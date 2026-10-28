@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#3B1425" />
+  <title>ANDRESSA SPAGNOL IMOVEIS | CRM Imobiliário</title>
+
+  <!-- Google Fonts: Montserrat & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Folha de Estilo Principal -->
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+
+  <!-- ========================================================================
+       1. TELA DE AUTENTICAÇÃO (SUPABASE AUTH) - BLOQUEIA ACESSO PÚBLICO
+       ======================================================================== -->
+  <main id="auth-screen" class="auth-wrapper">
+    <section class="auth-card" aria-labelledby="auth-title">
+      <div class="auth-header">
+        <div class="auth-monogram" aria-hidden="true">AS</div>
+        <h2 id="auth-title">ANDRESSA SPAGNOL IMOVEIS</h2>
+        <p>Acesso restrito aos corretores autorizados</p>
+      </div>
+
+      <div id="config-warning" class="config-warning hidden">
+        <strong>Configuração Pendente:</strong> Insira sua <code>SUPABASE_URL</code>,
+        <code>SUPABASE_KEY</code> e <code>WEBHOOK_URL</code> no arquivo
+        <code>js/config.js</code>.
+      </div>
+
+      <div id="login-error" class="alert-error hidden" role="alert"></div>
+
+      <form id="form-login" autocomplete="on">
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="login-email">E-mail Corporativo</label>
+          <input
+            type="email"
+            id="login-email"
+            class="form-control"
+            placeholder="imoveis.spagnol@gmail.com"
+            required
+            autocomplete="email"
+          />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.35rem;">
+          <label for="login-password">Senha de Acesso</label>
+          <input
+            type="password"
+            id="login-password"
+            class="form-control"
+            placeholder="••••••••"
+            required
+            autocomplete="current-password"
+          />
+        </div>
+
+        <button type="submit" id="btn-login" class="btn-primary">
+          Acessar Sistema
+        </button>
+      </form>
+    </section>
+  </main>
+
+  <!-- ========================================================================
+       2. PAINEL DO CRM (RENDERIZADO APENAS APÓS LOGIN BEM-SUCEDIDO)
+       ======================================================================== -->
+  <div id="crm-screen" class="crm-wrapper hidden">
+    <!-- Cabeçalho Principal -->
+    <header class="app-header">
+      <div class="header-container">
+        <div class="brand-identity">
+          <div class="brand-monogram" aria-hidden="true">AS</div>
+          <div class="brand-titles">
+            <h1>ANDRESSA SPAGNOL IMOVEIS</h1>
+            <span class="brand-subtitle">Gestão de Leads, Captações &amp; Documentação</span>
+          </div>
+        </div>
+
+        <div class="header-user-area">
+          <span id="user-email-badge" class="user-email-badge"></span>
+          <button type="button" id="btn-logout" class="btn-logout">
+            Sair
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="crm-main">
+      <!-- Indicadores Rápidos -->
+      <section class="kpi-strip" aria-label="Resumo do CRM">
+        <div class="kpi-card">
+          <span class="kpi-label">Leads no Funil</span>
+          <strong id="kpi-total-clientes" class="kpi-value">0</strong>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Visitas Agendadas</span>
+          <strong id="kpi-visitas" class="kpi-value">0</strong>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Imóveis Ativos</span>
+          <strong id="kpi-imoveis-ativos" class="kpi-value">0</strong>
+        </div>
+      </section>
+
+      <!-- Navegação entre os Módulos -->
+      <nav class="crm-tabs-nav" aria-label="Módulos do CRM">
+        <button type="button" class="nav-tab-btn active" data-tab="clientes">
+          Funil de Clientes (Leads)
+        </button>
+        <button type="button" class="nav-tab-btn" data-tab="imoveis">
+          Imóveis &amp; Pastas Drive
+        </button>
+      </nav>
+
+      <!-- ====================================================================
+           MÓDULO 2: CLIENTES (FUNIL DE VENDAS)
+           ==================================================================== -->
+      <section id="section-clientes">
+        <div class="panel-card">
+          <div class="panel-header">
+            <h2>Novo Lead / Cliente</h2>
+            <p>Cadastre rapidamente clientes durante o atendimento ou visita.</p>
+          </div>
+
+          <form id="form-novo-cliente" class="form-grid">
+            <div class="form-group">
+              <label for="cliente-nome">Nome do Cliente *</label>
+              <input
+                type="text"
+                id="cliente-nome"
+                class="form-control"
+                placeholder="Ex: Mariana Costa"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="cliente-telefone">Telefone / WhatsApp *</label>
+              <input
+                type="tel"
+                id="cliente-telefone"
+                class="form-control"
+                placeholder="(27) 99872-5094"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="cliente-status">Status do Funil *</label>
+              <select id="cliente-status" class="form-control" required>
+                <option value="Prospecção">Prospecção</option>
+                <option value="Visita Agendada">Visita Agendada</option>
+                <option value="Proposta em Andamento">Proposta em Andamento</option>
+              </select>
+            </div>
+
+            <div class="form-group form-group-full">
+              <label for="cliente-perfil">Perfil de Interesse (Bairro, Tipologia, Faixa de Valor)</label>
+              <input
+                type="text"
+                id="cliente-perfil"
+                class="form-control"
+                placeholder="Ex: Apto 3 quartos em Jardim Camburi ou Praia do Canto, até R$ 950 mil, 2 vagas"
+              />
+            </div>
+
+            <div class="form-group">
+              <button type="submit" id="btn-salvar-cliente" class="btn-primary">
+                + Cadastrar Lead
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="section-toolbar">
+          <h3>Clientes Cadastrados (Mais Recentes)</h3>
+          <div class="toggle-group" role="group" aria-label="Modo de visualização">
+            <button type="button" class="toggle-btn view-toggle-btn active" data-view="kanban">
+              Kanban
+            </button>
+            <button type="button" class="toggle-btn view-toggle-btn" data-view="lista">
+              Lista
+            </button>
+          </div>
+        </div>
+
+        <!-- Visualização em Kanban -->
+        <div id="clientes-kanban-container" class="kanban-board"></div>
+
+        <!-- Visualização em Lista -->
+        <div id="clientes-lista-container" class="hidden"></div>
+      </section>
+
+      <!-- ====================================================================
+           MÓDULO 3: IMÓVEIS (CAPTAÇÕES, MARKETING E GOOGLE DRIVE)
+           ==================================================================== -->
+      <section id="section-imoveis" class="hidden">
+        <div class="panel-card">
+          <div class="panel-header">
+            <h2>Nova Captação de Imóvel</h2>
+            <p>
+              Ao salvar, o sistema cria automaticamente a pasta de Fotos e Documentação no Google Drive.
+            </p>
+          </div>
+
+          <form id="form-novo-imovel" class="form-grid">
+            <div class="form-group">
+              <label for="imovel-titulo">Título do Imóvel *</label>
+              <input
+                type="text"
+                id="imovel-titulo"
+                class="form-control"
+                placeholder="Ex: Apto 3 Qts Camburi - Ed. Solar"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="imovel-valor">Valor (R$) *</label>
+              <input
+                type="number"
+                id="imovel-valor"
+                class="form-control"
+                placeholder="Ex: 850000"
+                min="0"
+                step="0.01"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="imovel-status">Status do Marketing *</label>
+              <select id="imovel-status" class="form-control" required>
+                <option value="1. Fazer Fotos">1. Fazer Fotos</option>
+                <option value="2. Pronto para Postar">2. Pronto para Postar</option>
+                <option value="3. Anunciado">3. Anunciado</option>
+                <option value="4. Vendido">4. Vendido</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <button type="submit" id="btn-salvar-imovel" class="btn-primary">
+                + Cadastrar Imóvel e Gerar Pasta no Drive
+              </button>
+            </div>
+          </form>
+
+          <div id="imovel-submit-status" class="submit-feedback hidden"></div>
+        </div>
+
+        <div class="section-toolbar">
+          <h3>Carteira de Imóveis Captados</h3>
+          <div class="toggle-group" role="group" aria-label="Filtro de imóveis">
+            <button type="button" class="toggle-btn filter-imoveis-btn active" data-filter="ativos">
+              Imóveis Ativos
+            </button>
+            <button type="button" class="toggle-btn filter-imoveis-btn" data-filter="todos">
+              Todos (Incl. Vendidos)
+            </button>
+          </div>
+        </div>
+
+        <div id="imoveis-grid-container" class="cards-grid"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ========================================================================
+       RODAPÉ OFICIAL (IDENTIDADE VISUAL ANDRESSA SPAGNOL IMÓVEIS)
+       ======================================================================== -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div class="footer-brand">ANDRESSA SPAGNOL IMOVEIS</div>
+      <div class="footer-credentials">
+        <span><strong>CRECI:</strong> 7734F</span>
+        <span>
+          <strong>WhatsApp:</strong>
+          <a href="https://wa.me/5527998725094" target="_blank" rel="noopener noreferrer">
+            (27) 99872.5094
+          </a>
+        </span>
+        <span>
+          <strong>E-mail:</strong>
+          <a href="mailto:imoveis.spagnol@gmail.com">imoveis.spagnol@gmail.com</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Container de Notificações (Toasts) -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Script Principal (ES Modules + Supabase v2) -->
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
+
