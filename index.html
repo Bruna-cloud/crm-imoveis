@@ -274,7 +274,7 @@
 
     .kpi-strip {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 1.15rem;
       margin-bottom: 1.75rem;
     }
@@ -1119,14 +1119,79 @@
     .toast-error { background: #9E1C2E; }
     .toast-hide { opacity: 0; transform: translateY(8px); }
 
+    .search-filter-input {
+      min-width: 240px;
+      padding: 0.52rem 0.9rem;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      background-color: var(--bg-surface);
+      transition: all 0.2s ease;
+    }
+
+    .search-filter-input:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(59, 20, 37, 0.12);
+    }
+
     @media (max-width: 1060px) {
       .kanban-board,
       .kanban-board-5,
       .agenda-layout {
         grid-template-columns: 1fr;
       }
+      .kpi-strip {
+        grid-template-columns: repeat(2, 1fr);
+      }
       .crm-tabs-nav {
         grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* ========================================================================
+       RESPONSIVIDADE MOBILE: BOTTOM NAVIGATION BAR (ESTILO APP NATIVO)
+       ======================================================================== */
+    @media (max-width: 768px) {
+      .crm-main {
+        padding-bottom: 5.75rem;
+      }
+
+      .crm-tabs-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 850;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        gap: 0.25rem;
+        margin-bottom: 0;
+        padding: 0.45rem 0.4rem calc(0.45rem + env(safe-area-inset-bottom, 0px));
+        background: var(--bg-surface);
+        border-top: 2px solid var(--brand-accent);
+        border-bottom: none;
+        box-shadow: 0 -4px 20px rgba(38, 11, 23, 0.16);
+      }
+
+      .nav-tab-btn {
+        flex: 1;
+        flex-direction: column;
+        gap: 0.2rem;
+        padding: 0.5rem 0.25rem;
+        font-size: 0.72rem;
+        border: none;
+        border-radius: 8px;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .app-footer {
+        padding-bottom: 5.5rem;
       }
     }
 
@@ -1141,13 +1206,12 @@
         justify-content: space-between;
         padding: 0.9rem 1.1rem;
       }
-      .kpi-value { font-size: 1.4rem; margin-top: 0; }
-      .crm-tabs-nav { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
-      .nav-tab-btn { padding: 0.75rem 0.6rem; font-size: 0.8rem; }
+      .kpi-value { font-size: 1.35rem; margin-top: 0; }
       .panel-card { padding: 1.2rem; }
       .cards-grid { grid-template-columns: 1fr; }
       .ai-shortcuts-buttons { width: 100%; flex-direction: column; }
       .btn-ai-shortcut { justify-content: center; width: 100%; }
+      .search-filter-input { width: 100%; min-width: 0; }
     }
   </style>
 </head>
@@ -1233,7 +1297,7 @@
     </header>
 
     <main class="crm-main">
-      <!-- Indicadores Rápidos -->
+      <!-- Indicadores Rápidos (4 Blocos: Leads, Visitas, Imóveis Ativos e VGV Ativo) -->
       <section class="kpi-strip" aria-label="Resumo do CRM">
         <div class="kpi-card">
           <span class="kpi-label">Leads no Funil</span>
@@ -1246,6 +1310,10 @@
         <div class="kpi-card">
           <span class="kpi-label">Imóveis Ativos</span>
           <strong id="kpi-imoveis-ativos" class="kpi-value">0</strong>
+        </div>
+        <div class="kpi-card" style="border-left-color: var(--brand-accent);">
+          <span class="kpi-label">VGV Ativo</span>
+          <strong id="kpi-vgv-ativo" class="kpi-value" style="font-size: 1.45rem;">R$ 0,00</strong>
         </div>
       </section>
 
@@ -1368,6 +1436,13 @@
         <div class="section-toolbar">
           <h3>Clientes Cadastrados (Mais Recentes)</h3>
           <div class="toolbar-actions">
+            <input
+              type="search"
+              id="busca-clientes"
+              class="search-filter-input"
+              placeholder="🔍 Buscar cliente, telefone, perfil..."
+              oninput="window.filtrarCardsTempoReal(this.value, '.cliente-card')"
+            />
             <button
               type="button"
               id="btn-exportar-meta-csv"
@@ -1451,13 +1526,22 @@
 
         <div class="section-toolbar">
           <h3>Carteira de Imóveis Captados</h3>
-          <div class="toggle-group" role="group" aria-label="Filtro de imóveis">
-            <button type="button" class="toggle-btn filter-imoveis-btn active" data-filter="ativos">
-              Imóveis Ativos
-            </button>
-            <button type="button" class="toggle-btn filter-imoveis-btn" data-filter="todos">
-              Todos (Incl. Vendidos)
-            </button>
+          <div class="toolbar-actions">
+            <input
+              type="search"
+              id="busca-imoveis"
+              class="search-filter-input"
+              placeholder="🔍 Buscar imóvel, bairro, valor..."
+              oninput="window.filtrarCardsTempoReal(this.value, '.imovel-card')"
+            />
+            <div class="toggle-group" role="group" aria-label="Filtro de imóveis">
+              <button type="button" class="toggle-btn filter-imoveis-btn active" data-filter="ativos">
+                Imóveis Ativos
+              </button>
+              <button type="button" class="toggle-btn filter-imoveis-btn" data-filter="todos">
+                Todos (Incl. Vendidos)
+              </button>
+            </div>
           </div>
         </div>
 
@@ -2007,6 +2091,7 @@
       const totalClientesEl = document.getElementById("kpi-total-clientes");
       const visitasAgendadasEl = document.getElementById("kpi-visitas");
       const imoveisAtivosEl = document.getElementById("kpi-imoveis-ativos");
+      const vgvAtivoEl = document.getElementById("kpi-vgv-ativo");
 
       if (totalClientesEl) totalClientesEl.textContent = state.clientes.length;
       if (visitasAgendadasEl) {
@@ -2014,12 +2099,41 @@
           (c) => c.status_funil === "Visita Agendada"
         ).length;
       }
+
+      const imoveisNaoVendidos = state.imoveis.filter(
+        (i) =>
+          i.status_marketing !== "4. Vendido" &&
+          !String(i.status_marketing || "").toLowerCase().includes("vendido")
+      );
+
       if (imoveisAtivosEl) {
-        imoveisAtivosEl.textContent = state.imoveis.filter(
-          (i) => i.status_marketing !== "4. Vendido"
-        ).length;
+        imoveisAtivosEl.textContent = imoveisNaoVendidos.length;
+      }
+
+      if (vgvAtivoEl) {
+        const somaVGV = imoveisNaoVendidos.reduce(
+          (acc, imovel) => acc + (Number(imovel.valor) || 0),
+          0
+        );
+        vgvAtivoEl.textContent = new Intl.NumberFormat("pt-BR", {
+          style: "currency",
+          currency: "BRL"
+        }).format(somaVGV);
       }
     }
+
+    /**
+     * Filtro em Tempo Real (Barra de Busca no DOM sem nova requisição ao Supabase)
+     */
+    function filtrarCardsTempoReal(termo, seletorCard) {
+      const busca = String(termo || "").toLowerCase().trim();
+      const cards = document.querySelectorAll(seletorCard);
+      cards.forEach((card) => {
+        const conteudoTexto = (card.textContent || "").toLowerCase();
+        card.style.display = !busca || conteudoTexto.includes(busca) ? "" : "none";
+      });
+    }
+    window.filtrarCardsTempoReal = filtrarCardsTempoReal;
 
     // ========================================================================
     // MÓDULO 1: CLIENTES + OBSERVAÇÃO + TAGGING + EXPORTAÇÃO CSV META ADS
@@ -2281,8 +2395,8 @@
           }
 
           <div class="card-meta-row" style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
-            <a href="${linkWhats}" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
-              WhatsApp: ${escapeHtml(cliente.telefone)}
+            <a href="https://wa.me/${numeroWhats}" target="_blank" rel="noopener noreferrer" class="btn-whatsapp" title="Iniciar conversa rápida no WhatsApp">
+              <span>💬 WhatsApp: ${escapeHtml(cliente.telefone)}</span>
             </a>
             <label class="select-inline-label" style="max-width: 175px;">
               <select class="select-usuario-cliente" data-id="${escapeHtml(cliente.id)}" title="Marcar usuário neste lead">
@@ -2342,6 +2456,11 @@
             ? `<div class="empty-state-box"><p>Nenhum lead cadastrado ainda.</p></div>`
             : `<div class="cards-grid">${state.clientes.map(criarCardClienteHTML).join("")}</div>`;
       }
+
+      const termoBuscaClientes = document.getElementById("busca-clientes")?.value || "";
+      if (termoBuscaClientes) {
+        filtrarCardsTempoReal(termoBuscaClientes, ".cliente-card");
+      }
     }
 
     // ========================================================================
@@ -2381,6 +2500,24 @@
         return;
       }
       state.imoveis = data || [];
+
+      // Contador acumulativo de VGV Ativo (todos os imóveis cujo status não seja "Vendido")
+      const vgvAtivoTotal = state.imoveis.reduce((acumulador, imovel) => {
+        const statusStr = String(imovel.status_marketing || "").toLowerCase();
+        if (!statusStr.includes("vendido")) {
+          return acumulador + (Number(imovel.valor) || 0);
+        }
+        return acumulador;
+      }, 0);
+
+      const vgvAtivoEl = document.getElementById("kpi-vgv-ativo");
+      if (vgvAtivoEl) {
+        vgvAtivoEl.textContent = new Intl.NumberFormat("pt-BR", {
+          style: "currency",
+          currency: "BRL"
+        }).format(vgvAtivoTotal);
+      }
+
       renderizarImoveis();
       atualizarContadoresResumo();
     }
@@ -2540,6 +2677,11 @@
           `;
         })
         .join("");
+
+      const termoBuscaImoveis = document.getElementById("busca-imoveis")?.value || "";
+      if (termoBuscaImoveis) {
+        filtrarCardsTempoReal(termoBuscaImoveis, ".imovel-card");
+      }
     }
 
     // ========================================================================
