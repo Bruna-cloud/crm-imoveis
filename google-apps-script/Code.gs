@@ -1,25 +1,13 @@
 /**
  * ============================================================================
- * GOOGLE APPS SCRIPT - WEBHOOK DE CRIAÇÃO DE PASTAS NO GOOGLE DRIVE
+ * GOOGLE APPS SCRIPT UNIFICADO (GOOGLE DRIVE + GOOGLE CALENDAR)
  * Andressa Spagnol Imóveis - CRM Imobiliário
  * ============================================================================
- *
- * COMO PUBLICAR NO script.google.com:
- * 1. Acesse https://script.google.com e crie um "Novo Projeto".
- * 2. Cole este código no arquivo `Código.gs` (substituindo todo o conteúdo).
- * 3. (Opcional) Defina o ID de uma pasta-mãe na constante `PASTA_RAIZ_ID` abaixo
- *    para organizar todas as captações dentro de uma única pasta no seu Drive.
- * 4. Clique em "Implantar" > "Nova implantação".
- * 5. Em "Selecionar tipo", escolha "App da Web".
- * 6. Configure:
- *    - Executar como: "Eu" (seu e-mail Google)
- *    - Quem pode acessar: "Qualquer pessoa" (necessário para aceitar requisições CORS do navegador)
- * 7. Autorize as permissões do Google Drive e copie a URL do App da Web gerada
- *    para a constante `WEBHOOK_URL` no arquivo `js/config.js`.
+ * Este script suporta tanto:
+ * 1. Criação de eventos de 1h no Google Calendar (quando recebe `titulo` e `data_hora`)
+ * 2. Criação de pastas de imóveis no Google Drive (quando recebe `titulo` do imóvel)
  */
 
-// Opcional: ID da pasta principal no Google Drive onde as pastas dos imóveis serão criadas.
-// Deixe vazio ("") para criar na raiz do Meu Drive ou ter uma pasta "CRM - Captações Imóveis" criada automaticamente.
 const PASTA_RAIZ_ID = "";
 const NOME_PASTA_PADRAO = "Andressa Spagnol Imóveis - Captações";
 
@@ -33,8 +21,53 @@ function doPost(e) {
     }
 
     const dados = JSON.parse(e.postData.contents);
-    const nomeImovel = (dados.titulo || dados.nome || "").toString().trim();
 
+    // ------------------------------------------------------------------------
+    // ROTA A: AGENDAMENTO NO GOOGLE CALENDAR (Módulo 3)
+    // Acionada quando o JSON contém `data_hora` (ou `acao === "calendar"`)
+    // ------------------------------------------------------------------------
+    if (dados.data_hora || dados.acao === "calendar") {
+      const tituloEvento = (dados.titulo || "").toString().trim();
+      const dataHoraStr = (dados.data_hora || "").toString().trim();
+      const descricao = (
+        dados.descricao || "Compromisso agendado via CRM Andressa Spagnol Imóveis"
+      ).toString().trim();
+
+      if (!tituloEvento || !dataHoraStr) {
+        return responderJSON({
+          success: false,
+          error: "Os campos 'titulo' e 'data_hora' são obrigatórios para agendamento."
+        });
+      }
+
+      const dataInicio = new Date(dataHoraStr);
+      if (isNaN(dataInicio.getTime())) {
+        return responderJSON({
+          success: false,
+          error: "Formato de 'data_hora' inválido."
+        });
+      }
+
+      // Evento com duração de 1 hora (3.600.000 ms)
+      const dataFim = new Date(dataInicio.getTime() + 60 * 60 * 1000);
+      const agenda = CalendarApp.getDefaultCalendar();
+      const evento = agenda.createEvent(tituloEvento, dataInicio, dataFim, {
+        description: descricao
+      });
+
+      return responderJSON({
+        success: true,
+        eventId: evento.getId(),
+        titulo: evento.getTitle(),
+        inicio: dataInicio.toISOString(),
+        fim: dataFim.toISOString()
+      });
+    }
+
+    // ------------------------------------------------------------------------
+    // ROTA B: CRIAÇÃO DE PASTA NO GOOGLE DRIVE (Módulo de Imóveis)
+    // ------------------------------------------------------------------------
+    const nomeImovel = (dados.titulo || dados.nome || "").toString().trim();
     if (!nomeImovel) {
       return responderJSON({
         success: false,
@@ -42,7 +75,6 @@ function doPost(e) {
       });
     }
 
-    // Determinar pasta-mãe onde a pasta do imóvel será criada
     let pastaMae;
     if (PASTA_RAIZ_ID && PASTA_RAIZ_ID.trim() !== "") {
       pastaMae = DriveApp.getFolderById(PASTA_RAIZ_ID.trim());
@@ -53,11 +85,9 @@ function doPost(e) {
         : DriveApp.createFolder(NOME_PASTA_PADRAO);
     }
 
-    // Formatar nome da pasta com data de captação para fácil organização
     const dataFormatada = Utilities.formatDate(new Date(), "America/Sao_Paulo", "yyyy-MM-dd");
     const nomePastaFinal = `${nomeImovel} (${dataFormatada})`;
 
-    // Criar pasta principal do imóvel e subpastas organizacionais
     const pastaImovel = pastaMae.createFolder(nomePastaFinal);
     pastaImovel.createFolder("01. Fotos e Vídeos");
     pastaImovel.createFolder("02. Documentação do Imóvel");
@@ -76,12 +106,8 @@ function doPost(e) {
   }
 }
 
-/**
- * Helper para retornar resposta JSON com MIME Type adequado do Apps Script
- */
 function responderJSON(objeto) {
   return ContentService
     .createTextOutput(JSON.stringify(objeto))
     .setMimeType(ContentService.MimeType.JSON);
 }
-
