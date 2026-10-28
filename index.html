@@ -900,6 +900,154 @@
       display: block;
     }
 
+    /* ========================================================================
+       OFF-CANVAS DRAWER DE TAREFAS (AÇÕES VINCULADAS 2 EM 1)
+       ======================================================================== */
+    .btn-drawer-trigger {
+      background: linear-gradient(135deg, #C5A059 0%, #A88238 100%);
+      color: #1E191D;
+      border: none;
+      padding: 0.48rem 1rem;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-heading);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-drawer-trigger:hover {
+      filter: brightness(1.07);
+      transform: translateY(-1px);
+    }
+
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(30, 25, 29, 0.55);
+      z-index: 900;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .drawer-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .offcanvas-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 100%;
+      max-width: 420px;
+      height: 100vh;
+      background: var(--bg-surface);
+      z-index: 950;
+      box-shadow: -8px 0 32px rgba(0, 0, 0, 0.25);
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .offcanvas-drawer.open {
+      transform: translateX(0);
+    }
+
+    .drawer-header {
+      background: linear-gradient(135deg, #3B1425 0%, #2A0D1A 100%);
+      color: #FFFFFF;
+      padding: 1.15rem 1.35rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--brand-accent);
+    }
+
+    .drawer-header h3 {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .btn-drawer-close {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #FFFFFF;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .drawer-body {
+      padding: 1.25rem 1.35rem;
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .linked-action-box {
+      background: var(--brand-accent-soft);
+      border: 1px solid rgba(197, 160, 89, 0.55);
+      border-left: 4px solid var(--brand-primary);
+      border-radius: var(--radius-sm);
+      padding: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .linked-action-title {
+      font-family: var(--font-heading);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--brand-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .tarefas-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .tarefa-item {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 0.9rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.65rem;
+    }
+
+    .tarefa-item.done .tarefa-titulo {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .tarefa-lead-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--brand-primary);
+      background: #F3EBF0;
+      padding: 0.12rem 0.5rem;
+      border-radius: 999px;
+      margin-top: 0.25rem;
+    }
+
     /* Rodapé Oficial */
     .app-footer {
       background: linear-gradient(135deg, #2A0D1A 0%, #3B1425 100%);
@@ -1070,6 +1218,9 @@
         </div>
 
         <div class="header-user-area">
+          <button type="button" id="btn-abrir-tarefas" class="btn-drawer-trigger">
+            ☑️ Tarefas (<span id="badge-count-tarefas">0</span>)
+          </button>
           <span id="user-email-badge" class="user-email-badge"></span>
           <button type="button" id="btn-logout" class="btn-logout">
             Sair
@@ -1484,6 +1635,73 @@
     </main>
   </div>
 
+  <!-- ========================================================================
+       PAINEL LATERAL (OFF-CANVAS DRAWER) DE TAREFAS - AÇÕES VINCULADAS (2 EM 1)
+       ======================================================================== -->
+  <div id="drawer-overlay" class="drawer-overlay"></div>
+  <aside id="drawer-tarefas" class="offcanvas-drawer" aria-labelledby="drawer-tarefas-title">
+    <div class="drawer-header">
+      <h3 id="drawer-tarefas-title">☑️ Central de Tarefas &amp; Ações</h3>
+      <button type="button" id="btn-fechar-tarefas" class="btn-drawer-close" aria-label="Fechar">
+        ✕
+      </button>
+    </div>
+
+    <div class="drawer-body">
+      <form id="form-nova-tarefa" class="form-grid" style="grid-template-columns: 1fr;">
+        <div class="form-group">
+          <label for="tarefa-titulo">Descrição da Tarefa *</label>
+          <input
+            type="text"
+            id="tarefa-titulo"
+            class="form-control"
+            placeholder="Ex: Enviar proposta assinada / Confirmar visita"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="tarefa-vencimento">Data Limite (Opcional)</label>
+          <input type="date" id="tarefa-vencimento" class="form-control" />
+        </div>
+
+        <!-- BLOCO DE AÇÕES VINCULADAS (2 EM 1) -->
+        <div class="linked-action-box">
+          <span class="linked-action-title">🔗 Ação Vinculada ao Funil (2 em 1)</span>
+
+          <div class="form-group">
+            <label for="tarefa-cliente-id">Vincular a qual Lead/Cliente?</label>
+            <select id="tarefa-cliente-id" class="form-control">
+              <option value="">-- Nenhum cliente (Tarefa avulsa) --</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="tarefa-novo-status">Atualizar status do funil para:</label>
+            <select id="tarefa-novo-status" class="form-control">
+              <option value="nao_alterar" selected>Não alterar</option>
+              <option value="Prospecção">Prospecção</option>
+              <option value="Visita Agendada">Visita Agendada</option>
+              <option value="Proposta">Proposta</option>
+              <option value="Fechado">Fechado</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" id="btn-salvar-tarefa" class="btn-primary">
+          + Salvar Tarefa e Atualizar Funil
+        </button>
+      </form>
+
+      <div style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
+        <h4 style="font-family: var(--font-heading); font-size: 0.9rem; color: var(--brand-primary); margin-bottom: 0.75rem;">
+          Tarefas Pendentes e Concluídas
+        </h4>
+        <div id="lista-tarefas-drawer" class="tarefas-list"></div>
+      </div>
+    </div>
+  </aside>
+
   <!-- RODAPÉ OFICIAL -->
   <footer class="app-footer">
     <div class="footer-container">
@@ -1520,7 +1738,7 @@
         "https://script.google.com/macros/s/AKfycbwrVLCJbLjWI7PaaJIMu1KEE65pfGy7YfnVp5iGoO1MvB5QB4LXEy-NBkYxZjaY6wkNvA/exec"
     };
 
-    const STATUS_FUNIL = ["Prospecção", "Visita Agendada", "Proposta em Andamento"];
+    const STATUS_FUNIL = ["Prospecção", "Visita Agendada", "Proposta", "Fechado"];
     const STATUS_MARKETING = [
       "1. Fazer Fotos",
       "2. Pronto para Postar",
@@ -1545,7 +1763,8 @@
       filtroImoveis: "ativos",
       clientes: [],
       imoveis: [],
-      conteudos: []
+      conteudos: [],
+      tarefas: []
     };
 
     // ========================================================================
@@ -1712,7 +1931,8 @@
       await Promise.all([
         carregarClientes(),
         carregarImoveis(),
-        carregarConteudos()
+        carregarConteudos(),
+        carregarTarefas()
       ]);
       atualizarContadoresResumo();
     }
@@ -1750,6 +1970,7 @@
       }
       state.clientes = data || [];
       renderizarClientes();
+      popularSelectClientesTarefa();
       atualizarContadoresResumo();
     }
 
@@ -1785,6 +2006,7 @@
         if (error) throw error;
         state.clientes.unshift(data);
         renderizarClientes();
+        popularSelectClientesTarefa();
         atualizarContadoresResumo();
         event.target.reset();
         showToast("Cliente adicionado ao funil com sucesso!", "success");
@@ -2393,6 +2615,233 @@
     }
 
     // ========================================================================
+    // MÓDULO 4: PAINEL DE TAREFAS + AÇÕES VINCULADAS (TRANSAÇÃO DUPLA 2 EM 1)
+    // ========================================================================
+    function toggleDrawerTarefas(abrir) {
+      const drawer = document.getElementById("drawer-tarefas");
+      const overlay = document.getElementById("drawer-overlay");
+      if (abrir) {
+        popularSelectClientesTarefa();
+        drawer?.classList.add("open");
+        overlay?.classList.add("open");
+      } else {
+        drawer?.classList.remove("open");
+        overlay?.classList.remove("open");
+      }
+    }
+
+    function popularSelectClientesTarefa() {
+      const selectEl = document.getElementById("tarefa-cliente-id");
+      if (!selectEl) return;
+
+      const valorAtual = selectEl.value;
+      const opcoesClientes = state.clientes
+        .map((c) => {
+          const nome = obterNomeCompleto(c);
+          return `<option value="${escapeHtml(c.id)}">${escapeHtml(nome)} (${escapeHtml(
+            c.status_funil
+          )})</option>`;
+        })
+        .join("");
+
+      selectEl.innerHTML =
+        `<option value="">-- Nenhum cliente (Tarefa avulsa) --</option>` + opcoesClientes;
+      if (valorAtual) selectEl.value = valorAtual;
+    }
+
+    async function carregarTarefas() {
+      const { data, error } = await supabase
+        .from("tarefas")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.warn("Tabela tarefas ainda não migrada:", error.message);
+        return;
+      }
+
+      state.tarefas = data || [];
+      renderizarTarefas();
+    }
+
+    /**
+     * Função de Transação Dupla (2 em 1):
+     * 1. Realiza o INSERT da nova tarefa na tabela `tarefas` (com `cliente_id` se vinculado).
+     * 2. Se um cliente foi selecionado e um novo status do funil foi escolhido (`!== "nao_alterar"`),
+     *    executa simultaneamente o UPDATE do `status_funil` na tabela `clientes`.
+     */
+    async function adicionarTarefa(event) {
+      event.preventDefault();
+
+      const tituloEl = document.getElementById("tarefa-titulo");
+      const vencimentoEl = document.getElementById("tarefa-vencimento");
+      const clienteIdEl = document.getElementById("tarefa-cliente-id");
+      const novoStatusEl = document.getElementById("tarefa-novo-status");
+      const btnSalvar = document.getElementById("btn-salvar-tarefa");
+
+      const titulo = tituloEl.value.trim();
+      const dataVencimento = vencimentoEl.value || null;
+      const clienteId = clienteIdEl.value || null;
+      const novoStatus = novoStatusEl.value;
+
+      if (!titulo) {
+        showToast("Informe a descrição da tarefa.", "error");
+        return;
+      }
+
+      btnSalvar.disabled = true;
+      btnSalvar.textContent = "Processando...";
+
+      try {
+        const payloadTarefa = {
+          titulo,
+          data_vencimento: dataVencimento,
+          cliente_id: clienteId,
+          concluida: false
+        };
+
+        // Operação 1: INSERT na tabela `tarefas`
+        const promessaInsertTarefa = supabase
+          .from("tarefas")
+          .insert([payloadTarefa])
+          .select()
+          .single();
+
+        // Operação 2 (Condicional): UPDATE simultâneo no `status_funil` do cliente vinculado
+        const deveAtualizarStatusLead =
+          Boolean(clienteId) && Boolean(novoStatus) && novoStatus !== "nao_alterar";
+
+        const promessaUpdateCliente = deveAtualizarStatusLead
+          ? supabase
+              .from("clientes")
+              .update({ status_funil: novoStatus })
+              .eq("id", clienteId)
+              .select()
+              .single()
+          : Promise.resolve({ data: null, error: null });
+
+        // Executa ambas as operações simultaneamente no Supabase
+        const [resTarefa, resCliente] = await Promise.all([
+          promessaInsertTarefa,
+          promessaUpdateCliente
+        ]);
+
+        if (resTarefa.error) throw resTarefa.error;
+        if (resCliente.error) throw resCliente.error;
+
+        state.tarefas.unshift(resTarefa.data);
+
+        if (deveAtualizarStatusLead) {
+          const idx = state.clientes.findIndex((c) => c.id === clienteId);
+          if (idx !== -1) {
+            state.clientes[idx].status_funil = novoStatus;
+          }
+          renderizarClientes();
+          popularSelectClientesTarefa();
+          atualizarContadoresResumo();
+          showToast(
+            `Tarefa criada e status do lead atualizado para "${novoStatus}"!`,
+            "success"
+          );
+        } else {
+          showToast("Tarefa adicionada com sucesso!", "success");
+        }
+
+        renderizarTarefas();
+        event.target.reset();
+      } catch (err) {
+        showToast(`Erro ao salvar tarefa: ${err.message}`, "error");
+      } finally {
+        btnSalvar.disabled = false;
+        btnSalvar.textContent = "+ Salvar Tarefa e Atualizar Funil";
+      }
+    }
+
+    async function alternarConclusaoTarefa(id, concluidaAtual) {
+      const { error } = await supabase
+        .from("tarefas")
+        .update({ concluida: !concluidaAtual })
+        .eq("id", id);
+
+      if (error) {
+        showToast(`Erro ao atualizar tarefa: ${error.message}`, "error");
+        return;
+      }
+
+      const idx = state.tarefas.findIndex((t) => t.id === id);
+      if (idx !== -1) state.tarefas[idx].concluida = !concluidaAtual;
+      renderizarTarefas();
+    }
+
+    async function excluirTarefa(id) {
+      const { error } = await supabase.from("tarefas").delete().eq("id", id);
+      if (error) {
+        showToast(`Erro ao excluir tarefa: ${error.message}`, "error");
+        return;
+      }
+      state.tarefas = state.tarefas.filter((t) => t.id !== id);
+      renderizarTarefas();
+    }
+
+    function renderizarTarefas() {
+      const container = document.getElementById("lista-tarefas-drawer");
+      const badgeEl = document.getElementById("badge-count-tarefas");
+      const pendentesCount = state.tarefas.filter((t) => !t.concluida).length;
+      if (badgeEl) badgeEl.textContent = pendentesCount;
+      if (!container) return;
+
+      if (state.tarefas.length === 0) {
+        container.innerHTML = `<div class="empty-column">Nenhuma tarefa cadastrada.</div>`;
+        return;
+      }
+
+      container.innerHTML = state.tarefas
+        .map((t) => {
+          const clienteVinculado = t.cliente_id
+            ? state.clientes.find((c) => c.id === t.cliente_id)
+            : null;
+          const nomeLead = clienteVinculado ? obterNomeCompleto(clienteVinculado) : null;
+
+          return `
+            <div class="tarefa-item ${t.concluida ? "done" : ""}">
+              <label style="display: flex; align-items: flex-start; gap: 0.55rem; flex: 1; cursor: pointer;">
+                <input
+                  type="checkbox"
+                  class="chk-tarefa"
+                  data-id="${escapeHtml(t.id)}"
+                  ${t.concluida ? "checked" : ""}
+                  style="margin-top: 4px;"
+                />
+                <div>
+                  <div class="tarefa-titulo" style="font-size: 0.86rem; font-weight: 600;">
+                    ${escapeHtml(t.titulo)}
+                  </div>
+                  ${
+                    t.data_vencimento
+                      ? `<span class="card-date">📅 Vence em: ${formatarDataCurta(
+                          t.data_vencimento
+                        )}</span>`
+                      : ""
+                  }
+                  ${
+                    nomeLead
+                      ? `<span class="tarefa-lead-tag">👤 Lead: ${escapeHtml(nomeLead)}</span>`
+                      : ""
+                  }
+                </div>
+              </label>
+              <button type="button" class="btn-icon-delete btn-del-tarefa" data-id="${escapeHtml(
+                t.id
+              )}">
+                ✕
+              </button>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    // ========================================================================
     // EVENT LISTENERS DOM
     // ========================================================================
     document.addEventListener("DOMContentLoaded", () => {
@@ -2474,6 +2923,32 @@
       document
         .getElementById("form-agendar-visita")
         ?.addEventListener("submit", handleAgendarVisitaSubmit);
+      document
+        .getElementById("form-nova-tarefa")
+        ?.addEventListener("submit", adicionarTarefa);
+
+      // Eventos do Painel Lateral (Off-canvas Drawer de Tarefas)
+      document
+        .getElementById("btn-abrir-tarefas")
+        ?.addEventListener("click", () => toggleDrawerTarefas(true));
+      document
+        .getElementById("btn-fechar-tarefas")
+        ?.addEventListener("click", () => toggleDrawerTarefas(false));
+      document
+        .getElementById("drawer-overlay")
+        ?.addEventListener("click", () => toggleDrawerTarefas(false));
+
+      document.getElementById("lista-tarefas-drawer")?.addEventListener("change", (e) => {
+        if (e.target.matches(".chk-tarefa")) {
+          const id = e.target.dataset.id;
+          const tarefa = state.tarefas.find((t) => t.id === id);
+          if (tarefa) alternarConclusaoTarefa(id, tarefa.concluida);
+        }
+      });
+      document.getElementById("lista-tarefas-drawer")?.addEventListener("click", (e) => {
+        const btnDel = e.target.closest(".btn-del-tarefa");
+        if (btnDel) excluirTarefa(btnDel.dataset.id);
+      });
 
       const sectionClientes = document.getElementById("section-clientes");
       sectionClientes?.addEventListener("change", (e) => {

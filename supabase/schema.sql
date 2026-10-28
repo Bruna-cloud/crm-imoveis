@@ -104,3 +104,4 @@ CREATE POLICY "Conteudos: acesso autenticados" ON public.conteudos FOR ALL TO au
 
 DROP POLICY IF EXISTS "Referencias IA: acesso total para autenticados" ON public.ia_referencias;
 CREATE POLICY "Referencias IA: acesso total para autenticados" ON public.ia_referencias FOR ALL TO authenticated USING (auth.uid() IS NOT NULL) WITH CHECK (auth.uid() IS NOT NULL);
+

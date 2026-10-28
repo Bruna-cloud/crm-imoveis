@@ -95,3 +95,46 @@ DROP POLICY IF EXISTS "Referencias IA: acesso total para autenticados" ON public
 CREATE POLICY "Referencias IA: acesso total para autenticados"
     ON public.ia_referencias FOR ALL TO authenticated
     USING (auth.uid() IS NOT NULL) WITH CHECK (auth.uid() IS NOT NULL);
+
+
+-- ============================================================================
+-- MÓDULO 4: TABELA `tarefas` + FOREIGN KEY `cliente_id` (AÇÕES VINCULADAS 2 EM 1)
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS public.tarefas (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    titulo TEXT NOT NULL CHECK (char_length(trim(titulo)) > 0),
+    data_vencimento DATE,
+    concluida BOOLEAN NOT NULL DEFAULT false,
+    criado_por UUID REFERENCES auth.users(id) ON DELETE SET NULL DEFAULT auth.uid(),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Adiciona a Foreign Key `cliente_id` referenciando `public.clientes(id)`
+ALTER TABLE public.tarefas
+    ADD COLUMN IF NOT EXISTS cliente_id UUID REFERENCES public.clientes(id) ON DELETE SET NULL;
+
+CREATE INDEX IF NOT EXISTS idx_tarefas_cliente_id ON public.tarefas (cliente_id);
+
+-- Atualiza a constraint de `status_funil` em `clientes` para suportar também 'Proposta' e 'Fechado'
+ALTER TABLE public.clientes DROP CONSTRAINT IF EXISTS clientes_status_funil_check;
+ALTER TABLE public.clientes
+    ADD CONSTRAINT clientes_status_funil_check CHECK (
+        status_funil IN (
+            'Prospecção',
+            'Visita Agendada',
+            'Proposta',
+            'Proposta em Andamento',
+            'Fechado'
+        )
+    );
+
+-- RLS para `tarefas`
+ALTER TABLE public.tarefas ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Tarefas: acesso total para autenticados" ON public.tarefas;
+CREATE POLICY "Tarefas: acesso total para autenticados"
+    ON public.tarefas
+    FOR ALL
+    TO authenticated
+    USING (auth.uid() IS NOT NULL)
+    WITH CHECK (auth.uid() IS NOT NULL);
