@@ -1625,7 +1625,11 @@
               <iframe
                 id="google-calendar-iframe"
                 title="Agenda Google Calendar - Andressa Spagnol Imóveis"
-                src="https://calendar.google.com/calendar/embed?src=imoveis.spagnol%40gmail.com&ctz=America%2FSao_Paulo"
+                src="https://calendar.google.com/calendar/embed?src=ef4db9ef39447454cea9c3e6ec534785fc81c39829bbc1645d820b5afa5bfff8%40group.calendar.google.com&ctz=America%2FSao_Paulo"
+                style="border: 0"
+                width="800"
+                height="600"
+                frameborder="0"
                 scrolling="no"
               ></iframe>
             </div>
@@ -2581,6 +2585,7 @@
           headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify({
             acao: "calendar",
+            calendar_id: "ef4db9ef39447454cea9c3e6ec534785fc81c39829bbc1645d820b5afa5bfff8@group.calendar.google.com",
             titulo,
             data_hora: new Date(dataHora).toISOString(),
             descricao

@@ -40,8 +40,12 @@ function doPost(e) {
 
     const dataFim = new Date(dataInicio.getTime() + 60 * 60 * 1000); // +1 hora
 
-    // Cria o evento na agenda padrão do usuário autenticado no Apps Script
-    const agenda = CalendarApp.getDefaultCalendar();
+    // Cria o evento na agenda específica do CRM (ou agenda padrão como fallback)
+    const idAgenda =
+      dados.calendar_id ||
+      "ef4db9ef39447454cea9c3e6ec534785fc81c39829bbc1645d820b5afa5bfff8@group.calendar.google.com";
+    const agenda =
+      CalendarApp.getCalendarById(idAgenda) || CalendarApp.getDefaultCalendar();
     const evento = agenda.createEvent(titulo, dataInicio, dataFim, {
       description: descricao
     });

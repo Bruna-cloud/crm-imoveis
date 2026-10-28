@@ -50,7 +50,11 @@ function doPost(e) {
 
       // Evento com duração de 1 hora (3.600.000 ms)
       const dataFim = new Date(dataInicio.getTime() + 60 * 60 * 1000);
-      const agenda = CalendarApp.getDefaultCalendar();
+      const idAgenda =
+        dados.calendar_id ||
+        "ef4db9ef39447454cea9c3e6ec534785fc81c39829bbc1645d820b5afa5bfff8@group.calendar.google.com";
+      const agenda =
+        CalendarApp.getCalendarById(idAgenda) || CalendarApp.getDefaultCalendar();
       const evento = agenda.createEvent(tituloEvento, dataInicio, dataFim, {
         description: descricao
       });
