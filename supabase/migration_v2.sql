@@ -138,3 +138,33 @@ CREATE POLICY "Tarefas: acesso total para autenticados"
     TO authenticated
     USING (auth.uid() IS NOT NULL)
     WITH CHECK (auth.uid() IS NOT NULL);
+
+-- ============================================================================
+-- MÓDULO 5: OBSERVAÇÃO & TAGGING EM `clientes` + CENTRAL DE NOTIFICAÇÕES
+-- ============================================================================
+
+-- 4.1 Novas colunas na tabela `clientes`: `observacao` e `usuario_marcado`
+ALTER TABLE public.clientes
+    ADD COLUMN IF NOT EXISTS observacao TEXT DEFAULT '',
+    ADD COLUMN IF NOT EXISTS usuario_marcado TEXT DEFAULT '';
+
+-- 5.1 Criação da tabela `notificacoes`
+CREATE TABLE IF NOT EXISTS public.notificacoes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    mensagem TEXT NOT NULL CHECK (char_length(trim(mensagem)) > 0),
+    lida BOOLEAN NOT NULL DEFAULT false,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_notificacoes_lida_created ON public.notificacoes (lida, created_at DESC);
+
+-- RLS para `notificacoes`
+ALTER TABLE public.notificacoes ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Notificacoes: acesso total para autenticados" ON public.notificacoes;
+CREATE POLICY "Notificacoes: acesso total para autenticados"
+    ON public.notificacoes
+    FOR ALL
+    TO authenticated
+    USING (auth.uid() IS NOT NULL)
+    WITH CHECK (auth.uid() IS NOT NULL);

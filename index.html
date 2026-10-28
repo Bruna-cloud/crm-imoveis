@@ -1218,6 +1218,9 @@
         </div>
 
         <div class="header-user-area">
+          <button type="button" id="btn-abrir-notificacoes" class="btn-drawer-trigger" title="Central de Notificações">
+            🔔 (<span id="badge-count-notificacoes">0</span>)
+          </button>
           <button type="button" id="btn-abrir-tarefas" class="btn-drawer-trigger">
             ☑️ Tarefas (<span id="badge-count-tarefas">0</span>)
           </button>
@@ -1246,24 +1249,24 @@
         </div>
       </section>
 
-      <!-- Navegação entre os 4 Módulos -->
+      <!-- Navegação entre os 4 Módulos (Ordem: 1. Funil de Leads, 2. Imóvel Drive, 3. Agenda, 4. Linha Editorial) -->
       <nav class="crm-tabs-nav" aria-label="Módulos do CRM">
         <button type="button" class="nav-tab-btn active" data-tab="clientes">
           👥 Funil de Leads
         </button>
         <button type="button" class="nav-tab-btn" data-tab="imoveis">
-          🏠 Imóveis &amp; Drive
+          🏠 Imóvel Drive
+        </button>
+        <button type="button" class="nav-tab-btn" data-tab="agenda">
+          📅 Agenda
         </button>
         <button type="button" class="nav-tab-btn" data-tab="conteudos">
           🎬 Linha Editorial
         </button>
-        <button type="button" class="nav-tab-btn" data-tab="agenda">
-          📅 Agenda &amp; Visitas
-        </button>
       </nav>
 
       <!-- ====================================================================
-           MÓDULO 1: CLIENTES (REFATORADO + EXPORTAÇÃO META ADS)
+           1. FUNIL DE LEADS (CLIENTES + OBSERVAÇÃO + TAGGING + META ADS)
            ==================================================================== -->
       <section id="section-clientes">
         <div class="panel-card">
@@ -1320,7 +1323,8 @@
               <select id="cliente-status" class="form-control" required>
                 <option value="Prospecção">Prospecção</option>
                 <option value="Visita Agendada">Visita Agendada</option>
-                <option value="Proposta em Andamento">Proposta em Andamento</option>
+                <option value="Proposta">Proposta</option>
+                <option value="Fechado">Fechado</option>
               </select>
             </div>
 
@@ -1332,6 +1336,25 @@
                 class="form-control"
                 placeholder="Ex: Apto 3 Qts Jardim Camburi até R$ 950 mil"
               />
+            </div>
+
+            <div class="form-group">
+              <label for="cliente-usuario-marcado">Marcar Usuário (Tagging)</label>
+              <select id="cliente-usuario-marcado" class="form-control">
+                <option value="">-- Nenhum --</option>
+                <option value="Andressa">Andressa</option>
+                <option value="Douglas">Douglas</option>
+              </select>
+            </div>
+
+            <div class="form-group form-group-full">
+              <label for="cliente-observacao">Observação do Lead</label>
+              <textarea
+                id="cliente-observacao"
+                class="form-control"
+                style="min-height: 76px;"
+                placeholder="Anotações importantes sobre o histórico, preferências ou negociação do lead..."
+              ></textarea>
             </div>
 
             <div class="form-group form-group-full">
@@ -1370,7 +1393,7 @@
       </section>
 
       <!-- ====================================================================
-           MÓDULO DE IMÓVEIS (CAPTAÇÕES, MARKETING E GOOGLE DRIVE)
+           2. IMÓVEL DRIVE (CAPTAÇÕES, MARKETING E GOOGLE DRIVE)
            ==================================================================== -->
       <section id="section-imoveis" class="hidden">
         <div class="panel-card">
@@ -1442,7 +1465,89 @@
       </section>
 
       <!-- ====================================================================
-           MÓDULO 2: LINHA EDITORIAL + ATALHOS DIRETOS (GEMINI, CLAUDE, CHATGPT)
+           3. AGENDA (INTEGRAÇÃO BIDIRECIONAL COM GOOGLE CALENDAR + VINCULAÇÃO DE LEAD)
+           ==================================================================== -->
+      <section id="section-agenda" class="hidden">
+        <div class="agenda-layout">
+          <div class="panel-card" style="margin-bottom: 0;">
+            <div class="panel-header">
+              <h2>Agenda</h2>
+              <p>Cria automaticamente um evento de 1 hora no seu Google Calendar.</p>
+            </div>
+
+            <form id="form-agendar-visita" class="form-grid" style="grid-template-columns: 1fr;">
+              <div class="form-group">
+                <label for="agenda-cliente-id">Vincular a qual Lead/Cliente?</label>
+                <select id="agenda-cliente-id" class="form-control">
+                  <option value="">-- Nenhum cliente (Compromisso avulso) --</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="agenda-titulo">Título da Visita / Compromisso *</label>
+                <input
+                  type="text"
+                  id="agenda-titulo"
+                  class="form-control"
+                  placeholder="Ex: Apto 3 Qts Camburi"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="agenda-data-hora">Data e Hora de Início *</label>
+                <input
+                  type="datetime-local"
+                  id="agenda-data-hora"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="agenda-descricao">Observações / Endereço (Opcional)</label>
+                <input
+                  type="text"
+                  id="agenda-descricao"
+                  class="form-control"
+                  placeholder="Ex: Levar chaves da portaria e ficha de visita"
+                />
+              </div>
+
+              <div class="form-group">
+                <button type="submit" id="btn-agendar-visita" class="btn-primary">
+                  📅 Agendar Visita / Compromisso (1h)
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="panel-card" style="margin-bottom: 0;">
+            <div class="panel-header">
+              <h2>Agenda Google Calendar</h2>
+              <p>
+                Visualização integrada da agenda de visitas e compromissos.
+              </p>
+            </div>
+
+            <div class="calendar-iframe-wrapper">
+              <iframe
+                id="iframe-calendario"
+                title="Agenda Google Calendar - Andressa Spagnol Imóveis"
+                src="https://calendar.google.com/calendar/embed?src=ef4db9ef39447454cea9c3e6ec534785fc81c39829bbc1645d820b5afa5bfff8%40group.calendar.google.com&ctz=America%2FSao_Paulo"
+                style="border: 0"
+                width="800"
+                height="600"
+                frameborder="0"
+                scrolling="no"
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           4. LINHA EDITORIAL (CONTEÚDOS + ATALHOS DIRETOS GEMINI, CLAUDE, CHATGPT)
            ==================================================================== -->
       <section id="section-conteudos" class="hidden">
 
@@ -1561,81 +1666,6 @@
         <div id="conteudos-kanban-container" class="kanban-board-5"></div>
         <div id="conteudos-lista-container" class="hidden"></div>
       </section>
-
-      <!-- ====================================================================
-           MÓDULO 3: INTEGRAÇÃO BIDIRECIONAL COM GOOGLE CALENDAR
-           ==================================================================== -->
-      <section id="section-agenda" class="hidden">
-        <div class="agenda-layout">
-          <div class="panel-card" style="margin-bottom: 0;">
-            <div class="panel-header">
-              <h2>Agendar Visita / Compromisso</h2>
-              <p>Cria automaticamente um evento de 1 hora no seu Google Calendar.</p>
-            </div>
-
-            <form id="form-agendar-visita" class="form-grid" style="grid-template-columns: 1fr;">
-              <div class="form-group">
-                <label for="agenda-titulo">Título da Visita / Compromisso *</label>
-                <input
-                  type="text"
-                  id="agenda-titulo"
-                  class="form-control"
-                  placeholder="Ex: Visita Apto 3 Qts Camburi - Cliente Mariana"
-                  required
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="agenda-data-hora">Data e Hora de Início *</label>
-                <input
-                  type="datetime-local"
-                  id="agenda-data-hora"
-                  class="form-control"
-                  required
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="agenda-descricao">Observações / Endereço (Opcional)</label>
-                <input
-                  type="text"
-                  id="agenda-descricao"
-                  class="form-control"
-                  placeholder="Ex: Levar chaves da portaria e ficha de visita"
-                />
-              </div>
-
-              <div class="form-group">
-                <button type="submit" id="btn-agendar-visita" class="btn-primary">
-                  📅 Agendar Visita / Compromisso (1h)
-                </button>
-              </div>
-            </form>
-          </div>
-
-          <div class="panel-card" style="margin-bottom: 0;">
-            <div class="panel-header">
-              <h2>Agenda Google Calendar</h2>
-              <p>
-                Visualização integrada da agenda de visitas e compromissos.
-              </p>
-            </div>
-
-            <div class="calendar-iframe-wrapper">
-              <iframe
-                id="google-calendar-iframe"
-                title="Agenda Google Calendar - Andressa Spagnol Imóveis"
-                src="https://calendar.google.com/calendar/embed?src=ef4db9ef39447454cea9c3e6ec534785fc81c39829bbc1645d820b5afa5bfff8%40group.calendar.google.com&ctz=America%2FSao_Paulo"
-                style="border: 0"
-                width="800"
-                height="600"
-                frameborder="0"
-                scrolling="no"
-              ></iframe>
-            </div>
-          </div>
-        </div>
-      </section>
     </main>
   </div>
 
@@ -1706,6 +1736,36 @@
     </div>
   </aside>
 
+  <!-- ========================================================================
+       PAINEL LATERAL (OFF-CANVAS DRAWER) DE NOTIFICAÇÕES (SININHO)
+       ======================================================================== -->
+  <aside id="drawer-notificacoes" class="offcanvas-drawer" aria-labelledby="drawer-notificacoes-title">
+    <div class="drawer-header">
+      <h3 id="drawer-notificacoes-title">🔔 Central de Notificações</h3>
+      <button type="button" id="btn-fechar-notificacoes" class="btn-drawer-close" aria-label="Fechar">
+        ✕
+      </button>
+    </div>
+
+    <div class="drawer-body">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
+        <span style="font-size: 0.84rem; color: var(--text-secondary); font-weight: 600;">
+          Notificações não lidas
+        </span>
+        <button
+          type="button"
+          id="btn-limpar-notificacoes"
+          class="btn-secondary-outline"
+          style="padding: 0.35rem 0.7rem; font-size: 0.75rem;"
+        >
+          ✓ Marcar todas como lidas
+        </button>
+      </div>
+
+      <div id="lista-notificacoes-drawer" class="tarefas-list"></div>
+    </div>
+  </aside>
+
   <!-- RODAPÉ OFICIAL -->
   <footer class="app-footer">
     <div class="footer-container">
@@ -1768,7 +1828,8 @@
       clientes: [],
       imoveis: [],
       conteudos: [],
-      tarefas: []
+      tarefas: [],
+      notificacoes: []
     };
 
     // ========================================================================
@@ -1936,7 +1997,8 @@
         carregarClientes(),
         carregarImoveis(),
         carregarConteudos(),
-        carregarTarefas()
+        carregarTarefas(),
+        carregarNotificacoes()
       ]);
       atualizarContadoresResumo();
     }
@@ -1960,7 +2022,7 @@
     }
 
     // ========================================================================
-    // MÓDULO 1: CLIENTES + EXPORTAÇÃO CSV META ADS (`fn,ln,phone,email`)
+    // MÓDULO 1: CLIENTES + OBSERVAÇÃO + TAGGING + EXPORTAÇÃO CSV META ADS
     // ========================================================================
     async function carregarClientes() {
       const { data, error } = await supabase
@@ -1975,6 +2037,7 @@
       state.clientes = data || [];
       renderizarClientes();
       popularSelectClientesTarefa();
+      popularSelectClientesAgenda();
       atualizarContadoresResumo();
     }
 
@@ -1986,6 +2049,8 @@
       const telefoneEl = document.getElementById("cliente-telefone");
       const statusEl = document.getElementById("cliente-status");
       const perfilEl = document.getElementById("cliente-perfil");
+      const observacaoEl = document.getElementById("cliente-observacao");
+      const usuarioMarcadoEl = document.getElementById("cliente-usuario-marcado");
       const btnSubmit = document.getElementById("btn-salvar-cliente");
 
       const novoCliente = {
@@ -1994,7 +2059,9 @@
         email: emailEl.value.trim().toLowerCase(),
         telefone: telefoneEl.value.trim(),
         status_funil: statusEl.value,
-        perfil_interesse: perfilEl.value.trim()
+        perfil_interesse: perfilEl.value.trim(),
+        observacao: observacaoEl ? observacaoEl.value.trim() : "",
+        usuario_marcado: usuarioMarcadoEl ? usuarioMarcadoEl.value : ""
       };
 
       btnSubmit.disabled = true;
@@ -2009,8 +2076,17 @@
 
         if (error) throw error;
         state.clientes.unshift(data);
+
+        // Gatilho de Notificação se algum usuário foi marcado no cadastro do Lead
+        if (novoCliente.usuario_marcado) {
+          await registrarNotificacao(
+            `Você (${novoCliente.usuario_marcado}) foi marcado(a) no lead ${obterNomeCompleto(data)}`
+          );
+        }
+
         renderizarClientes();
         popularSelectClientesTarefa();
+        popularSelectClientesAgenda();
         atualizarContadoresResumo();
         event.target.reset();
         showToast("Cliente adicionado ao funil com sucesso!", "success");
@@ -2067,10 +2143,50 @@
         return;
       }
       const index = state.clientes.findIndex((c) => c.id === id);
-      if (index !== -1) state.clientes[index].status_funil = novoStatus;
+      let nomeLead = "Lead";
+      if (index !== -1) {
+        state.clientes[index].status_funil = novoStatus;
+        nomeLead = obterNomeCompleto(state.clientes[index]);
+      }
+
+      // Gatilho de Notificação: Mudança de status no funil
+      await registrarNotificacao(`O lead ${nomeLead} mudou para ${novoStatus}`);
+
       renderizarClientes();
+      popularSelectClientesTarefa();
+      popularSelectClientesAgenda();
       atualizarContadoresResumo();
       showToast(`Status atualizado para "${novoStatus}".`, "success");
+    }
+
+    async function atualizarUsuarioMarcadoCliente(id, usuarioMarcado) {
+      const { error } = await supabase
+        .from("clientes")
+        .update({ usuario_marcado: usuarioMarcado })
+        .eq("id", id);
+
+      if (error) {
+        showToast(`Erro ao marcar usuário: ${error.message}`, "error");
+        return;
+      }
+
+      const index = state.clientes.findIndex((c) => c.id === id);
+      let nomeLead = "Lead";
+      if (index !== -1) {
+        state.clientes[index].usuario_marcado = usuarioMarcado;
+        nomeLead = obterNomeCompleto(state.clientes[index]);
+      }
+
+      if (usuarioMarcado) {
+        await registrarNotificacao(
+          `Você (${usuarioMarcado}) foi marcado(a) no lead ${nomeLead}`
+        );
+        showToast(`Usuário ${usuarioMarcado} marcado no lead ${nomeLead}!`, "success");
+      } else {
+        showToast(`Marcação removida do lead ${nomeLead}.`, "info");
+      }
+
+      renderizarClientes();
     }
 
     async function excluirCliente(id, nome) {
@@ -2082,6 +2198,8 @@
       }
       state.clientes = state.clientes.filter((c) => c.id !== id);
       renderizarClientes();
+      popularSelectClientesTarefa();
+      popularSelectClientesAgenda();
       atualizarContadoresResumo();
       showToast("Lead removido.", "info");
     }
@@ -2102,9 +2220,25 @@
           }>${escapeHtml(st)}</option>`
       ).join("");
 
+      const usuarioMarcadoAtual = cliente.usuario_marcado || "";
+      const opcoesUsuarios = ["", "Andressa", "Douglas"]
+        .map((u) => {
+          const label = u ? `👤 ${u}` : "-- Sem marcação --";
+          return `<option value="${escapeHtml(u)}" ${
+            usuarioMarcadoAtual === u ? "selected" : ""
+          }>${escapeHtml(label)}</option>`;
+        })
+        .join("");
+
       let badgeClass = "badge-prospeccao";
       if (cliente.status_funil === "Visita Agendada") badgeClass = "badge-visita";
-      if (cliente.status_funil === "Proposta em Andamento") badgeClass = "badge-proposta";
+      if (
+        cliente.status_funil === "Proposta" ||
+        cliente.status_funil === "Proposta em Andamento" ||
+        cliente.status_funil === "Fechado"
+      ) {
+        badgeClass = "badge-proposta";
+      }
 
       return `
         <article class="crm-card cliente-card" data-id="${escapeHtml(cliente.id)}">
@@ -2115,6 +2249,14 @@
             </div>
             <span class="status-badge ${badgeClass}">${escapeHtml(cliente.status_funil)}</span>
           </div>
+
+          ${
+            usuarioMarcadoAtual
+              ? `<div><span class="tarefa-lead-tag">🏷️ Marcado: <strong>${escapeHtml(
+                  usuarioMarcadoAtual
+                )}</strong></span></div>`
+              : ""
+          }
 
           ${
             cliente.email
@@ -2130,10 +2272,23 @@
               : `<p class="card-description text-muted">Sem observações de perfil cadastradas.</p>`
           }
 
-          <div class="card-meta-row">
+          ${
+            cliente.observacao
+              ? `<p class="card-description" style="border-left-color: var(--brand-accent);"><strong>Observação:</strong> ${escapeHtml(
+                  cliente.observacao
+                )}</p>`
+              : ""
+          }
+
+          <div class="card-meta-row" style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
             <a href="${linkWhats}" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
               WhatsApp: ${escapeHtml(cliente.telefone)}
             </a>
+            <label class="select-inline-label" style="max-width: 175px;">
+              <select class="select-usuario-cliente" data-id="${escapeHtml(cliente.id)}" title="Marcar usuário neste lead">
+                ${opcoesUsuarios}
+              </select>
+            </label>
           </div>
 
           <div class="card-actions-footer">
@@ -2558,22 +2713,53 @@
     }
 
     // ========================================================================
-    // MÓDULO 3: AGENDAMENTO NO GOOGLE CALENDAR VIA WEBHOOK
+    // MÓDULO 3: AGENDAMENTO NO GOOGLE CALENDAR VIA WEBHOOK (2 EM 1 + AUTO-REFRESH)
     // ========================================================================
+    function popularSelectClientesAgenda() {
+      const selectEl = document.getElementById("agenda-cliente-id");
+      if (!selectEl) return;
+
+      const valorAtual = selectEl.value;
+      const opcoesClientes = state.clientes
+        .map((c) => {
+          const nome = obterNomeCompleto(c);
+          return `<option value="${escapeHtml(c.id)}">${escapeHtml(nome)} (${escapeHtml(
+            c.status_funil
+          )})</option>`;
+        })
+        .join("");
+
+      selectEl.innerHTML =
+        `<option value="">-- Nenhum cliente (Compromisso avulso) --</option>` + opcoesClientes;
+      if (valorAtual) selectEl.value = valorAtual;
+    }
+
     async function handleAgendarVisitaSubmit(event) {
       event.preventDefault();
+      const clienteIdEl = document.getElementById("agenda-cliente-id");
       const tituloEl = document.getElementById("agenda-titulo");
       const dataHoraEl = document.getElementById("agenda-data-hora");
       const descricaoEl = document.getElementById("agenda-descricao");
       const btnSubmit = document.getElementById("btn-agendar-visita");
 
-      const titulo = tituloEl.value.trim();
+      const clienteId = clienteIdEl?.value || "";
+      const tituloBase = tituloEl.value.trim();
       const dataHora = dataHoraEl.value;
       const descricao = descricaoEl?.value.trim() || "";
 
-      if (!titulo || !dataHora) {
+      if (!tituloBase || !dataHora) {
         showToast("Preencha o título e a data/hora do compromisso.", "error");
         return;
+      }
+
+      // Ação Vinculada na Agenda (2 em 1): concatena o nome do cliente no título do evento
+      let tituloEvento = tituloBase;
+      if (clienteId) {
+        const clienteSelecionado = state.clientes.find((c) => c.id === clienteId);
+        if (clienteSelecionado) {
+          const nomeCliente = obterNomeCompleto(clienteSelecionado);
+          tituloEvento = `Visita - ${nomeCliente} - ${tituloBase}`;
+        }
       }
 
       btnSubmit.disabled = true;
@@ -2586,7 +2772,7 @@
           body: JSON.stringify({
             acao: "calendar",
             calendar_id: "ef4db9ef39447454cea9c3e6ec534785fc81c39829bbc1645d820b5afa5bfff8@group.calendar.google.com",
-            titulo,
+            titulo: tituloEvento,
             data_hora: new Date(dataHora).toISOString(),
             descricao
           }),
@@ -2607,10 +2793,14 @@
         event.target.reset();
         showToast("Compromisso de 1h agendado com sucesso no Google Calendar!", "success");
 
-        const iframe = document.getElementById("google-calendar-iframe");
-        if (iframe && iframe.src) {
-          iframe.src = iframe.src;
-        }
+        // Promessa de auto-refresh visual do iFrame do Google Calendar após o sucesso
+        await Promise.resolve().then(() => {
+          const iframeCalendario = document.getElementById("iframe-calendario");
+          if (iframeCalendario) {
+            document.getElementById("iframe-calendario").src =
+              document.getElementById("iframe-calendario").src;
+          }
+        });
       } catch (err) {
         showToast(`Erro ao agendar: ${err.message}`, "error");
       } finally {
@@ -2624,14 +2814,18 @@
     // ========================================================================
     function toggleDrawerTarefas(abrir) {
       const drawer = document.getElementById("drawer-tarefas");
+      const drawerNotif = document.getElementById("drawer-notificacoes");
       const overlay = document.getElementById("drawer-overlay");
       if (abrir) {
+        drawerNotif?.classList.remove("open");
         popularSelectClientesTarefa();
         drawer?.classList.add("open");
         overlay?.classList.add("open");
       } else {
         drawer?.classList.remove("open");
-        overlay?.classList.remove("open");
+        if (!drawerNotif?.classList.contains("open")) {
+          overlay?.classList.remove("open");
+        }
       }
     }
 
@@ -2738,11 +2932,15 @@
 
         if (deveAtualizarStatusLead) {
           const idx = state.clientes.findIndex((c) => c.id === clienteId);
+          let nomeLead = "Lead";
           if (idx !== -1) {
             state.clientes[idx].status_funil = novoStatus;
+            nomeLead = obterNomeCompleto(state.clientes[idx]);
           }
+          await registrarNotificacao(`O lead ${nomeLead} mudou para ${novoStatus}`);
           renderizarClientes();
           popularSelectClientesTarefa();
+          popularSelectClientesAgenda();
           atualizarContadoresResumo();
           showToast(
             `Tarefa criada e status do lead atualizado para "${novoStatus}"!`,
@@ -2847,6 +3045,131 @@
     }
 
     // ========================================================================
+    // MÓDULO 5: CENTRAL DE NOTIFICAÇÕES (SININHO + OFF-CANVAS DRAWER)
+    // ========================================================================
+    function toggleDrawerNotificacoes(abrir) {
+      const drawer = document.getElementById("drawer-notificacoes");
+      const drawerTarefas = document.getElementById("drawer-tarefas");
+      const overlay = document.getElementById("drawer-overlay");
+      if (abrir) {
+        drawerTarefas?.classList.remove("open");
+        carregarNotificacoes();
+        drawer?.classList.add("open");
+        overlay?.classList.add("open");
+      } else {
+        drawer?.classList.remove("open");
+        if (!drawerTarefas?.classList.contains("open")) {
+          overlay?.classList.remove("open");
+        }
+      }
+    }
+
+    async function carregarNotificacoes() {
+      const { data, error } = await supabase
+        .from("notificacoes")
+        .select("*")
+        .eq("lida", false)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.warn("Tabela notificacoes ainda não migrada:", error.message);
+        return;
+      }
+
+      state.notificacoes = data || [];
+      renderizarNotificacoes();
+    }
+
+    async function registrarNotificacao(mensagem) {
+      if (!mensagem || !mensagem.trim()) return;
+      const { data, error } = await supabase
+        .from("notificacoes")
+        .insert([{ mensagem: mensagem.trim(), lida: false }])
+        .select()
+        .single();
+
+      if (error) {
+        console.warn("Aviso ao registrar notificação:", error.message);
+        return;
+      }
+
+      if (data) {
+        state.notificacoes.unshift(data);
+        renderizarNotificacoes();
+      }
+    }
+
+    async function marcarNotificacaoComoLida(id) {
+      const { error } = await supabase
+        .from("notificacoes")
+        .update({ lida: true })
+        .eq("id", id);
+
+      if (error) {
+        showToast(`Erro ao atualizar notificação: ${error.message}`, "error");
+        return;
+      }
+
+      state.notificacoes = state.notificacoes.filter((n) => n.id !== id);
+      renderizarNotificacoes();
+    }
+
+    async function marcarTodasNotificacoesComoLidas() {
+      if (state.notificacoes.length === 0) return;
+
+      const ids = state.notificacoes.map((n) => n.id);
+      const { error } = await supabase
+        .from("notificacoes")
+        .update({ lida: true })
+        .in("id", ids);
+
+      if (error) {
+        showToast(`Erro ao limpar notificações: ${error.message}`, "error");
+        return;
+      }
+
+      state.notificacoes = [];
+      renderizarNotificacoes();
+      showToast("Todas as notificações foram marcadas como lidas!", "info");
+    }
+
+    function renderizarNotificacoes() {
+      const container = document.getElementById("lista-notificacoes-drawer");
+      const badgeEl = document.getElementById("badge-count-notificacoes");
+      const naoLidasCount = state.notificacoes.length;
+      if (badgeEl) badgeEl.textContent = naoLidasCount;
+      if (!container) return;
+
+      if (naoLidasCount === 0) {
+        container.innerHTML = `<div class="empty-column">Nenhuma notificação não lida no momento.</div>`;
+        return;
+      }
+
+      container.innerHTML = state.notificacoes
+        .map((n) => {
+          return `
+            <div class="tarefa-item">
+              <div style="flex: 1;">
+                <div style="font-size: 0.86rem; font-weight: 600; color: var(--text-primary);">
+                  🔔 ${escapeHtml(n.mensagem)}
+                </div>
+                <span class="card-date">${formatarDataCurta(n.created_at)}</span>
+              </div>
+              <button
+                type="button"
+                class="btn-icon-delete btn-lida-notificacao"
+                data-id="${escapeHtml(n.id)}"
+                title="Marcar como lida"
+              >
+                ✓ Lida
+              </button>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    // ========================================================================
     // EVENT LISTENERS DOM
     // ========================================================================
     document.addEventListener("DOMContentLoaded", () => {
@@ -2875,11 +3198,11 @@
             .getElementById("section-imoveis")
             ?.classList.toggle("hidden", targetTab !== "imoveis");
           document
-            .getElementById("section-conteudos")
-            ?.classList.toggle("hidden", targetTab !== "conteudos");
-          document
             .getElementById("section-agenda")
             ?.classList.toggle("hidden", targetTab !== "agenda");
+          document
+            .getElementById("section-conteudos")
+            ?.classList.toggle("hidden", targetTab !== "conteudos");
         });
       });
 
@@ -2932,7 +3255,7 @@
         .getElementById("form-nova-tarefa")
         ?.addEventListener("submit", adicionarTarefa);
 
-      // Eventos do Painel Lateral (Off-canvas Drawer de Tarefas)
+      // Eventos dos Painéis Laterais (Off-canvas Drawers: Tarefas e Notificações)
       document
         .getElementById("btn-abrir-tarefas")
         ?.addEventListener("click", () => toggleDrawerTarefas(true));
@@ -2940,8 +3263,20 @@
         .getElementById("btn-fechar-tarefas")
         ?.addEventListener("click", () => toggleDrawerTarefas(false));
       document
+        .getElementById("btn-abrir-notificacoes")
+        ?.addEventListener("click", () => toggleDrawerNotificacoes(true));
+      document
+        .getElementById("btn-fechar-notificacoes")
+        ?.addEventListener("click", () => toggleDrawerNotificacoes(false));
+      document
+        .getElementById("btn-limpar-notificacoes")
+        ?.addEventListener("click", marcarTodasNotificacoesComoLidas);
+      document
         .getElementById("drawer-overlay")
-        ?.addEventListener("click", () => toggleDrawerTarefas(false));
+        ?.addEventListener("click", () => {
+          toggleDrawerTarefas(false);
+          toggleDrawerNotificacoes(false);
+        });
 
       document.getElementById("lista-tarefas-drawer")?.addEventListener("change", (e) => {
         if (e.target.matches(".chk-tarefa")) {
@@ -2955,10 +3290,17 @@
         if (btnDel) excluirTarefa(btnDel.dataset.id);
       });
 
+      document.getElementById("lista-notificacoes-drawer")?.addEventListener("click", (e) => {
+        const btnLida = e.target.closest(".btn-lida-notificacao");
+        if (btnLida) marcarNotificacaoComoLida(btnLida.dataset.id);
+      });
+
       const sectionClientes = document.getElementById("section-clientes");
       sectionClientes?.addEventListener("change", (e) => {
         if (e.target.matches(".select-status-cliente")) {
           atualizarStatusCliente(e.target.dataset.id, e.target.value);
+        } else if (e.target.matches(".select-usuario-cliente")) {
+          atualizarUsuarioMarcadoCliente(e.target.dataset.id, e.target.value);
         }
       });
       sectionClientes?.addEventListener("click", (e) => {
