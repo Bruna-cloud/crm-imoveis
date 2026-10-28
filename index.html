@@ -14,7 +14,6 @@
     rel="stylesheet"
   />
 
-  <!-- Folha de Estilo (também embutida abaixo para nunca quebrar no upload do GitHub) -->
   <link rel="stylesheet" href="./css/styles.css" />
 
   <style>
@@ -77,7 +76,7 @@
     }
 
     /* ========================================================================
-       CABEÇALHO PRINCIPAL (HEADER CORPORATIVO DE ALTO PADRÃO)
+       CABEÇALHO PRINCIPAL
        ======================================================================== */
     .app-header {
       background: linear-gradient(135deg, #3B1425 0%, #2A0D1A 100%);
@@ -177,7 +176,7 @@
     }
 
     /* ========================================================================
-       TELA DE LOGIN (SUPABASE AUTH)
+       TELA DE LOGIN
        ======================================================================== */
     .auth-wrapper {
       flex: 1;
@@ -273,7 +272,6 @@
       flex: 1;
     }
 
-    /* Indicadores Rápidos (KPIs) */
     .kpi-strip {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -289,8 +287,6 @@
       border-left: 4px solid var(--brand-primary);
       display: flex;
       flex-direction: column;
-      position: relative;
-      overflow: hidden;
     }
 
     .kpi-label {
@@ -309,7 +305,6 @@
       margin-top: 0.25rem;
     }
 
-    /* Navegação por Abas (4 Módulos) */
     .crm-tabs-nav {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -348,7 +343,6 @@
       box-shadow: 0 6px 16px rgba(59, 20, 37, 0.24);
     }
 
-    /* Painéis de Formulário */
     .panel-card {
       background: var(--bg-surface);
       border-radius: var(--radius-md);
@@ -414,7 +408,7 @@
 
     textarea.form-control {
       resize: vertical;
-      min-height: 115px;
+      min-height: 110px;
       line-height: 1.5;
     }
 
@@ -425,7 +419,6 @@
       box-shadow: 0 0 0 3px rgba(59, 20, 37, 0.12);
     }
 
-    /* Linha Tema + Botão Gerar Ideia com IA */
     .input-with-button {
       display: flex;
       gap: 0.65rem;
@@ -518,6 +511,185 @@
       border-radius: var(--radius-sm);
       border-left: 4px solid var(--brand-accent);
       font-weight: 600;
+    }
+
+    /* ========================================================================
+       ESTÚDIO CRIATIVO IA (BASE DE REFERÊNCIAS DO INSTAGRAM + CHAT DE IDEIAS)
+       ======================================================================== */
+    .ai-studio-grid {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      align-items: stretch;
+    }
+
+    .ai-refs-panel,
+    .ai-chat-panel {
+      background: var(--bg-surface);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-card);
+      border: 1px solid rgba(59, 20, 37, 0.08);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ai-refs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      max-height: 250px;
+      overflow-y: auto;
+      margin: 0.85rem 0;
+      padding-right: 4px;
+    }
+
+    .ref-item-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--brand-accent);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .ref-item-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .ref-handle {
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--brand-primary);
+      text-decoration: none;
+    }
+
+    .ref-handle:hover {
+      text-decoration: underline;
+    }
+
+    .ref-notes {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .ref-example {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      background: #FFFFFF;
+      padding: 0.4rem 0.6rem;
+      border-radius: 6px;
+      border: 1px dashed var(--border-color);
+      margin-top: 2px;
+    }
+
+    /* Chat Window */
+    .chat-quick-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .chip-btn {
+      background: var(--brand-accent-soft);
+      color: var(--brand-primary);
+      border: 1px solid rgba(197, 160, 89, 0.5);
+      border-radius: 999px;
+      padding: 0.38rem 0.8rem;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .chip-btn:hover {
+      background: var(--brand-primary);
+      color: #FFFFFF;
+      border-color: var(--brand-primary);
+    }
+
+    .chat-messages-box {
+      flex: 1;
+      min-height: 330px;
+      max-height: 430px;
+      overflow-y: auto;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .chat-bubble {
+      max-width: 88%;
+      padding: 0.85rem 1.05rem;
+      border-radius: 14px;
+      font-size: 0.88rem;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      position: relative;
+    }
+
+    .chat-bubble-user {
+      align-self: flex-end;
+      background: var(--brand-primary);
+      color: #FFFFFF;
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-bubble-ai {
+      align-self: flex-start;
+      background: #FFFFFF;
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--brand-accent);
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .chat-bubble-actions {
+      margin-top: 0.65rem;
+      padding-top: 0.55rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-use-script {
+      background: var(--brand-primary);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 6px;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-use-script:hover {
+      background: var(--brand-primary-hover);
+    }
+
+    .chat-input-row {
+      display: flex;
+      gap: 0.65rem;
+    }
+
+    .chat-input-row input {
+      flex: 1;
     }
 
     /* Barra de Ferramentas e Alternadores */
@@ -718,7 +890,6 @@
       font-style: italic;
     }
 
-    /* Badges de Status */
     .status-badge {
       font-size: 0.72rem;
       font-weight: 700;
@@ -850,9 +1021,7 @@
       border: 1px dashed var(--border-color);
     }
 
-    /* ========================================================================
-       MÓDULO 3: LAYOUT GOOGLE CALENDAR (AGENDAMENTO + IFRAME)
-       ======================================================================== */
+    /* Módulo 3: Agenda */
     .agenda-layout {
       display: grid;
       grid-template-columns: 380px 1fr;
@@ -921,7 +1090,6 @@
       text-decoration: underline;
     }
 
-    /* Toasts */
     .toast-container {
       position: fixed;
       bottom: 1.25rem;
@@ -948,10 +1116,11 @@
     .toast-error { background: #9E1C2E; }
     .toast-hide { opacity: 0; transform: translateY(8px); }
 
-    @media (max-width: 1024px) {
+    @media (max-width: 1060px) {
       .kanban-board,
       .kanban-board-5,
-      .agenda-layout {
+      .agenda-layout,
+      .ai-studio-grid {
         grid-template-columns: 1fr;
       }
       .crm-tabs-nav {
@@ -975,7 +1144,8 @@
       .nav-tab-btn { padding: 0.75rem 0.6rem; font-size: 0.8rem; }
       .panel-card { padding: 1.2rem; }
       .cards-grid { grid-template-columns: 1fr; }
-      .input-with-button { flex-direction: column; }
+      .input-with-button,
+      .chat-input-row { flex-direction: column; }
       .btn-ai { padding: 0.75rem 1rem; }
     }
   </style>
@@ -983,7 +1153,7 @@
 <body>
 
   <!-- ========================================================================
-       1. TELA DE AUTENTICAÇÃO (SUPABASE AUTH) - BLOQUEIA ACESSO PÚBLICO
+       1. TELA DE AUTENTICAÇÃO (SUPABASE AUTH)
        ======================================================================== -->
   <main id="auth-screen" class="auth-wrapper">
     <section class="auth-card" aria-labelledby="auth-title">
@@ -1033,17 +1203,16 @@
   </main>
 
   <!-- ========================================================================
-       2. PAINEL DO CRM (RENDERIZADO APENAS APÓS LOGIN BEM-SUCEDIDO)
+       2. PAINEL DO CRM (RENDERIZADO APÓS LOGIN)
        ======================================================================== -->
   <div id="crm-screen" class="crm-wrapper hidden">
-    <!-- Cabeçalho Principal -->
     <header class="app-header">
       <div class="header-container">
         <div class="brand-identity">
           <div class="brand-monogram" aria-hidden="true">AS</div>
           <div class="brand-titles">
             <h1>ANDRESSA SPAGNOL IMOVEIS</h1>
-            <span class="brand-subtitle">Gestão de Leads, Imóveis, Conteúdo IA &amp; Agenda</span>
+            <span class="brand-subtitle">Gestão de Leads, Imóveis, Estúdio IA &amp; Agenda</span>
           </div>
         </div>
 
@@ -1056,7 +1225,6 @@
       </div>
     </header>
 
-    <!-- Conteúdo Principal -->
     <main class="crm-main">
       <!-- Indicadores Rápidos -->
       <section class="kpi-strip" aria-label="Resumo do CRM">
@@ -1083,7 +1251,7 @@
           🏠 Imóveis &amp; Drive
         </button>
         <button type="button" class="nav-tab-btn" data-tab="conteudos">
-          ✨ Conteúdos &amp; IA
+          ✨ Conteúdos &amp; Chat IA
         </button>
         <button type="button" class="nav-tab-btn" data-tab="agenda">
           📅 Agenda &amp; Visitas
@@ -1270,13 +1438,144 @@
       </section>
 
       <!-- ====================================================================
-           MÓDULO 2: GESTÃO DE CONTEÚDO E IA (LINHA EDITORIAL + GEMINI)
+           MÓDULO 2: ESTÚDIO CRIATIVO IA (BASE DE REFERÊNCIAS + CHAT + LINHA EDITORIAL)
            ==================================================================== -->
       <section id="section-conteudos" class="hidden">
+
+        <div class="ai-studio-grid">
+          <!-- COLUNA ESQUERDA: BASE PRÉ-SETADA DE REFERÊNCIAS DO INSTAGRAM & DNA -->
+          <div class="ai-refs-panel">
+            <div class="panel-header" style="margin-bottom: 0.85rem;">
+              <h2>📌 Base de Referências da IA</h2>
+              <p>
+                Cadastre os Instagrams que você mais gosta. A IA usa essas referências como base fixa em todas as conversas e roteiros!
+              </p>
+            </div>
+
+            <!-- Configuração rápida da chave Gemini -->
+            <div class="form-group" style="margin-bottom: 0.85rem;">
+              <label for="input-gemini-key">🔑 Chave Gemini API (Google AI Studio)</label>
+              <div class="input-with-button">
+                <input
+                  type="password"
+                  id="input-gemini-key"
+                  class="form-control"
+                  placeholder="Cole sua chave AIzaSy... aqui"
+                />
+                <button type="button" id="btn-salvar-gemini-key" class="btn-secondary-outline">
+                  Salvar Chave
+                </button>
+              </div>
+            </div>
+
+            <!-- DNA e Tom de Voz Pré-setado -->
+            <div class="form-group" style="margin-bottom: 0.85rem;">
+              <label for="ia-dna-texto">🎯 Meu Posicionamento &amp; Tom de Voz (Pré-setado)</label>
+              <textarea
+                id="ia-dna-texto"
+                class="form-control"
+                style="min-height: 74px; font-size: 0.82rem;"
+              ></textarea>
+            </div>
+
+            <!-- Lista de Instagrams de Referência Salvos -->
+            <label style="font-size: 0.82rem; font-weight: 700; color: var(--brand-primary);">
+              📸 Meus Instagrams de Referência (<span id="refs-count">0</span>)
+            </label>
+            <div id="ai-refs-list" class="ai-refs-list"></div>
+
+            <!-- Formulário para Adicionar Nova Referência de Instagram -->
+            <form id="form-nova-ref" style="border-top: 1px solid var(--border-color); padding-top: 0.85rem; margin-top: auto;">
+              <div class="form-group" style="margin-bottom: 0.55rem;">
+                <label for="ref-instagram">Adicionar @Perfil ou Link do Instagram *</label>
+                <input
+                  type="text"
+                  id="ref-instagram"
+                  class="form-control"
+                  placeholder="Ex: @corretor_luxo ou https://instagram.com/..."
+                  required
+                />
+              </div>
+
+              <div class="form-group" style="margin-bottom: 0.55rem;">
+                <label for="ref-estilo">O que você mais gosta nesse perfil? *</label>
+                <input
+                  type="text"
+                  id="ref-estilo"
+                  class="form-control"
+                  placeholder="Ex: Ganchos nos 3s iniciais mostrando a vista, tom dinâmico e elegante"
+                  required
+                />
+              </div>
+
+              <div class="form-group" style="margin-bottom: 0.7rem;">
+                <label for="ref-exemplo">Exemplo de frase/gancho que você amou (Opcional)</label>
+                <input
+                  type="text"
+                  id="ref-exemplo"
+                  class="form-control"
+                  placeholder="Ex: 'O que R$ 950 mil compram hoje a 2 quadras do mar em Camburi?'"
+                />
+              </div>
+
+              <button type="submit" class="btn-secondary-outline" style="width: 100%; justify-content: center;">
+                + Salvar Referência na Base da IA
+              </button>
+            </form>
+          </div>
+
+          <!-- COLUNA DIREITA: CHAT INTERATIVO DE IDEIAS E ROTEIROS COM A IA -->
+          <div class="ai-chat-panel">
+            <div class="panel-header" style="margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+              <div>
+                <h2>💬 Chat Criativo com IA</h2>
+                <p>Converse, peça ideias de Reels e adapte tudo ao estilo das suas referências salvas.</p>
+              </div>
+              <button type="button" id="btn-limpar-chat" class="btn-icon-delete" title="Reiniciar conversa">
+                Limpar Chat
+              </button>
+            </div>
+
+            <!-- Sugestões Rápidas (1 Clique) -->
+            <div class="chat-quick-chips">
+              <button type="button" class="chip-btn" data-prompt="Me dê 5 ideias inéditas de Reels para gravar essa semana inspiradas exatamente no estilo das minhas referências do Instagram.">
+                🔥 5 Ideias de Reels da Semana
+              </button>
+              <button type="button" class="chip-btn" data-prompt="Crie um roteiro de Tour de Imóvel rápido e magnético usando o estilo de gancho das minhas referências.">
+                🎬 Roteiro de Tour Magnético
+              </button>
+              <button type="button" class="chip-btn" data-prompt="Me dê 3 ganchos virais de 3 segundos para atrair proprietários que querem vender imóvel em Vitória.">
+                🧲 3 Ganchos para Captação
+              </button>
+              <button type="button" class="chip-btn" data-prompt="Crie uma sequência de 4 Stories com enquete estratégica para gerar mensagens no Direct hoje.">
+                📲 Sequência de Stories
+              </button>
+            </div>
+
+            <!-- Histórico de Mensagens do Chat -->
+            <div id="chat-messages-box" class="chat-messages-box"></div>
+
+            <!-- Barra de Envio de Mensagem -->
+            <form id="form-chat-ia" class="chat-input-row">
+              <input
+                type="text"
+                id="chat-input-msg"
+                class="form-control"
+                placeholder="Peça ideias, mande um imóvel que vai gravar ou peça ajustes no roteiro..."
+                required
+              />
+              <button type="submit" id="btn-enviar-chat" class="btn-ai">
+                Enviar para IA ✨
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- FORMULÁRIO DA LINHA EDITORIAL (SALVAR PAUTA NO SUPABASE) -->
         <div class="panel-card">
           <div class="panel-header">
-            <h2>Linha Editorial &amp; Criador de Roteiros com IA</h2>
-            <p>Planeje seus Reels, Stories e posts imobiliários com geração automática de roteiro via Gemini IA.</p>
+            <h2>Salvar Pauta na Linha Editorial</h2>
+            <p>Gere o roteiro pelo botão ao lado do Tema (ou clique em "Usar na Pauta" lá no Chat acima) e agende sua gravação.</p>
           </div>
 
           <form id="form-novo-conteudo" class="form-grid">
@@ -1328,7 +1627,7 @@
               <textarea
                 id="conteudo-roteiro"
                 class="form-control"
-                placeholder="Clique em 'Gerar Ideia com IA' acima para preencher automaticamente ou digite seu roteiro aqui..."
+                placeholder="Clique em 'Gerar Ideia com IA', escolha uma resposta do Chat acima ou escreva seu roteiro aqui..."
               ></textarea>
             </div>
 
@@ -1361,7 +1660,6 @@
            ==================================================================== -->
       <section id="section-agenda" class="hidden">
         <div class="agenda-layout">
-          <!-- Formulário de Agendamento via Webhook -->
           <div class="panel-card" style="margin-bottom: 0;">
             <div class="panel-header">
               <h2>Agendar Visita / Compromisso</h2>
@@ -1408,12 +1706,11 @@
             </form>
           </div>
 
-          <!-- Visualização Iframe do Google Calendar -->
           <div class="panel-card" style="margin-bottom: 0;">
             <div class="panel-header">
               <h2>Agenda Google Calendar</h2>
               <p>
-                Substitua o atributo <code>src</code> do <code>&lt;iframe&gt;</code> abaixo pelo link público de incorporação da sua agenda do Google.
+                Visualização integrada da agenda de visitas e compromissos.
               </p>
             </div>
 
@@ -1431,9 +1728,7 @@
     </main>
   </div>
 
-  <!-- ========================================================================
-       RODAPÉ OFICIAL (IDENTIDADE VISUAL ANDRESSA SPAGNOL IMÓVEIS)
-       ======================================================================== -->
+  <!-- RODAPÉ OFICIAL -->
   <footer class="app-footer">
     <div class="footer-container">
       <div class="footer-brand">ANDRESSA SPAGNOL IMOVEIS</div>
@@ -1453,17 +1748,16 @@
     </div>
   </footer>
 
-  <!-- Container de Notificações (Toasts) -->
   <div id="toast-container" class="toast-container" aria-live="polite"></div>
 
-  <!-- Lógica Completa (Supabase v2 + Meta Ads CSV + Gemini IA + Google Calendar) -->
+  <!-- Lógica Completa -->
   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
     // ========================================================================
     // CONSTANTES E CREDENCIAIS DO SISTEMA
     // ========================================================================
-    // Preencha sua chave gratuita do Google AI Studio (https://aistudio.google.com/app/apikey):
+    // Você pode colar sua chave aqui no código OU direto na caixinha "Chave Gemini API" na tela!
     const GEMINI_API_KEY = "";
 
     const CONFIG = {
@@ -1475,6 +1769,26 @@
       CALENDAR_WEBHOOK_URL:
         "https://script.google.com/macros/s/AKfycbwrVLCJbLjWI7PaaJIMu1KEE65pfGy7YfnVp5iGoO1MvB5QB4LXEy-NBkYxZjaY6wkNvA/exec"
     };
+
+    const DNA_PADRAO =
+      "Andressa Spagnol Imóveis (CRECI 7734F) - Corretora especialista em imóveis de médio e alto padrão em Vitória/ES (Jardim Camburi, Praia do Canto, Mata da Praia, Enseada do Suá). Tom de voz: elegante, consultivo, seguro, direto ao ponto e focado em gerar desejo e autoridade.";
+
+    const REFS_INICIAIS_PADRAO = [
+      {
+        id: "ref-default-1",
+        perfil_instagram: "@referencia_imoveis_luxo",
+        estilo_o_que_gosto:
+          "Começa o vídeo nos primeiros 3 segundos já mostrando o ambiente mais impactante do imóvel (varanda gourmet ou vista) com uma pergunta curiosa sobre localização/valor.",
+        exemplo_post: "O que R$ 1,2 milhão compram hoje a 300m do mar em Vitória?"
+      },
+      {
+        id: "ref-default-2",
+        perfil_instagram: "@consultoria_imobiliaria_ref",
+        estilo_o_que_gosto:
+          "Explicações curtas e elegantes desmistificando financiamento, documentação e valorização de bairro, olhando direto para a câmera com cortes dinâmicos.",
+        exemplo_post: "3 detalhes que valorizam um apartamento em até 20% na hora da revenda."
+      }
+    ];
 
     const STATUS_FUNIL = ["Prospecção", "Visita Agendada", "Proposta em Andamento"];
     const STATUS_MARKETING = [
@@ -1501,12 +1815,22 @@
       filtroImoveis: "ativos",
       clientes: [],
       imoveis: [],
-      conteudos: []
+      conteudos: [],
+      iaReferencias: [],
+      chatHistory: []
     };
 
     // ========================================================================
-    // UTILITÁRIOS E REGRA DE LIMPEZA (REGEX META ADS)
+    // UTILITÁRIOS E REGEX META ADS
     // ========================================================================
+    function obterChaveGeminiAtiva() {
+      return (
+        localStorage.getItem("crm_as_gemini_key") ||
+        GEMINI_API_KEY ||
+        ""
+      ).trim();
+    }
+
     function formatarMoeda(valor) {
       const numero = Number(valor) || 0;
       return numero.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -1542,9 +1866,6 @@
       return `${obterPrimeiroNome(cliente)} ${obterSobrenome(cliente)}`.trim() || "Cliente";
     }
 
-    /**
-     * Limpa qualquer caractere especial via Regex e adiciona o prefixo 55 (DDI Brasil).
-     */
     function limparTelefoneBrasilDDI(telefone) {
       const apenasDigitos = String(telefone || "").replace(/\D/g, "");
       if (!apenasDigitos) return "";
@@ -1668,7 +1989,13 @@
     }
 
     async function carregarDadosIniciais() {
-      await Promise.all([carregarClientes(), carregarImoveis(), carregarConteudos()]);
+      inicializarEstudioIA();
+      await Promise.all([
+        carregarClientes(),
+        carregarImoveis(),
+        carregarConteudos(),
+        carregarReferenciasIA()
+      ]);
       atualizarContadoresResumo();
     }
 
@@ -2117,20 +2444,297 @@
     }
 
     // ========================================================================
-    // MÓDULO 2: GESTÃO DE CONTEÚDO E IA (LINHA EDITORIAL + GEMINI)
+    // MÓDULO 2: ESTÚDIO CRIATIVO IA (BASE DE REFERÊNCIAS INSTAGRAM + CHAT + PAUTAS)
     // ========================================================================
-    async function carregarConteudos() {
+    function inicializarEstudioIA() {
+      const inputKey = document.getElementById("input-gemini-key");
+      if (inputKey) {
+        inputKey.value = obterChaveGeminiAtiva();
+      }
+
+      const dnaEl = document.getElementById("ia-dna-texto");
+      if (dnaEl) {
+        dnaEl.value = localStorage.getItem("crm_as_ia_dna") || DNA_PADRAO;
+        dnaEl.addEventListener("change", () => {
+          localStorage.setItem("crm_as_ia_dna", dnaEl.value.trim());
+          showToast("Posicionamento/DNA atualizado na base da IA!", "info");
+        });
+      }
+
+      if (state.chatHistory.length === 0) {
+        adicionarMensagemChatUI(
+          "assistant",
+          "Olá! Sou seu Assistente Criativo de Marketing Imobiliário.\n\nJá estou conectado às suas **Referências de Instagram** ao lado e ao posicionamento da **Andressa Spagnol Imóveis**.\n\nVocê pode clicar em um dos atalhos acima ou me dizer o que quer gravar hoje (ex: *'Vou visitar um apto de 3 quartos em Jardim Camburi, me dê 3 ideias de Reels no estilo das minhas referências'*)."
+        );
+      }
+    }
+
+    async function carregarReferenciasIA() {
+      // Tenta buscar do Supabase primeiro; usa localStorage como fallback instantâneo
       const { data, error } = await supabase
-        .from("conteudos")
+        .from("ia_referencias")
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) {
-        console.warn("Tabela conteudos ainda não migrada:", error.message);
+      if (!error && data && data.length > 0) {
+        state.iaReferencias = data;
+        localStorage.setItem("crm_as_ia_refs", JSON.stringify(data));
+      } else {
+        const salvasLocal = localStorage.getItem("crm_as_ia_refs");
+        if (salvasLocal) {
+          state.iaReferencias = JSON.parse(salvasLocal);
+        } else {
+          state.iaReferencias = [...REFS_INICIAIS_PADRAO];
+          localStorage.setItem("crm_as_ia_refs", JSON.stringify(state.iaReferencias));
+        }
+      }
+      renderizarReferenciasIA();
+    }
+
+    function formatarLinkInstagram(perfilOuUrl) {
+      const limpo = perfilOuUrl.trim();
+      if (limpo.startsWith("http://") || limpo.startsWith("https://")) return limpo;
+      const handle = limpo.replace(/^@/, "");
+      return `https://www.instagram.com/${encodeURIComponent(handle)}/`;
+    }
+
+    function renderizarReferenciasIA() {
+      const listEl = document.getElementById("ai-refs-list");
+      const countEl = document.getElementById("refs-count");
+      if (!listEl) return;
+
+      if (countEl) countEl.textContent = state.iaReferencias.length;
+
+      if (state.iaReferencias.length === 0) {
+        listEl.innerHTML = `<div class="empty-column" style="padding: 1rem;">Nenhuma referência cadastrada. Adicione seus Instagrams favoritos abaixo!</div>`;
         return;
       }
-      state.conteudos = data || [];
-      renderizarConteudos();
+
+      listEl.innerHTML = state.iaReferencias
+        .map(
+          (ref) => `
+          <div class="ref-item-card">
+            <div class="ref-item-top">
+              <a href="${escapeHtml(
+                formatarLinkInstagram(ref.perfil_instagram)
+              )}" target="_blank" rel="noopener noreferrer" class="ref-handle">
+                📸 ${escapeHtml(ref.perfil_instagram)}
+              </a>
+              <button type="button" class="btn-icon-delete btn-delete-ref" data-id="${escapeHtml(
+                ref.id
+              )}">
+                Remover
+              </button>
+            </div>
+            <p class="ref-notes"><strong>Estilo:</strong> ${escapeHtml(
+              ref.estilo_o_que_gosto
+            )}</p>
+            ${
+              ref.exemplo_post
+                ? `<div class="ref-example">💡 <em>"${escapeHtml(ref.exemplo_post)}"</em></div>`
+                : ""
+            }
+          </div>
+        `
+        )
+        .join("");
+    }
+
+    async function handleNovaReferenciaSubmit(event) {
+      event.preventDefault();
+      const perfilEl = document.getElementById("ref-instagram");
+      const estiloEl = document.getElementById("ref-estilo");
+      const exemploEl = document.getElementById("ref-exemplo");
+
+      const novaRef = {
+        id: crypto.randomUUID ? crypto.randomUUID() : `ref-${Date.now()}`,
+        perfil_instagram: perfilEl.value.trim(),
+        estilo_o_que_gosto: estiloEl.value.trim(),
+        exemplo_post: exemploEl.value.trim()
+      };
+
+      // Salva no Supabase se a tabela ia_referencias existir + salva no localStorage
+      const { data, error } = await supabase
+        .from("ia_referencias")
+        .insert([
+          {
+            perfil_instagram: novaRef.perfil_instagram,
+            estilo_o_que_gosto: novaRef.estilo_o_que_gosto,
+            exemplo_post: novaRef.exemplo_post
+          }
+        ])
+        .select()
+        .single();
+
+      if (!error && data) {
+        state.iaReferencias.unshift(data);
+      } else {
+        state.iaReferencias.unshift(novaRef);
+      }
+
+      localStorage.setItem("crm_as_ia_refs", JSON.stringify(state.iaReferencias));
+      renderizarReferenciasIA();
+      event.target.reset();
+      showToast("Referência de Instagram salva na memória da IA!", "success");
+    }
+
+    async function removerReferenciaIA(id) {
+      await supabase.from("ia_referencias").delete().eq("id", id);
+      state.iaReferencias = state.iaReferencias.filter((r) => String(r.id) !== String(id));
+      localStorage.setItem("crm_as_ia_refs", JSON.stringify(state.iaReferencias));
+      renderizarReferenciasIA();
+      showToast("Referência removida.", "info");
+    }
+
+    /**
+     * Monta o System Prompt com o DNA da corretora + todas as Referências de Instagram salvas
+     */
+    function construirContextoBaseIA() {
+      const dna =
+        document.getElementById("ia-dna-texto")?.value.trim() ||
+        localStorage.getItem("crm_as_ia_dna") ||
+        DNA_PADRAO;
+
+      const listaRefsTexto =
+        state.iaReferencias.length > 0
+          ? state.iaReferencias
+              .map(
+                (r, idx) =>
+                  `${idx + 1}. Perfil/Link: ${r.perfil_instagram}\n   - O que a corretora mais gosta nesse perfil: ${r.estilo_o_que_gosto}${
+                    r.exemplo_post ? `\n   - Exemplo de gancho/post favorito: "${r.exemplo_post}"` : ""
+                  }`
+              )
+              .join("\n\n")
+          : "Nenhuma referência específica cadastrada ainda.";
+
+      return `Você é o Diretor Criativo e Estrategista de Conteúdo Imobiliário exclusivo da corretora Andressa Spagnol Imóveis.
+
+POSICIONAMENTO E DNA DA MARCA:
+${dna}
+
+BASE PRÉ-SETADA DE REFERÊNCIAS DO INSTAGRAM DA CORRETORA (Use obrigatoriamente o ritmo, estilo de ganchos, estética narrativa e formato dessas referências para criar qualquer ideia ou roteiro):
+${listaRefsTexto}
+
+DIRETRIZES DE RESPOSTA:
+- Sempre adapte as sugestões e roteiros ao estilo prático das referências acima.
+- Quando criar roteiros de Reels/Stories, estruture com:
+  1. GANCHO (0 a 3 segundos - visual + fala de impacto)
+  2. DESENVOLVIMENTO (cenas rápidas + argumentos de valor/desejo)
+  3. CTA (chamada para ação elegante para Direct ou WhatsApp)
+  4. SUGESTÃO DE LEGENDA CURTA.`;
+    }
+
+    function adicionarMensagemChatUI(role, texto) {
+      const box = document.getElementById("chat-messages-box");
+      if (!box) return;
+
+      const div = document.createElement("div");
+      div.className = `chat-bubble ${
+        role === "user" ? "chat-bubble-user" : "chat-bubble-ai"
+      }`;
+
+      const textoSpan = document.createElement("div");
+      textoSpan.textContent = texto;
+      div.appendChild(textoSpan);
+
+      if (role === "assistant") {
+        const actionsDiv = document.createElement("div");
+        actionsDiv.className = "chat-bubble-actions";
+
+        const btnUsar = document.createElement("button");
+        btnUsar.type = "button";
+        btnUsar.className = "btn-use-script";
+        btnUsar.textContent = "📥 Usar este Roteiro no Formulário de Pauta";
+        btnUsar.addEventListener("click", () => {
+          const roteiroEl = document.getElementById("conteudo-roteiro");
+          const temaEl = document.getElementById("conteudo-tema");
+          if (roteiroEl) {
+            roteiroEl.value = texto;
+            roteiroEl.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+          if (temaEl && !temaEl.value.trim()) {
+            const primeiraLinha = texto
+              .split("\n")
+              .map((l) => l.replace(/^[#*\-\d.\s]+/, "").trim())
+              .find((l) => l.length > 5);
+            if (primeiraLinha) temaEl.value = primeiraLinha.slice(0, 90);
+          }
+          showToast("Roteiro copiado para o formulário da Linha Editorial!", "success");
+        });
+
+        actionsDiv.appendChild(btnUsar);
+        div.appendChild(actionsDiv);
+      }
+
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    async function enviarMensagemChatIA(mensagemUsuario) {
+      const apiKey = obterChaveGeminiAtiva();
+      if (!apiKey) {
+        showToast(
+          "Cole sua Chave Gemini API na caixinha '🔑 Chave Gemini API' ao lado e clique em Salvar Chave!",
+          "error"
+        );
+        document.getElementById("input-gemini-key")?.focus();
+        return;
+      }
+
+      const btnEnviar = document.getElementById("btn-enviar-chat");
+      if (btnEnviar) {
+        btnEnviar.disabled = true;
+        btnEnviar.textContent = "Pensando...";
+      }
+
+      adicionarMensagemChatUI("user", mensagemUsuario);
+      state.chatHistory.push({
+        role: "user",
+        parts: [{ text: mensagemUsuario }]
+      });
+
+      try {
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(
+          apiKey
+        )}`;
+
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            systemInstruction: {
+              parts: [{ text: construirContextoBaseIA() }]
+            },
+            contents: state.chatHistory
+          })
+        });
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(
+            errData?.error?.message || `Erro HTTP ${response.status} na API do Gemini.`
+          );
+        }
+
+        const result = await response.json();
+        const respostaIA =
+          result?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
+          "Não consegui gerar uma resposta agora.";
+
+        state.chatHistory.push({
+          role: "model",
+          parts: [{ text: respostaIA }]
+        });
+
+        adicionarMensagemChatUI("assistant", respostaIA);
+      } catch (err) {
+        showToast(`Erro na IA: ${err.message}`, "error");
+      } finally {
+        if (btnEnviar) {
+          btnEnviar.disabled = false;
+          btnEnviar.textContent = "Enviar para IA ✨";
+        }
+      }
     }
 
     async function gerarRoteiroComIA() {
@@ -2148,37 +2752,35 @@
         return;
       }
 
-      if (!GEMINI_API_KEY || !GEMINI_API_KEY.trim()) {
+      const apiKey = obterChaveGeminiAtiva();
+      if (!apiKey) {
         showToast(
-          "Preencha a constante GEMINI_API_KEY no código com sua chave do Google AI Studio.",
+          "Cole sua Chave Gemini API na caixinha '🔑 Chave Gemini API' acima e clique em Salvar Chave!",
           "error"
         );
+        document.getElementById("input-gemini-key")?.focus();
         return;
       }
 
       btnIA.disabled = true;
       const textoOriginal = btnIA.textContent;
-      btnIA.textContent = "✨ Gerando com IA...";
+      btnIA.textContent = "✨ Gerando com base nas suas Refs...";
 
-      const promptMarketing = `Você é um estrategista sênior de Marketing Imobiliário de alto padrão atuando para a corretora "Andressa Spagnol Imóveis" (CRECI 7734F, Vitória/ES).
-Crie um roteiro magnético, elegante e altamente persuasivo no formato "${formato}" sobre o tema: "${tema}".
-
-Estruture o roteiro com:
-1. GANCHO (Primeiros 3 segundos): Frase de impacto para reter a atenção imediata.
-2. DESENVOLVIMENTO (Conteúdo de Valor): 3 pontos objetivos e com autoridade no mercado imobiliário.
-3. CHAMADA PARA AÇÃO (CTA): Convite claro para chamar no Direct ou WhatsApp da Andressa Spagnol Imóveis.
-4. SUGESTÃO DE LEGENDA + 5 HASHTAGS estratégicas.`;
+      const promptDireto = `Crie um roteiro completo, magnético e pronto para gravar no formato "${formato}" sobre o tema: "${tema}". Utilize obrigatoriamente o estilo de ganchos e narrativa das minhas referências do Instagram salvas na sua base.`;
 
       try {
         const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(
-          GEMINI_API_KEY.trim()
+          apiKey
         )}`;
 
         const response = await fetch(endpoint, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            contents: [{ parts: [{ text: promptMarketing }] }]
+            systemInstruction: {
+              parts: [{ text: construirContextoBaseIA() }]
+            },
+            contents: [{ role: "user", parts: [{ text: promptDireto }] }]
           })
         });
 
@@ -2198,13 +2800,27 @@ Estruture o roteiro com:
         }
 
         roteiroEl.value = textoGerado;
-        showToast("Roteiro gerado automaticamente pela IA!", "success");
+        showToast("Roteiro gerado com base nas suas Referências!", "success");
       } catch (err) {
         showToast(`Erro na IA: ${err.message}`, "error");
       } finally {
         btnIA.disabled = false;
         btnIA.textContent = textoOriginal;
       }
+    }
+
+    async function carregarConteudos() {
+      const { data, error } = await supabase
+        .from("conteudos")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.warn("Tabela conteudos ainda não migrada:", error.message);
+        return;
+      }
+      state.conteudos = data || [];
+      renderizarConteudos();
     }
 
     async function handleNovoConteudoSubmit(event) {
@@ -2438,6 +3054,51 @@ Estruture o roteiro com:
 
       document.getElementById("btn-gerar-ia")?.addEventListener("click", gerarRoteiroComIA);
 
+      // Salvar Chave Gemini na UI
+      document.getElementById("btn-salvar-gemini-key")?.addEventListener("click", () => {
+        const val = document.getElementById("input-gemini-key")?.value.trim() || "";
+        localStorage.setItem("crm_as_gemini_key", val);
+        showToast(
+          val ? "Chave da API Gemini salva com sucesso!" : "Chave removida.",
+          val ? "success" : "info"
+        );
+      });
+
+      // Adicionar e Remover Referências do Instagram
+      document
+        .getElementById("form-nova-ref")
+        ?.addEventListener("submit", handleNovaReferenciaSubmit);
+
+      document.getElementById("ai-refs-list")?.addEventListener("click", (e) => {
+        const btnDel = e.target.closest(".btn-delete-ref");
+        if (btnDel) removerReferenciaIA(btnDel.dataset.id);
+      });
+
+      // Chat Criativo com IA
+      document.getElementById("form-chat-ia")?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const input = document.getElementById("chat-input-msg");
+        const msg = input?.value.trim() || "";
+        if (!msg) return;
+        input.value = "";
+        enviarMensagemChatIA(msg);
+      });
+
+      document.querySelectorAll(".chip-btn").forEach((chip) => {
+        chip.addEventListener("click", () => {
+          const prompt = chip.dataset.prompt;
+          if (prompt) enviarMensagemChatIA(prompt);
+        });
+      });
+
+      document.getElementById("btn-limpar-chat")?.addEventListener("click", () => {
+        state.chatHistory = [];
+        const box = document.getElementById("chat-messages-box");
+        if (box) box.innerHTML = "";
+        inicializarEstudioIA();
+      });
+
+      // Navegação entre Abas
       const tabBtns = document.querySelectorAll(".nav-tab-btn");
       tabBtns.forEach((btn) => {
         btn.addEventListener("click", () => {

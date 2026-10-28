@@ -1,7 +1,7 @@
 -- ============================================================================
--- MIGRAÇÃO V2 - CRM IMOBILIÁRIO ANDRESSA SPAGNOL IMÓVEIS
+-- MIGRAÇÃO V2/V3 - CRM IMOBILIÁRIO ANDRESSA SPAGNOL IMÓVEIS
 -- Módulo 1: Refatoração da tabela `clientes` (Meta Ads: primeiro_nome, sobrenome, email)
--- Módulo 2: Criação da tabela `conteudos` (Linha Editorial & IA) + Políticas RLS
+-- Módulo 2: Criação da tabela `conteudos` (Linha Editorial) e `ia_referencias` (Base de Refs da IA)
 -- ============================================================================
 
 -- ----------------------------------------------------------------------------
@@ -9,7 +9,6 @@
 -- ----------------------------------------------------------------------------
 DO $$
 BEGIN
-    -- Renomeia a coluna `nome` para `primeiro_nome` caso `nome` ainda exista
     IF EXISTS (
         SELECT 1
         FROM information_schema.columns
@@ -26,7 +25,7 @@ ALTER TABLE public.clientes
     ADD COLUMN IF NOT EXISTS email TEXT DEFAULT '';
 
 -- ----------------------------------------------------------------------------
--- MÓDULO 2: CRIAÇÃO DA TABELA `conteudos` (LINHA EDITORIAL & IA)
+-- MÓDULO 2A: CRIAÇÃO DA TABELA `conteudos` (LINHA EDITORIAL & IA)
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.conteudos (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -51,7 +50,6 @@ CREATE TABLE IF NOT EXISTS public.conteudos (
 CREATE INDEX IF NOT EXISTS idx_conteudos_created_at ON public.conteudos (created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_conteudos_status ON public.conteudos (status);
 
--- Trigger de atualização automática de `updated_at` para `conteudos`
 DROP TRIGGER IF EXISTS trg_conteudos_updated_at ON public.conteudos;
 CREATE TRIGGER trg_conteudos_updated_at
     BEFORE UPDATE ON public.conteudos
@@ -59,35 +57,41 @@ CREATE TRIGGER trg_conteudos_updated_at
     EXECUTE FUNCTION public.handle_updated_at();
 
 -- ----------------------------------------------------------------------------
--- POLÍTICAS DE SEGURANÇA (RLS) PARA `conteudos`
+-- MÓDULO 2B: CRIAÇÃO DA TABELA `ia_referencias` (PERFIS DO INSTAGRAM & REFS FIXAS DA IA)
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS public.ia_referencias (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    perfil_instagram TEXT NOT NULL CHECK (char_length(trim(perfil_instagram)) > 0),
+    estilo_o_que_gosto TEXT NOT NULL,
+    exemplo_post TEXT DEFAULT '',
+    criado_por UUID REFERENCES auth.users(id) ON DELETE SET NULL DEFAULT auth.uid(),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- ----------------------------------------------------------------------------
+-- POLÍTICAS DE SEGURANÇA (RLS) PARA `conteudos` E `ia_referencias`
 -- ----------------------------------------------------------------------------
 ALTER TABLE public.conteudos ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.ia_referencias ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Conteudos: leitura apenas para autenticados" ON public.conteudos;
 CREATE POLICY "Conteudos: leitura apenas para autenticados"
-    ON public.conteudos
-    FOR SELECT
-    TO authenticated
-    USING (auth.uid() IS NOT NULL);
+    ON public.conteudos FOR SELECT TO authenticated USING (auth.uid() IS NOT NULL);
 
 DROP POLICY IF EXISTS "Conteudos: inserção apenas para autenticados" ON public.conteudos;
 CREATE POLICY "Conteudos: inserção apenas para autenticados"
-    ON public.conteudos
-    FOR INSERT
-    TO authenticated
-    WITH CHECK (auth.uid() IS NOT NULL);
+    ON public.conteudos FOR INSERT TO authenticated WITH CHECK (auth.uid() IS NOT NULL);
 
 DROP POLICY IF EXISTS "Conteudos: atualização apenas para autenticados" ON public.conteudos;
 CREATE POLICY "Conteudos: atualização apenas para autenticados"
-    ON public.conteudos
-    FOR UPDATE
-    TO authenticated
-    USING (auth.uid() IS NOT NULL)
-    WITH CHECK (auth.uid() IS NOT NULL);
+    ON public.conteudos FOR UPDATE TO authenticated
+    USING (auth.uid() IS NOT NULL) WITH CHECK (auth.uid() IS NOT NULL);
 
 DROP POLICY IF EXISTS "Conteudos: exclusão apenas para autenticados" ON public.conteudos;
 CREATE POLICY "Conteudos: exclusão apenas para autenticados"
-    ON public.conteudos
-    FOR DELETE
-    TO authenticated
-    USING (auth.uid() IS NOT NULL);
+    ON public.conteudos FOR DELETE TO authenticated USING (auth.uid() IS NOT NULL);
+
+DROP POLICY IF EXISTS "Referencias IA: acesso total para autenticados" ON public.ia_referencias;
+CREATE POLICY "Referencias IA: acesso total para autenticados"
+    ON public.ia_referencias FOR ALL TO authenticated
+    USING (auth.uid() IS NOT NULL) WITH CHECK (auth.uid() IS NOT NULL);

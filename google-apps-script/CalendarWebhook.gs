@@ -66,3 +66,4 @@ function responderJSON(objeto) {
     .createTextOutput(JSON.stringify(objeto))
     .setMimeType(ContentService.MimeType.JSON);
 }
+
