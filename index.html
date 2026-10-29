@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#3B1425" />
-  <title>ANDRESSA SPAGNOL IMOVEIS | CRM Imobiliário</title>
+  <meta name="theme-color" content="#2F0E1E" />
+  <title>ANDRESSA SPAGNOL IMÓVEIS | CRM Imobiliário</title>
+  <link rel="icon" type="image/png" href="./assets/favicon.png" />
+  <link rel="apple-touch-icon" href="./assets/favicon.png" />
 
   <!-- Google Fonts: Montserrat & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -18,24 +20,24 @@
 
   <style>
     :root {
-      --brand-primary: #3B1425;
-      --brand-primary-hover: #521D34;
-      --brand-primary-dark: #260B17;
+      --brand-primary: #2F0E1E;
+      --brand-primary-hover: #44152C;
+      --brand-primary-dark: #1F0913;
       --brand-accent: #C5A059;
       --brand-accent-light: #E5C98B;
       --brand-accent-soft: #FAF5EA;
 
-      --bg-page: #F4F3F6;
+      --bg-page: #ECECEC;
       --bg-surface: #FFFFFF;
-      --bg-subtle: #F9F8FA;
+      --bg-subtle: #F7F6F8;
 
       --text-primary: #1E191D;
       --text-secondary: #5C5359;
       --text-muted: #8C8288;
       --text-on-primary: #FFFFFF;
 
-      --border-color: #E5E0E4;
-      --border-focus: #3B1425;
+      --border-color: #DCD8DE;
+      --border-focus: #2F0E1E;
 
       --radius-sm: 10px;
       --radius-md: 14px;
@@ -103,6 +105,31 @@
       display: flex;
       align-items: center;
       gap: 0.95rem;
+    }
+
+    .header-brand-logo {
+      height: 52px;
+      width: auto;
+      display: block;
+      object-fit: contain;
+    }
+
+    .auth-brand-logo {
+      max-width: 260px;
+      width: 100%;
+      height: auto;
+      margin: 0 auto 1rem;
+      display: block;
+      object-fit: contain;
+    }
+
+    .footer-brand-logo {
+      height: 48px;
+      width: auto;
+      display: block;
+      margin: 0 auto 0.35rem;
+      object-fit: contain;
+      opacity: 0.95;
     }
 
     .brand-monogram {
@@ -1223,8 +1250,12 @@
   <main id="auth-screen" class="auth-wrapper">
     <section class="auth-card" aria-labelledby="auth-title">
       <div class="auth-header">
-        <div class="auth-monogram" aria-hidden="true">AS</div>
-        <h2 id="auth-title">ANDRESSA SPAGNOL IMOVEIS</h2>
+        <img
+          src="./assets/logo-escura.png"
+          alt="Andressa Spagnol Imóveis"
+          class="auth-brand-logo"
+        />
+        <h2 id="auth-title" class="hidden">ANDRESSA SPAGNOL IMÓVEIS</h2>
         <p>Acesso restrito aos corretores autorizados</p>
       </div>
 
@@ -1274,9 +1305,13 @@
     <header class="app-header">
       <div class="header-container">
         <div class="brand-identity">
-          <div class="brand-monogram" aria-hidden="true">AS</div>
+          <img
+            src="./assets/logo-clara.png"
+            alt="Andressa Spagnol Imóveis"
+            class="header-brand-logo"
+          />
           <div class="brand-titles">
-            <h1>ANDRESSA SPAGNOL IMOVEIS</h1>
+            <h1 class="hidden">ANDRESSA SPAGNOL IMÓVEIS</h1>
             <span class="brand-subtitle">Gestão de Leads, Imóveis, Conteúdos &amp; Agenda</span>
           </div>
         </div>
@@ -1853,7 +1888,11 @@
   <!-- RODAPÉ OFICIAL -->
   <footer class="app-footer">
     <div class="footer-container">
-      <div class="footer-brand">ANDRESSA SPAGNOL IMOVEIS</div>
+      <img
+        src="./assets/logo-clara.png"
+        alt="Andressa Spagnol Imóveis"
+        class="footer-brand-logo"
+      />
       <div class="footer-credentials">
         <span><strong>CRECI:</strong> 7734F</span>
         <span>
