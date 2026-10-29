@@ -1240,6 +1240,140 @@
       .btn-ai-shortcut { justify-content: center; width: 100%; }
       .search-filter-input { width: 100%; min-width: 0; }
     }
+
+    /* ========================================================================
+       FASE 1 E 2: BOTÕES DUPLOS DRIVE, WHATSAPP DINÂMICO E PAINEL DE PROJETO
+       ======================================================================== */
+    .drive-dual-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    .whatsapp-dual-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      width: 100%;
+      margin-top: 0.25rem;
+    }
+
+    .btn-whatsapp-sm {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      flex: 1;
+      min-width: 135px;
+      padding: 0.38rem 0.6rem;
+      border-radius: 6px;
+      background: #E8F8EE;
+      border: 1px solid #9ADCB3;
+      color: #156C36;
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .btn-whatsapp-sm:hover {
+      background: #25D366;
+      border-color: #1EBE5D;
+      color: #FFFFFF;
+      transform: translateY(-1px);
+    }
+
+    .service-type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      background: var(--bg-surface-alt);
+      border: 1px solid var(--border-color);
+      color: var(--brand-primary);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .btn-toggle-projeto {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface-alt);
+      border: 1px solid var(--border-color);
+      color: var(--brand-primary);
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-toggle-projeto:hover {
+      border-color: var(--brand-accent);
+      background: #F4EFE6;
+    }
+
+    .lead-project-panel {
+      margin-top: 0.35rem;
+      padding: 0.85rem;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface-alt);
+      border: 1px dashed var(--brand-accent);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .checklist-box {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      background: var(--bg-surface);
+      padding: 0.65rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+
+    .checklist-item.done span {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .checklist-add-row {
+      display: flex;
+      gap: 0.4rem;
+      margin-top: 0.35rem;
+    }
+
+    .kanban-board-dynamic {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      padding-bottom: 0.75rem;
+      align-items: flex-start;
+    }
+
+    .kanban-board-dynamic .kanban-column {
+      min-width: 295px;
+      max-width: 330px;
+      flex: 0 0 305px;
+    }
   </style>
 </head>
 <body>
@@ -1312,7 +1446,6 @@
           />
           <div class="brand-titles">
             <h1 class="hidden">ANDRESSA SPAGNOL IMÓVEIS</h1>
-            <span class="brand-subtitle">Gestão de Leads, Imóveis, Conteúdos &amp; Agenda</span>
           </div>
         </div>
 
@@ -1320,8 +1453,11 @@
           <button type="button" id="btn-abrir-notificacoes" class="btn-drawer-trigger" title="Central de Notificações">
             🔔 (<span id="badge-count-notificacoes">0</span>)
           </button>
-          <button type="button" id="btn-abrir-tarefas" class="btn-drawer-trigger">
-            ☑️ Tarefas (<span id="badge-count-tarefas">0</span>)
+          <button type="button" id="btn-abrir-nova-tarefa" class="btn-drawer-trigger" title="Criar Nova Tarefa">
+            ➕ Nova Tarefa
+          </button>
+          <button type="button" id="btn-abrir-lista-tarefas" class="btn-drawer-trigger" title="Visualizar Tarefas">
+            ☑️ Visualizar Tarefas (<span id="badge-count-tarefas">0</span>)
           </button>
           <span id="user-email-badge" class="user-email-badge"></span>
           <button type="button" id="btn-logout" class="btn-logout">
@@ -1335,7 +1471,7 @@
       <!-- Indicadores Rápidos (4 Blocos: Leads, Visitas, Imóveis Ativos e VGV Ativo) -->
       <section class="kpi-strip" aria-label="Resumo do CRM">
         <div class="kpi-card">
-          <span class="kpi-label">Leads no Funil</span>
+          <span class="kpi-label">Leads</span>
           <strong id="kpi-total-clientes" class="kpi-value">0</strong>
         </div>
         <div class="kpi-card">
@@ -1352,13 +1488,13 @@
         </div>
       </section>
 
-      <!-- Navegação entre os 4 Módulos (Ordem: 1. Funil de Leads, 2. Imóvel Drive, 3. Agenda, 4. Linha Editorial) -->
+      <!-- Navegação entre os 4 Módulos (Ordem: 1. Funil de Leads, 2. Google Drive, 3. Agenda, 4. Linha Editorial) -->
       <nav class="crm-tabs-nav" aria-label="Módulos do CRM">
         <button type="button" class="nav-tab-btn active" data-tab="clientes">
           👥 Funil de Leads
         </button>
         <button type="button" class="nav-tab-btn" data-tab="imoveis">
-          🏠 Imóvel Drive
+          🏠 Google Drive
         </button>
         <button type="button" class="nav-tab-btn" data-tab="agenda">
           📅 Agenda
@@ -1369,108 +1505,34 @@
       </nav>
 
       <!-- ====================================================================
-           1. FUNIL DE LEADS (CLIENTES + OBSERVAÇÃO + TAGGING + META ADS)
+           1. FUNIL DE LEADS (GESTÃO DE PROJETOS IMOBILIÁRIOS + META ADS)
            ==================================================================== -->
       <section id="section-clientes">
-        <div class="panel-card">
-          <div class="panel-header">
-            <h2>Novo Lead / Cliente</h2>
-            <p>Campos estruturados para Funil de Vendas e Públicos Personalizados (Meta Ads).</p>
-          </div>
-
-          <form id="form-novo-cliente" class="form-grid">
-            <div class="form-group">
-              <label for="cliente-primeiro-nome">Primeiro Nome *</label>
-              <input
-                type="text"
-                id="cliente-primeiro-nome"
-                class="form-control"
-                placeholder="Ex: Mariana"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="cliente-sobrenome">Sobrenome</label>
-              <input
-                type="text"
-                id="cliente-sobrenome"
-                class="form-control"
-                placeholder="Ex: Costa"
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="cliente-email">E-mail</label>
-              <input
-                type="email"
-                id="cliente-email"
-                class="form-control"
-                placeholder="mariana@email.com"
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="cliente-telefone">Telefone / WhatsApp *</label>
-              <input
-                type="tel"
-                id="cliente-telefone"
-                class="form-control"
-                placeholder="(27) 99872-5094"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="cliente-status">Status do Funil *</label>
-              <select id="cliente-status" class="form-control" required>
-                <option value="Prospecção">Prospecção</option>
-                <option value="Visita Agendada">Visita Agendada</option>
-                <option value="Proposta">Proposta</option>
-                <option value="Fechado">Fechado</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="cliente-perfil">Perfil de Interesse</label>
-              <input
-                type="text"
-                id="cliente-perfil"
-                class="form-control"
-                placeholder="Ex: Apto 3 Qts Jardim Camburi até R$ 950 mil"
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="cliente-usuario-marcado">Marcar Usuário (Tagging)</label>
-              <select id="cliente-usuario-marcado" class="form-control">
-                <option value="">-- Nenhum --</option>
-                <option value="Andressa">Andressa</option>
-                <option value="Douglas">Douglas</option>
-              </select>
-            </div>
-
-            <div class="form-group form-group-full">
-              <label for="cliente-observacao">Observação do Lead</label>
-              <textarea
-                id="cliente-observacao"
-                class="form-control"
-                style="min-height: 76px;"
-                placeholder="Anotações importantes sobre o histórico, preferências ou negociação do lead..."
-              ></textarea>
-            </div>
-
-            <div class="form-group form-group-full">
-              <button type="submit" id="btn-salvar-cliente" class="btn-primary">
-                + Cadastrar Lead
-              </button>
-            </div>
-          </form>
-        </div>
-
         <div class="section-toolbar">
-          <h3>Clientes Cadastrados (Mais Recentes)</h3>
+          <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+            <h3>Clientes Cadastrados (Mais Recentes)</h3>
+            <button
+              type="button"
+              id="btn-abrir-novo-lead"
+              class="btn-primary"
+              style="padding: 0.55rem 1.05rem; font-size: 0.84rem;"
+            >
+              ➕ Cadastrar Lead
+            </button>
+          </div>
           <div class="toolbar-actions">
+            <select
+              id="filtro-servico-clientes"
+              class="form-control"
+              style="width: auto; min-width: 175px; padding: 0.5rem 0.75rem; font-size: 0.82rem;"
+              title="Filtrar colunas do Kanban por Tipo de Serviço"
+            >
+              <option value="Todos">Todos os Serviços</option>
+              <option value="Compra">Serviço: Compra</option>
+              <option value="Venda">Serviço: Venda</option>
+              <option value="Registro de Imóvel">Serviço: Registro de Imóvel</option>
+              <option value="Aluguel">Serviço: Aluguel</option>
+            </select>
             <input
               type="search"
               id="busca-clientes"
@@ -1498,7 +1560,7 @@
           </div>
         </div>
 
-        <div id="clientes-kanban-container" class="kanban-board"></div>
+        <div id="clientes-kanban-container" class="kanban-board-dynamic"></div>
         <div id="clientes-lista-container" class="hidden"></div>
       </section>
 
@@ -1789,13 +1851,137 @@
   </div>
 
   <!-- ========================================================================
-       PAINEL LATERAL (OFF-CANVAS DRAWER) DE TAREFAS - AÇÕES VINCULADAS (2 EM 1)
+       PAINÉIS LATERAIS (OFF-CANVAS DRAWERS):
+       1. Cadastrar Novo Lead (#drawer-novo-lead)
+       2. Nova Tarefa (#drawer-nova-tarefa)
+       3. Visualizar Tarefas (#drawer-lista-tarefas)
+       4. Central de Notificações (#drawer-notificacoes)
        ======================================================================== -->
   <div id="drawer-overlay" class="drawer-overlay"></div>
-  <aside id="drawer-tarefas" class="offcanvas-drawer" aria-labelledby="drawer-tarefas-title">
+
+  <!-- 1. GAVETA DE CRIAÇÃO DE LEADS (OFF-CANVAS DRAWER) -->
+  <aside id="drawer-novo-lead" class="offcanvas-drawer" aria-labelledby="drawer-novo-lead-title">
     <div class="drawer-header">
-      <h3 id="drawer-tarefas-title">☑️ Central de Tarefas &amp; Ações</h3>
-      <button type="button" id="btn-fechar-tarefas" class="btn-drawer-close" aria-label="Fechar">
+      <h3 id="drawer-novo-lead-title">➕ Cadastrar Lead / Cliente</h3>
+      <button type="button" id="btn-fechar-novo-lead" class="btn-drawer-close" aria-label="Fechar">
+        ✕
+      </button>
+    </div>
+
+    <div class="drawer-body">
+      <form id="form-novo-cliente" class="form-grid" style="grid-template-columns: 1fr;">
+        <div class="form-group">
+          <label for="cliente-primeiro-nome">Primeiro Nome *</label>
+          <input
+            type="text"
+            id="cliente-primeiro-nome"
+            class="form-control"
+            placeholder="Ex: Mariana"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="cliente-sobrenome">Sobrenome</label>
+          <input
+            type="text"
+            id="cliente-sobrenome"
+            class="form-control"
+            placeholder="Ex: Costa"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="cliente-email">E-mail</label>
+          <input
+            type="email"
+            id="cliente-email"
+            class="form-control"
+            placeholder="mariana@email.com"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="cliente-telefone">Telefone / WhatsApp *</label>
+          <input
+            type="tel"
+            id="cliente-telefone"
+            class="form-control"
+            placeholder="(27) 99872-5094"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="cliente-tipo-servico">Tipo de Serviço *</label>
+          <select id="cliente-tipo-servico" class="form-control" required>
+            <option value="Compra" selected>Compra</option>
+            <option value="Venda">Venda</option>
+            <option value="Registro de Imóvel">Registro de Imóvel</option>
+            <option value="Aluguel">Aluguel</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="cliente-status">Funil de Leads *</label>
+          <select id="cliente-status" class="form-control" required>
+            <option value="Proposta Enviada">Proposta Enviada</option>
+            <option value="Análise de Proposta">Análise de Proposta</option>
+            <option value="Aceita">Aceita</option>
+            <option value="Negada">Negada</option>
+            <option value="Pré-visitas">Pré-visitas</option>
+            <option value="Visitas">Visitas</option>
+            <option value="Envio de Proposta">Envio de Proposta</option>
+            <option value="Análise">Análise</option>
+            <option value="Aceita/Negada">Aceita/Negada</option>
+            <option value="Solicitação Docs">Solicitação Docs</option>
+            <option value="Confecção de Contrato">Confecção de Contrato</option>
+            <option value="Assinatura">Assinatura</option>
+            <option value="Encerrado">Encerrado</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="cliente-perfil">Perfil de Interesse</label>
+          <input
+            type="text"
+            id="cliente-perfil"
+            class="form-control"
+            placeholder="Ex: Apto 3 Qts Jardim Camburi até R$ 950 mil"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="cliente-usuario-marcado">Marcar Usuário (Tagging)</label>
+          <select id="cliente-usuario-marcado" class="form-control">
+            <option value="">-- Nenhum --</option>
+            <option value="Andressa">Andressa</option>
+            <option value="Douglas">Douglas</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="cliente-observacao">Observação do Lead</label>
+          <textarea
+            id="cliente-observacao"
+            class="form-control"
+            style="min-height: 76px;"
+            placeholder="Anotações importantes sobre o histórico, preferências ou negociação do lead..."
+          ></textarea>
+        </div>
+
+        <button type="submit" id="btn-salvar-cliente" class="btn-primary">
+          + Cadastrar Lead e Criar Pasta no Drive
+        </button>
+      </form>
+    </div>
+  </aside>
+
+  <!-- 2. GAVETA DE NOVA TAREFA (APENAS O FORMULÁRIO + AÇÃO VINCULADA 2 EM 1) -->
+  <aside id="drawer-nova-tarefa" class="offcanvas-drawer" aria-labelledby="drawer-nova-tarefa-title">
+    <div class="drawer-header">
+      <h3 id="drawer-nova-tarefa-title">➕ Nova Tarefa &amp; Ação Vinculada</h3>
+      <button type="button" id="btn-fechar-nova-tarefa" class="btn-drawer-close" aria-label="Fechar">
         ✕
       </button>
     </div>
@@ -1833,10 +2019,18 @@
             <label for="tarefa-novo-status">Atualizar status do funil para:</label>
             <select id="tarefa-novo-status" class="form-control">
               <option value="nao_alterar" selected>Não alterar</option>
-              <option value="Prospecção">Prospecção</option>
-              <option value="Visita Agendada">Visita Agendada</option>
-              <option value="Proposta">Proposta</option>
-              <option value="Fechado">Fechado</option>
+              <option value="Proposta Enviada">Proposta Enviada</option>
+              <option value="Análise de Proposta">Análise de Proposta</option>
+              <option value="Aceita">Aceita</option>
+              <option value="Negada">Negada</option>
+              <option value="Pré-visitas">Pré-visitas</option>
+              <option value="Visitas">Visitas</option>
+              <option value="Envio de Proposta">Envio de Proposta</option>
+              <option value="Solicitação de Documentação">Solicitação de Documentação</option>
+              <option value="Confecção de Contrato">Confecção de Contrato</option>
+              <option value="Assinatura">Assinatura</option>
+              <option value="Encerrado">Encerrado</option>
+              <option value="Alugado">Alugado</option>
             </select>
           </div>
         </div>
@@ -1845,13 +2039,20 @@
           + Salvar Tarefa e Atualizar Funil
         </button>
       </form>
+    </div>
+  </aside>
 
-      <div style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
-        <h4 style="font-family: var(--font-heading); font-size: 0.9rem; color: var(--brand-primary); margin-bottom: 0.75rem;">
-          Tarefas Pendentes e Concluídas
-        </h4>
-        <div id="lista-tarefas-drawer" class="tarefas-list"></div>
-      </div>
+  <!-- 3. GAVETA DE VISUALIZAR TAREFAS (APENAS A LISTA DE PENDENTES / CONCLUÍDAS) -->
+  <aside id="drawer-lista-tarefas" class="offcanvas-drawer" aria-labelledby="drawer-lista-tarefas-title">
+    <div class="drawer-header">
+      <h3 id="drawer-lista-tarefas-title">☑️ Tarefas Pendentes e Concluídas</h3>
+      <button type="button" id="btn-fechar-lista-tarefas" class="btn-drawer-close" aria-label="Fechar">
+        ✕
+      </button>
+    </div>
+
+    <div class="drawer-body">
+      <div id="lista-tarefas-drawer" class="tarefas-list"></div>
     </div>
   </aside>
 
@@ -1934,6 +2135,97 @@
     ];
     const STATUS_CONTEUDO = ["Ideia", "Gravar", "Editar", "Pronto", "Postado"];
 
+    // Checklist padrão para Solicitação de Documentação (Registro de Imóvel / Compra / Venda)
+    const CHECKLIST_DOCS_PADRAO = [
+      { item: "Certidão Negativa Federal", ok: false },
+      { item: "Certidão Negativa Estadual", ok: false },
+      { item: "Certidão Negativa Trabalhista", ok: false },
+      { item: "Certidão de Casamento", ok: false },
+      { item: "Certidão Negativa de Débito do Imóvel", ok: false },
+      { item: "Comprovante de Residência", ok: false },
+      { item: "Documentos Pessoais", ok: false }
+    ];
+
+    /**
+     * Motor de Status (State Machine) baseado no Tipo de Serviço do Lead/Cliente
+     */
+    function obterStatusPorTipoServico(tipoServico) {
+      const padraoInicial = [
+        "Proposta Enviada",
+        "Análise de Proposta",
+        "Aceita",
+        "Negada"
+      ];
+
+      switch (tipoServico) {
+        case "Aluguel":
+          return [
+            ...padraoInicial,
+            "Análise Inicial",
+            "Alugado",
+            "Recusado"
+          ];
+        case "Registro de Imóvel":
+          return [
+            ...padraoInicial,
+            "Solicitação de Documentação"
+          ];
+        case "Compra":
+          return [
+            ...padraoInicial,
+            "Pré-visitas",
+            "Visitas",
+            "Envio de Proposta",
+            "Análise",
+            "Aceita/Negada",
+            "Solicitação Docs",
+            "Confecção de Contrato",
+            "Assinatura",
+            "Encerrado"
+          ];
+        case "Venda":
+          return [
+            ...padraoInicial,
+            "Marcar Fotos/Vídeos",
+            "Fazer Fotos/Vídeos",
+            "Editar Mídia",
+            "Postar",
+            "Visitas",
+            "Envio Proposta",
+            "Análise",
+            "Aceita/Negada",
+            "Solicitação Docs",
+            "Confecção de Contrato",
+            "Assinatura",
+            "Encerrado"
+          ];
+        default:
+          return padraoInicial;
+      }
+    }
+
+    /**
+     * Gera os links de WhatsApp dinâmicos para Douglas e Andressa com encodeURIComponent()
+     */
+    function gerarLinksWhatsAppDinamicos(cliente) {
+      const numeroWhats = limparTelefoneBrasilDDI(cliente.telefone);
+      const primeiroNome = obterPrimeiroNome(cliente) || "Cliente";
+
+      const msgDouglas = `Bom dia, ${primeiroNome}! Me chamo Douglas e sou captador de imóveis no escritório da Andressa Spagnol (Corretora de Imóveis - CRECI-ES 7734F). Estamos no mercado há 13 anos, trabalhando com muita dedicação e seriedade. Somamos experiência, conhecimento e uma forte rede de parceiros, o que nos capacita a oferecer um atendimento personalizado para garantir o sucesso do seu próximo negócio imobiliário! Fico à disposição e aguardo o seu retorno para iniciarmos nosso atendimento! Visite nosso Instagram @andressaspagnol.imoveis para conhecer um pouco mais do nosso trabalho.`;
+
+      const msgAndressa = `Bom dia, ${primeiroNome}! Sou a Andressa Spagnol, corretora de Imóveis (CRECI-ES 7734F). Atuo no mercado há 13 anos, trabalhando com muita dedicação e seriedade. Hoje, com minha equipe e uma forte rede de parceiros, unimos experiência e conhecimento para entregar um atendimento exclusivo, focado em garantir o sucesso do seu próximo negócio imobiliário. Fico à disposição e aguardo o seu retorno para iniciarmos o nosso atendimento!`;
+
+      return {
+        numeroWhats,
+        urlDouglas: numeroWhats
+          ? `https://wa.me/${numeroWhats}?text=${encodeURIComponent(msgDouglas)}`
+          : "#",
+        urlAndressa: numeroWhats
+          ? `https://wa.me/${numeroWhats}?text=${encodeURIComponent(msgAndressa)}`
+          : "#"
+      };
+    }
+
     const supabase = createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY, {
       auth: {
         persistSession: true,
@@ -1946,6 +2238,8 @@
       user: null,
       activeTab: "clientes",
       clientesView: "kanban",
+      filtroServicoClientes: "Todos",
+      paineisProjetoAbertos: {},
       conteudosView: "kanban",
       filtroImoveis: "ativos",
       clientes: [],
@@ -2162,21 +2456,43 @@
     }
 
     /**
-     * Filtro em Tempo Real (Barra de Busca no DOM sem nova requisição ao Supabase)
+     * Filtro Inteligente em Tempo Real (Regex: remove pontuação e caracteres especiais)
+     * Buscar "999" encontra "(27) 999..." sem nova requisição ao Supabase.
      */
     function filtrarCardsTempoReal(termo, seletorCard) {
-      const busca = String(termo || "").toLowerCase().trim();
+      const buscaBruta = String(termo || "").toLowerCase().trim();
+      const buscaLimpa = buscaBruta.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
       const cards = document.querySelectorAll(seletorCard);
+
       cards.forEach((card) => {
-        const conteudoTexto = (card.textContent || "").toLowerCase();
-        card.style.display = !busca || conteudoTexto.includes(busca) ? "" : "none";
+        if (!buscaBruta) {
+          card.style.display = "";
+          return;
+        }
+        const textoBruto = (card.textContent || "").toLowerCase();
+        const textoLimpo = textoBruto.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+        const corresponde =
+          textoBruto.includes(buscaBruta) ||
+          (buscaLimpa.length > 0 && textoLimpo.includes(buscaLimpa));
+        card.style.display = corresponde ? "" : "none";
       });
     }
     window.filtrarCardsTempoReal = filtrarCardsTempoReal;
 
     // ========================================================================
-    // MÓDULO 1: CLIENTES + OBSERVAÇÃO + TAGGING + EXPORTAÇÃO CSV META ADS
+    // MÓDULO 1: GESTÃO DE PROJETOS IMOBILIÁRIOS (LEADS + MÁQUINA DE ESTADOS + DRIVE)
     // ========================================================================
+    function atualizarOpcoesStatusFormLead() {
+      const tipoServicoEl = document.getElementById("cliente-tipo-servico");
+      const statusEl = document.getElementById("cliente-status");
+      if (!tipoServicoEl || !statusEl) return;
+
+      const listaStatus = obterStatusPorTipoServico(tipoServicoEl.value);
+      statusEl.innerHTML = listaStatus
+        .map((st) => `<option value="${escapeHtml(st)}">${escapeHtml(st)}</option>`)
+        .join("");
+    }
+
     async function carregarClientes() {
       const { data, error } = await supabase
         .from("clientes")
@@ -2200,27 +2516,50 @@
       const sobrenomeEl = document.getElementById("cliente-sobrenome");
       const emailEl = document.getElementById("cliente-email");
       const telefoneEl = document.getElementById("cliente-telefone");
+      const tipoServicoEl = document.getElementById("cliente-tipo-servico");
       const statusEl = document.getElementById("cliente-status");
       const perfilEl = document.getElementById("cliente-perfil");
       const observacaoEl = document.getElementById("cliente-observacao");
       const usuarioMarcadoEl = document.getElementById("cliente-usuario-marcado");
       const btnSubmit = document.getElementById("btn-salvar-cliente");
 
-      const novoCliente = {
-        primeiro_nome: primeiroNomeEl.value.trim(),
-        sobrenome: sobrenomeEl.value.trim(),
-        email: emailEl.value.trim().toLowerCase(),
-        telefone: telefoneEl.value.trim(),
-        status_funil: statusEl.value,
-        perfil_interesse: perfilEl.value.trim(),
-        observacao: observacaoEl ? observacaoEl.value.trim() : "",
-        usuario_marcado: usuarioMarcadoEl ? usuarioMarcadoEl.value : ""
-      };
+      const primeiroNome = primeiroNomeEl.value.trim();
+      const sobrenome = sobrenomeEl.value.trim();
+      const nomeCompleto = `${primeiroNome} ${sobrenome}`.trim() || "Cliente";
+      const tipoServico = tipoServicoEl ? tipoServicoEl.value : "Compra";
 
       btnSubmit.disabled = true;
-      btnSubmit.textContent = "Salvando...";
+      btnSubmit.textContent = "Criando pasta do cliente no Google Drive...";
 
       try {
+        let linkDriveCliente = "";
+        try {
+          linkDriveCliente = await criarPastaDriveImovel(
+            `Cliente - ${nomeCompleto} (${tipoServico})`
+          );
+        } catch (driveErr) {
+          console.warn("Aviso ao criar pasta do cliente no Drive:", driveErr.message);
+        }
+
+        btnSubmit.textContent = "Salvando Lead no Supabase...";
+
+        const novoCliente = {
+          primeiro_nome: primeiroNome,
+          sobrenome,
+          email: emailEl.value.trim().toLowerCase(),
+          telefone: telefoneEl.value.trim(),
+          tipo_servico: tipoServico,
+          status_funil: statusEl.value,
+          perfil_interesse: perfilEl.value.trim(),
+          observacao: observacaoEl ? observacaoEl.value.trim() : "",
+          usuario_marcado: usuarioMarcadoEl ? usuarioMarcadoEl.value : "",
+          links_imoveis: "",
+          observacoes_visitas: "",
+          checklist_docs: CHECKLIST_DOCS_PADRAO,
+          responsavel_contrato: "Interno",
+          link_drive_cliente: linkDriveCliente
+        };
+
         const { data, error } = await supabase
           .from("clientes")
           .insert([novoCliente])
@@ -2242,13 +2581,106 @@
         popularSelectClientesAgenda();
         atualizarContadoresResumo();
         event.target.reset();
-        showToast("Cliente adicionado ao funil com sucesso!", "success");
+        atualizarOpcoesStatusFormLead();
+        toggleDrawerNovoLead(false);
+        showToast(
+          linkDriveCliente
+            ? "Lead cadastrado e pasta do cliente criada no Google Drive!"
+            : "Lead adicionado ao funil com sucesso!",
+          "success"
+        );
       } catch (err) {
         showToast(`Erro ao salvar cliente: ${err.message}`, "error");
       } finally {
         btnSubmit.disabled = false;
-        btnSubmit.textContent = "+ Cadastrar Lead";
+        btnSubmit.textContent = "+ Cadastrar Lead e Criar Pasta no Drive";
       }
+    }
+
+    async function gerarPastaDriveClienteExistente(id) {
+      const cliente = state.clientes.find((c) => c.id === id);
+      if (!cliente) return;
+      const nomeCompleto = obterNomeCompleto(cliente);
+      const tipoServico = cliente.tipo_servico || "Compra";
+      showToast(`Criando pasta no Google Drive para ${nomeCompleto}...`, "info");
+
+      try {
+        const urlDrive = await criarPastaDriveImovel(
+          `Cliente - ${nomeCompleto} (${tipoServico})`
+        );
+        const { error } = await supabase
+          .from("clientes")
+          .update({ link_drive_cliente: urlDrive })
+          .eq("id", id);
+
+        if (error) throw error;
+        cliente.link_drive_cliente = urlDrive;
+        renderizarClientes();
+        showToast("Pasta do cliente criada no Google Drive!", "success");
+      } catch (err) {
+        showToast(`Erro ao criar pasta no Drive: ${err.message}`, "error");
+      }
+    }
+
+    async function atualizarCamposProjetoCliente(id, camposAtualizados, msgSucesso = "Projeto do lead atualizado!") {
+      const { error } = await supabase
+        .from("clientes")
+        .update(camposAtualizados)
+        .eq("id", id);
+
+      if (error) {
+        showToast(`Erro ao salvar dados do projeto: ${error.message}`, "error");
+        return;
+      }
+
+      const idx = state.clientes.findIndex((c) => c.id === id);
+      if (idx !== -1) {
+        state.clientes[idx] = { ...state.clientes[idx], ...camposAtualizados };
+      }
+      renderizarClientes();
+      showToast(msgSucesso, "success");
+    }
+
+    function obterChecklistNormalizado(cliente) {
+      if (Array.isArray(cliente.checklist_docs) && cliente.checklist_docs.length > 0) {
+        return cliente.checklist_docs.map((d) => ({
+          item: String(d.item || ""),
+          ok: Boolean(d.ok)
+        }));
+      }
+      return CHECKLIST_DOCS_PADRAO.map((d) => ({ ...d }));
+    }
+
+    async function alternarItemChecklistCliente(id, docIndex, concluido) {
+      const cliente = state.clientes.find((c) => c.id === id);
+      if (!cliente) return;
+      const lista = obterChecklistNormalizado(cliente);
+      if (!lista[docIndex]) return;
+      lista[docIndex].ok = Boolean(concluido);
+
+      await atualizarCamposProjetoCliente(
+        id,
+        { checklist_docs: lista },
+        `Checklist atualizado: ${lista[docIndex].item}`
+      );
+    }
+
+    async function adicionarItemChecklistCliente(id, textoNovoItem) {
+      const limpo = String(textoNovoItem || "").trim();
+      if (!limpo) {
+        showToast("Digite o nome do documento para adicionar ao checklist.", "error");
+        return;
+      }
+      const cliente = state.clientes.find((c) => c.id === id);
+      if (!cliente) return;
+      const lista = obterChecklistNormalizado(cliente);
+      lista.push({ item: limpo, ok: false });
+
+      await atualizarCamposProjetoCliente(
+        id,
+        { checklist_docs: lista },
+        `Documento "${limpo}" adicionado ao checklist!`
+      );
     }
 
     function exportarLeadsMetaAdsCSV() {
@@ -2300,6 +2732,18 @@
       if (index !== -1) {
         state.clientes[index].status_funil = novoStatus;
         nomeLead = obterNomeCompleto(state.clientes[index]);
+      }
+
+      // Se a etapa exigir ação específica (ex: Pré-visitas, Visitas, Solicitação Docs, Confecção de Contrato), abre automaticamente o painel do projeto
+      const etapasExpansiveis = [
+        "Pré-visitas",
+        "Visitas",
+        "Solicitação de Documentação",
+        "Solicitação Docs",
+        "Confecção de Contrato"
+      ];
+      if (etapasExpansiveis.includes(novoStatus)) {
+        state.paineisProjetoAbertos[id] = true;
       }
 
       // Gatilho de Notificação: Mudança de status no funil
@@ -2359,19 +2803,33 @@
 
     function criarCardClienteHTML(cliente) {
       const nomeCompleto = obterNomeCompleto(cliente);
-      const numeroWhats = limparTelefoneBrasilDDI(cliente.telefone);
-      const linkWhats = numeroWhats
-        ? `https://wa.me/${numeroWhats}?text=${encodeURIComponent(
-            `Olá ${obterPrimeiroNome(cliente)}, tudo bem? Aqui é da Andressa Spagnol Imóveis.`
-          )}`
-        : "#";
+      const tipoServico = cliente.tipo_servico || "Compra";
+      const statusAtual = cliente.status_funil || "Proposta Enviada";
+      const { urlDouglas, urlAndressa } = gerarLinksWhatsAppDinamicos(cliente);
 
-      const opcoesStatus = STATUS_FUNIL.map(
-        (st) =>
-          `<option value="${escapeHtml(st)}" ${
-            cliente.status_funil === st ? "selected" : ""
-          }>${escapeHtml(st)}</option>`
-      ).join("");
+      // Opções dinâmicas de status segundo o Motor de Status (State Machine)
+      const listaStatusServico = obterStatusPorTipoServico(tipoServico);
+      const todosStatusCard = listaStatusServico.includes(statusAtual)
+        ? listaStatusServico
+        : [statusAtual, ...listaStatusServico];
+
+      const opcoesStatus = todosStatusCard
+        .map(
+          (st) =>
+            `<option value="${escapeHtml(st)}" ${
+              statusAtual === st ? "selected" : ""
+            }>${escapeHtml(st)}</option>`
+        )
+        .join("");
+
+      const opcoesTipoServico = ["Compra", "Venda", "Registro de Imóvel", "Aluguel"]
+        .map(
+          (ts) =>
+            `<option value="${escapeHtml(ts)}" ${
+              tipoServico === ts ? "selected" : ""
+            }>${escapeHtml(ts)}</option>`
+        )
+        .join("");
 
       const usuarioMarcadoAtual = cliente.usuario_marcado || "";
       const opcoesUsuarios = ["", "Andressa", "Douglas"]
@@ -2384,23 +2842,57 @@
         .join("");
 
       let badgeClass = "badge-prospeccao";
-      if (cliente.status_funil === "Visita Agendada") badgeClass = "badge-visita";
       if (
-        cliente.status_funil === "Proposta" ||
-        cliente.status_funil === "Proposta em Andamento" ||
-        cliente.status_funil === "Fechado"
+        statusAtual.includes("Visita") ||
+        statusAtual.includes("Fotos") ||
+        statusAtual.includes("Mídia")
+      ) {
+        badgeClass = "badge-visita";
+      } else if (
+        statusAtual.includes("Aceita") ||
+        statusAtual.includes("Contrato") ||
+        statusAtual.includes("Assinatura") ||
+        statusAtual === "Encerrado" ||
+        statusAtual === "Alugado" ||
+        statusAtual === "Fechado"
       ) {
         badgeClass = "badge-proposta";
       }
+
+      const temPastaDriveCliente = Boolean(
+        cliente.link_drive_cliente && cliente.link_drive_cliente.trim()
+      );
+
+      const checklistItens = obterChecklistNormalizado(cliente);
+      const concluidosChecklist = checklistItens.filter((d) => d.ok).length;
+      const painelAberto = Boolean(state.paineisProjetoAbertos[cliente.id]);
+
+      const checklistHTML = checklistItens
+        .map(
+          (doc, idx) => `
+            <label class="checklist-item ${doc.ok ? "done" : ""}">
+              <input
+                type="checkbox"
+                class="chk-doc-cliente"
+                data-id="${escapeHtml(cliente.id)}"
+                data-doc-index="${idx}"
+                ${doc.ok ? "checked" : ""}
+              />
+              <span>${escapeHtml(doc.item)}</span>
+            </label>
+          `
+        )
+        .join("");
 
       return `
         <article class="crm-card cliente-card" data-id="${escapeHtml(cliente.id)}">
           <div class="card-top">
             <div>
-              <h4 class="card-title">${escapeHtml(nomeCompleto)}</h4>
+              <span class="service-type-badge">🏷️ ${escapeHtml(tipoServico)}</span>
+              <h4 class="card-title" style="margin-top: 0.3rem;">${escapeHtml(nomeCompleto)}</h4>
               <span class="card-date">Cadastrado em ${formatarDataCurta(cliente.created_at)}</span>
             </div>
-            <span class="status-badge ${badgeClass}">${escapeHtml(cliente.status_funil)}</span>
+            <span class="status-badge ${badgeClass}">${escapeHtml(statusAtual)}</span>
           </div>
 
           ${
@@ -2422,7 +2914,7 @@
               ? `<p class="card-description"><strong>Perfil de Interesse:</strong> ${escapeHtml(
                   cliente.perfil_interesse
                 )}</p>`
-              : `<p class="card-description text-muted">Sem observações de perfil cadastradas.</p>`
+              : ""
           }
 
           ${
@@ -2433,11 +2925,157 @@
               : ""
           }
 
+          <!-- AUTOMAÇÃO GOOGLE DRIVE PARA CLIENTES -->
+          <div class="drive-action-wrapper">
+            ${
+              temPastaDriveCliente
+                ? `<a href="${escapeHtml(
+                    cliente.link_drive_cliente
+                  )}" target="_blank" rel="noopener noreferrer" class="btn-drive-folder">
+                    📁 Abrir Pasta do Cliente
+                  </a>`
+                : `<button type="button" class="btn-drive-folder btn-gerar-drive-cliente" data-id="${escapeHtml(
+                    cliente.id
+                  )}" style="cursor: pointer;">
+                    📁 Gerar e Abrir Pasta do Cliente no Drive
+                  </button>`
+            }
+          </div>
+
+          <!-- WHATSAPP DINÂMICO: CHAMAR COMO DOUGLAS / CHAMAR COMO ANDRESSA -->
+          <div>
+            <span class="card-date" style="display: block; margin-bottom: 0.25rem;">
+              📞 WhatsApp (${escapeHtml(cliente.telefone)}):
+            </span>
+            <div class="whatsapp-dual-actions">
+              <a
+                href="${urlDouglas}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn-whatsapp-sm"
+                title="Enviar mensagem padronizada de Douglas"
+              >
+                💬 Chamar como Douglas
+              </a>
+              <a
+                href="${urlAndressa}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn-whatsapp-sm"
+                title="Enviar mensagem padronizada de Andressa"
+              >
+                💬 Chamar como Andressa
+              </a>
+            </div>
+          </div>
+
+          <!-- BOTÃO EXPANSÍVEL DO PAINEL DE GESTÃO DE PROJETO DO LEAD -->
+          <button
+            type="button"
+            class="btn-toggle-projeto"
+            data-id="${escapeHtml(cliente.id)}"
+          >
+            <span>📂 Painel do Projeto (${concluidosChecklist}/${checklistItens.length} docs)</span>
+            <span>${painelAberto ? "▲ Recolher" : "▼ Expandir"}</span>
+          </button>
+
+          <!-- PAINEL DE PROJETO EXPANSÍVEL (CAMPOS CONDICIONAIS + CHECKLIST INTERATIVO) -->
+          <div
+            id="painel-projeto-${escapeHtml(cliente.id)}"
+            class="lead-project-panel ${painelAberto ? "" : "hidden"}"
+          >
+            <div class="form-group">
+              <label>Tipo de Serviço do Projeto</label>
+              <select class="form-control select-tipo-servico-card" data-id="${escapeHtml(cliente.id)}">
+                ${opcoesTipoServico}
+              </select>
+            </div>
+
+            ${
+              tipoServico === "Compra" || cliente.links_imoveis
+                ? `
+              <div class="form-group">
+                <label>🔗 Links de Imóveis / Pesquisa (Pré-visitas)</label>
+                <textarea
+                  class="form-control input-links-imoveis"
+                  data-id="${escapeHtml(cliente.id)}"
+                  style="min-height: 62px; font-size: 0.8rem;"
+                  placeholder="Cole links de imóveis pesquisados para este comprador..."
+                >${escapeHtml(cliente.links_imoveis || "")}</textarea>
+              </div>
+            `
+                : ""
+            }
+
+            ${
+              tipoServico === "Compra" || tipoServico === "Venda" || cliente.observacoes_visitas
+                ? `
+              <div class="form-group">
+                <label>📝 Observações de Visitas / Captação</label>
+                <textarea
+                  class="form-control input-observacoes-visitas"
+                  data-id="${escapeHtml(cliente.id)}"
+                  style="min-height: 62px; font-size: 0.8rem;"
+                  placeholder="Feedback das visitas realizadas, pontos fortes/fracos..."
+                >${escapeHtml(cliente.observacoes_visitas || "")}</textarea>
+              </div>
+            `
+                : ""
+            }
+
+            <div class="form-group">
+              <label>📄 Confecção de Contrato (Responsável)</label>
+              <select
+                class="form-control select-responsavel-contrato"
+                data-id="${escapeHtml(cliente.id)}"
+              >
+                <option value="Interno" ${
+                  (cliente.responsavel_contrato || "Interno") === "Interno" ? "selected" : ""
+                }>Interno (Escritório Andressa Spagnol)</option>
+                <option value="Parceiro" ${
+                  cliente.responsavel_contrato === "Parceiro" ? "selected" : ""
+                }>Parceiro</option>
+              </select>
+            </div>
+
+            <button
+              type="button"
+              class="btn-primary btn-salvar-projeto-card"
+              data-id="${escapeHtml(cliente.id)}"
+              style="padding: 0.48rem 0.75rem; font-size: 0.78rem;"
+            >
+              💾 Salvar Anotações e Contrato
+            </button>
+
+            <!-- CHECKLIST INTERATIVO DE DOCUMENTAÇÃO -->
+            <div class="form-group">
+              <label>✅ Checklist de Documentação (${concluidosChecklist}/${checklistItens.length})</label>
+              <div class="checklist-box">
+                ${checklistHTML}
+                <div class="checklist-add-row">
+                  <input
+                    type="text"
+                    id="novo-doc-input-${escapeHtml(cliente.id)}"
+                    class="form-control"
+                    style="padding: 0.35rem 0.55rem; font-size: 0.76rem;"
+                    placeholder="+ Novo documento..."
+                  />
+                  <button
+                    type="button"
+                    class="btn-secondary-outline btn-add-doc-checklist"
+                    data-id="${escapeHtml(cliente.id)}"
+                    style="padding: 0.35rem 0.65rem; font-size: 0.76rem;"
+                  >
+                    + Item
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="card-meta-row" style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
-            <a href="https://wa.me/${numeroWhats}" target="_blank" rel="noopener noreferrer" class="btn-whatsapp" title="Iniciar conversa rápida no WhatsApp">
-              <span>💬 WhatsApp: ${escapeHtml(cliente.telefone)}</span>
-            </a>
-            <label class="select-inline-label" style="max-width: 175px;">
+            <span class="card-date">Tagging:</span>
+            <label class="select-inline-label" style="max-width: 195px;">
               <select class="select-usuario-cliente" data-id="${escapeHtml(cliente.id)}" title="Marcar usuário neste lead">
                 ${opcoesUsuarios}
               </select>
@@ -2446,7 +3084,7 @@
 
           <div class="card-actions-footer">
             <label class="select-inline-label">
-              <span>Etapa:</span>
+              <span>Funil de Leads:</span>
               <select class="select-status-cliente" data-id="${escapeHtml(cliente.id)}">
                 ${opcoesStatus}
               </select>
@@ -2466,12 +3104,50 @@
       const containerLista = document.getElementById("clientes-lista-container");
       if (!containerKanban || !containerLista) return;
 
+      const servicoFiltro = state.filtroServicoClientes || "Todos";
+      const clientesFiltradosServico =
+        servicoFiltro === "Todos"
+          ? state.clientes
+          : state.clientes.filter((c) => (c.tipo_servico || "Compra") === servicoFiltro);
+
       if (state.clientesView === "kanban") {
         containerKanban.classList.remove("hidden");
         containerLista.classList.add("hidden");
-        containerKanban.innerHTML = STATUS_FUNIL.map((etapa) => {
-          const clientesEtapa = state.clientes.filter((c) => c.status_funil === etapa);
-          return `
+
+        // Define as colunas do Kanban de acordo com o Tipo de Serviço selecionado ou agrega as etapas em uso
+        let etapasKanban = [];
+        if (servicoFiltro !== "Todos") {
+          etapasKanban = [...obterStatusPorTipoServico(servicoFiltro)];
+        } else {
+          etapasKanban = [
+            "Proposta Enviada",
+            "Análise de Proposta",
+            "Aceita",
+            "Negada",
+            "Pré-visitas",
+            "Visitas",
+            "Solicitação de Documentação",
+            "Solicitação Docs",
+            "Confecção de Contrato",
+            "Assinatura",
+            "Encerrado"
+          ];
+        }
+
+        // Garante que qualquer lead com status customizado/legado também apareça em sua respectiva coluna
+        clientesFiltradosServico.forEach((c) => {
+          const st = c.status_funil || "Proposta Enviada";
+          if (!etapasKanban.includes(st)) {
+            etapasKanban.push(st);
+          }
+        });
+
+        containerKanban.innerHTML = etapasKanban
+          .map((etapa) => {
+            const clientesEtapa = clientesFiltradosServico.filter(
+              (c) => (c.status_funil || "Proposta Enviada") === etapa
+            );
+            return `
             <div class="kanban-column">
               <div class="kanban-column-header">
                 <h3>${escapeHtml(etapa)}</h3>
@@ -2486,14 +3162,17 @@
               </div>
             </div>
           `;
-        }).join("");
+          })
+          .join("");
       } else {
         containerKanban.classList.add("hidden");
         containerLista.classList.remove("hidden");
         containerLista.innerHTML =
-          state.clientes.length === 0
-            ? `<div class="empty-state-box"><p>Nenhum lead cadastrado ainda.</p></div>`
-            : `<div class="cards-grid">${state.clientes.map(criarCardClienteHTML).join("")}</div>`;
+          clientesFiltradosServico.length === 0
+            ? `<div class="empty-state-box"><p>Nenhum lead encontrado para o filtro selecionado.</p></div>`
+            : `<div class="cards-grid">${clientesFiltradosServico
+                .map(criarCardClienteHTML)
+                .join("")}</div>`;
       }
 
       const termoBuscaClientes = document.getElementById("busca-clientes")?.value || "";
@@ -2503,7 +3182,7 @@
     }
 
     // ========================================================================
-    // MÓDULO DE IMÓVEIS + GOOGLE DRIVE
+    // MÓDULO DE IMÓVEIS + GOOGLE DRIVE (BOTÕES DUPLOS: DOCUMENTOS E FOTOS)
     // ========================================================================
     async function criarPastaDriveImovel(tituloImovel) {
       const response = await fetch(CONFIG.WEBHOOK_URL, {
@@ -2690,11 +3369,20 @@
               <div class="drive-action-wrapper">
                 ${
                   temLinkDrive
-                    ? `<a href="${escapeHtml(
-                        imovel.link_drive_fotos
-                      )}" target="_blank" rel="noopener noreferrer" class="btn-drive-folder">
-                        📁 Abrir Pasta de Documentos/Fotos
-                      </a>`
+                    ? `
+                      <div class="drive-dual-buttons">
+                        <a href="${escapeHtml(
+                          imovel.link_drive_fotos
+                        )}" target="_blank" rel="noopener noreferrer" class="btn-drive-folder">
+                          📁 Abrir Documentos
+                        </a>
+                        <a href="${escapeHtml(
+                          imovel.link_drive_fotos
+                        )}" target="_blank" rel="noopener noreferrer" class="btn-drive-folder">
+                          🖼️ Abrir Fotos
+                        </a>
+                      </div>
+                    `
                     : `<span class="drive-missing">Pasta do Drive não vinculada</span>`
                 }
               </div>
@@ -2991,22 +3679,46 @@
     }
 
     // ========================================================================
-    // MÓDULO 4: PAINEL DE TAREFAS + AÇÕES VINCULADAS (TRANSAÇÃO DUPLA 2 EM 1)
+    // MÓDULO 4: PAINÉIS DESLIZANTES (NOVO LEAD, NOVA TAREFA, LISTA TAREFAS, NOTIFICAÇÕES)
     // ========================================================================
-    function toggleDrawerTarefas(abrir) {
-      const drawer = document.getElementById("drawer-tarefas");
-      const drawerNotif = document.getElementById("drawer-notificacoes");
-      const overlay = document.getElementById("drawer-overlay");
+    function fecharTodasDrawers() {
+      document.getElementById("drawer-novo-lead")?.classList.remove("open");
+      document.getElementById("drawer-nova-tarefa")?.classList.remove("open");
+      document.getElementById("drawer-lista-tarefas")?.classList.remove("open");
+      document.getElementById("drawer-notificacoes")?.classList.remove("open");
+      document.getElementById("drawer-overlay")?.classList.remove("open");
+    }
+
+    function toggleDrawerNovoLead(abrir) {
       if (abrir) {
-        drawerNotif?.classList.remove("open");
-        popularSelectClientesTarefa();
-        drawer?.classList.add("open");
-        overlay?.classList.add("open");
+        fecharTodasDrawers();
+        atualizarOpcoesStatusFormLead();
+        document.getElementById("drawer-novo-lead")?.classList.add("open");
+        document.getElementById("drawer-overlay")?.classList.add("open");
       } else {
-        drawer?.classList.remove("open");
-        if (!drawerNotif?.classList.contains("open")) {
-          overlay?.classList.remove("open");
-        }
+        fecharTodasDrawers();
+      }
+    }
+
+    function toggleDrawerNovaTarefa(abrir) {
+      if (abrir) {
+        fecharTodasDrawers();
+        popularSelectClientesTarefa();
+        document.getElementById("drawer-nova-tarefa")?.classList.add("open");
+        document.getElementById("drawer-overlay")?.classList.add("open");
+      } else {
+        fecharTodasDrawers();
+      }
+    }
+
+    function toggleDrawerListaTarefas(abrir) {
+      if (abrir) {
+        fecharTodasDrawers();
+        renderizarTarefas();
+        document.getElementById("drawer-lista-tarefas")?.classList.add("open");
+        document.getElementById("drawer-overlay")?.classList.add("open");
+      } else {
+        fecharTodasDrawers();
       }
     }
 
@@ -3133,6 +3845,7 @@
 
         renderizarTarefas();
         event.target.reset();
+        toggleDrawerNovaTarefa(false);
       } catch (err) {
         showToast(`Erro ao salvar tarefa: ${err.message}`, "error");
       } finally {
@@ -3229,19 +3942,13 @@
     // MÓDULO 5: CENTRAL DE NOTIFICAÇÕES (SININHO + OFF-CANVAS DRAWER)
     // ========================================================================
     function toggleDrawerNotificacoes(abrir) {
-      const drawer = document.getElementById("drawer-notificacoes");
-      const drawerTarefas = document.getElementById("drawer-tarefas");
-      const overlay = document.getElementById("drawer-overlay");
       if (abrir) {
-        drawerTarefas?.classList.remove("open");
+        fecharTodasDrawers();
         carregarNotificacoes();
-        drawer?.classList.add("open");
-        overlay?.classList.add("open");
+        document.getElementById("drawer-notificacoes")?.classList.add("open");
+        document.getElementById("drawer-overlay")?.classList.add("open");
       } else {
-        drawer?.classList.remove("open");
-        if (!drawerTarefas?.classList.contains("open")) {
-          overlay?.classList.remove("open");
-        }
+        fecharTodasDrawers();
       }
     }
 
@@ -3362,6 +4069,17 @@
       });
 
       document
+        .getElementById("cliente-tipo-servico")
+        ?.addEventListener("change", atualizarOpcoesStatusFormLead);
+
+      document
+        .getElementById("filtro-servico-clientes")
+        ?.addEventListener("change", (e) => {
+          state.filtroServicoClientes = e.target.value;
+          renderizarClientes();
+        });
+
+      document
         .getElementById("btn-exportar-meta-csv")
         ?.addEventListener("click", exportarLeadsMetaAdsCSV);
 
@@ -3436,13 +4154,28 @@
         .getElementById("form-nova-tarefa")
         ?.addEventListener("submit", adicionarTarefa);
 
-      // Eventos dos Painéis Laterais (Off-canvas Drawers: Tarefas e Notificações)
+      // Eventos dos Painéis Laterais (Off-canvas Drawers: Novo Lead, Nova Tarefa, Lista Tarefas, Notificações)
       document
-        .getElementById("btn-abrir-tarefas")
-        ?.addEventListener("click", () => toggleDrawerTarefas(true));
+        .getElementById("btn-abrir-novo-lead")
+        ?.addEventListener("click", () => toggleDrawerNovoLead(true));
       document
-        .getElementById("btn-fechar-tarefas")
-        ?.addEventListener("click", () => toggleDrawerTarefas(false));
+        .getElementById("btn-fechar-novo-lead")
+        ?.addEventListener("click", () => toggleDrawerNovoLead(false));
+
+      document
+        .getElementById("btn-abrir-nova-tarefa")
+        ?.addEventListener("click", () => toggleDrawerNovaTarefa(true));
+      document
+        .getElementById("btn-fechar-nova-tarefa")
+        ?.addEventListener("click", () => toggleDrawerNovaTarefa(false));
+
+      document
+        .getElementById("btn-abrir-lista-tarefas")
+        ?.addEventListener("click", () => toggleDrawerListaTarefas(true));
+      document
+        .getElementById("btn-fechar-lista-tarefas")
+        ?.addEventListener("click", () => toggleDrawerListaTarefas(false));
+
       document
         .getElementById("btn-abrir-notificacoes")
         ?.addEventListener("click", () => toggleDrawerNotificacoes(true));
@@ -3454,10 +4187,7 @@
         ?.addEventListener("click", marcarTodasNotificacoesComoLidas);
       document
         .getElementById("drawer-overlay")
-        ?.addEventListener("click", () => {
-          toggleDrawerTarefas(false);
-          toggleDrawerNotificacoes(false);
-        });
+        ?.addEventListener("click", fecharTodasDrawers);
 
       document.getElementById("lista-tarefas-drawer")?.addEventListener("change", (e) => {
         if (e.target.matches(".chk-tarefa")) {
@@ -3482,11 +4212,73 @@
           atualizarStatusCliente(e.target.dataset.id, e.target.value);
         } else if (e.target.matches(".select-usuario-cliente")) {
           atualizarUsuarioMarcadoCliente(e.target.dataset.id, e.target.value);
+        } else if (e.target.matches(".select-tipo-servico-card")) {
+          const id = e.target.dataset.id;
+          const novoServico = e.target.value;
+          const primeiroStatus = obterStatusPorTipoServico(novoServico)[0];
+          state.paineisProjetoAbertos[id] = true;
+          atualizarCamposProjetoCliente(
+            id,
+            { tipo_servico: novoServico, status_funil: primeiroStatus },
+            `Tipo de serviço alterado para "${novoServico}"!`
+          );
+        } else if (e.target.matches(".chk-doc-cliente")) {
+          const id = e.target.dataset.id;
+          const docIdx = Number(e.target.dataset.docIndex);
+          state.paineisProjetoAbertos[id] = true;
+          alternarItemChecklistCliente(id, docIdx, e.target.checked);
         }
       });
+
       sectionClientes?.addEventListener("click", (e) => {
         const deleteBtn = e.target.closest(".btn-delete-cliente");
-        if (deleteBtn) excluirCliente(deleteBtn.dataset.id, deleteBtn.dataset.nome);
+        if (deleteBtn) {
+          excluirCliente(deleteBtn.dataset.id, deleteBtn.dataset.nome);
+          return;
+        }
+
+        const toggleProjetoBtn = e.target.closest(".btn-toggle-projeto");
+        if (toggleProjetoBtn) {
+          const id = toggleProjetoBtn.dataset.id;
+          state.paineisProjetoAbertos[id] = !state.paineisProjetoAbertos[id];
+          renderizarClientes();
+          return;
+        }
+
+        const btnGerarDrive = e.target.closest(".btn-gerar-drive-cliente");
+        if (btnGerarDrive) {
+          gerarPastaDriveClienteExistente(btnGerarDrive.dataset.id);
+          return;
+        }
+
+        const btnSalvarProjeto = e.target.closest(".btn-salvar-projeto-card");
+        if (btnSalvarProjeto) {
+          const id = btnSalvarProjeto.dataset.id;
+          const cardEl = btnSalvarProjeto.closest(".cliente-card");
+          const linksImoveis = cardEl?.querySelector(".input-links-imoveis")?.value.trim() ?? "";
+          const obsVisitas = cardEl?.querySelector(".input-observacoes-visitas")?.value.trim() ?? "";
+          const respContrato = cardEl?.querySelector(".select-responsavel-contrato")?.value || "Interno";
+          state.paineisProjetoAbertos[id] = true;
+          atualizarCamposProjetoCliente(
+            id,
+            {
+              links_imoveis: linksImoveis,
+              observacoes_visitas: obsVisitas,
+              responsavel_contrato: respContrato
+            },
+            "Anotações de pesquisa, visitas e contrato salvas!"
+          );
+          return;
+        }
+
+        const btnAddDoc = e.target.closest(".btn-add-doc-checklist");
+        if (btnAddDoc) {
+          const id = btnAddDoc.dataset.id;
+          const inputEl = document.getElementById(`novo-doc-input-${id}`);
+          state.paineisProjetoAbertos[id] = true;
+          adicionarItemChecklistCliente(id, inputEl?.value || "");
+          return;
+        }
       });
 
       const sectionImoveis = document.getElementById("section-imoveis");
@@ -3511,6 +4303,7 @@
         if (deleteBtn) excluirConteudo(deleteBtn.dataset.id, deleteBtn.dataset.tema);
       });
 
+      atualizarOpcoesStatusFormLead();
       inicializarAutenticacao();
     });
   </script>

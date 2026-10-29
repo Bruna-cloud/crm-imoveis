@@ -168,3 +168,19 @@ CREATE POLICY "Notificacoes: acesso total para autenticados"
     TO authenticated
     USING (auth.uid() IS NOT NULL)
     WITH CHECK (auth.uid() IS NOT NULL);
+
+-- ============================================================================
+-- FASE 2: MOTOR DE GESTÃO DE PROJETOS IMOBILIÁRIOS (TABELA `clientes`)
+-- ============================================================================
+
+-- Remove a constraint fixa antiga de `status_funil` para permitir os pipelines dinâmicos por serviço
+ALTER TABLE public.clientes DROP CONSTRAINT IF EXISTS clientes_status_funil_check;
+
+-- Adiciona as 6 novas colunas do Gestor de Projetos na tabela `clientes`
+ALTER TABLE public.clientes
+    ADD COLUMN IF NOT EXISTS tipo_servico TEXT DEFAULT 'Compra',
+    ADD COLUMN IF NOT EXISTS links_imoveis TEXT DEFAULT '',
+    ADD COLUMN IF NOT EXISTS observacoes_visitas TEXT DEFAULT '',
+    ADD COLUMN IF NOT EXISTS checklist_docs JSONB DEFAULT '[]'::jsonb,
+    ADD COLUMN IF NOT EXISTS responsavel_contrato TEXT DEFAULT '',
+    ADD COLUMN IF NOT EXISTS link_drive_cliente TEXT DEFAULT '';
