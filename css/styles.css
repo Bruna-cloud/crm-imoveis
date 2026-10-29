@@ -1,27 +1,27 @@
 /* ============================================================================
    IDENTIDADE VISUAL E UI/UX - ANDRESSA SPAGNOL IMÓVEIS
-   Paleta: Vinho/Bordô Principal (#3B1425), Branco (#FFFFFF) e Cinza Claro (#F6F5F7)
-   Tipografia: Montserrat (Títulos/Marca) e Inter (Corpo/Formulários)
+   Paleta: Vinho/Bordô Principal (#2F0E1E), Branco (#FFFFFF) e Cinza Claro (#ECECEC)
+   Tipografia: Playfair Display (Títulos/Marca) e Montserrat (Corpo/Interface)
    ============================================================================ */
 
 :root {
-  --brand-primary: #3B1425;
-  --brand-primary-hover: #521D34;
-  --brand-primary-light: #6B2846;
+  --brand-primary: #2F0E1E;
+  --brand-primary-hover: #44152C;
+  --brand-primary-light: #5A1E3B;
   --brand-accent: #C5A059;
   --brand-accent-soft: #F9F4EB;
 
-  --bg-page: #F5F5F7;
+  --bg-page: #ECECEC;
   --bg-surface: #FFFFFF;
-  --bg-subtle: #FAFAFB;
+  --bg-subtle: #F7F6F8;
 
-  --text-primary: #1E1B1E;
-  --text-secondary: #5A5358;
-  --text-muted: #8C858A;
+  --text-primary: #1E191D;
+  --text-secondary: #5C5359;
+  --text-muted: #8C8288;
   --text-on-primary: #FFFFFF;
 
-  --border-color: #E6E3E6;
-  --border-focus: #3B1425;
+  --border-color: #DCD8DE;
+  --border-focus: #2F0E1E;
 
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -31,8 +31,8 @@
   --shadow-card-hover: 0 8px 24px rgba(59, 20, 37, 0.11);
   --shadow-header: 0 2px 12px rgba(59, 20, 37, 0.18);
 
-  --font-heading: "Montserrat", sans-serif;
-  --font-body: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: "Playfair Display", Georgia, serif;
+  --font-body: "Montserrat", sans-serif;
 }
 
 * {

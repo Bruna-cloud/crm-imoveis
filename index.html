@@ -8,11 +8,11 @@
   <link rel="icon" type="image/png" href="./assets/favicon.png" />
   <link rel="apple-touch-icon" href="./assets/favicon.png" />
 
-  <!-- Google Fonts: Montserrat & Inter -->
+  <!-- Google Fonts: Montserrat & Playfair Display (Identidade Visual Premium) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap"
     rel="stylesheet"
   />
 
@@ -47,8 +47,8 @@
       --shadow-card-hover: 0 12px 28px rgba(59, 20, 37, 0.12);
       --shadow-header: 0 4px 20px rgba(38, 11, 23, 0.25);
 
-      --font-heading: "Montserrat", sans-serif;
-      --font-body: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-heading: 'Playfair Display', Georgia, serif;
+      --font-body: 'Montserrat', sans-serif;
     }
 
     * {
@@ -1361,18 +1361,299 @@
       margin-top: 0.35rem;
     }
 
-    .kanban-board-dynamic {
+    h1, h2, h3, h4,
+    .brand-titles h1,
+    .auth-header h2,
+    .panel-header h2,
+    .drawer-header h3,
+    .detalhe-secao-titulo,
+    .kpi-value,
+    .footer-brand {
+      font-family: var(--font-heading);
+    }
+
+    body,
+    button,
+    input,
+    select,
+    textarea,
+    label,
+    table,
+    td,
+    th,
+    .btn-primary,
+    .btn-secondary,
+    .btn-secondary-outline,
+    .nav-tab-btn,
+    .kpi-label {
+      font-family: var(--font-body);
+    }
+
+    /* ========================================================================
+       LISTA COMPACTA (ESTILO ROWS / TABELA) & MACRO KANBAN
+       ======================================================================== */
+    .compact-table-container {
+      width: 100%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card);
+      overflow-x: auto;
+    }
+
+    .compact-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .compact-table th {
+      background: #F8F6F8;
+      color: var(--brand-primary);
+      font-family: var(--font-body);
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.85rem 1rem;
+      border-bottom: 2px solid var(--border-color);
+      white-space: nowrap;
+    }
+
+    .compact-table td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+      font-size: 0.84rem;
+      color: var(--text-primary);
+    }
+
+    .compact-table tbody tr.client-table-row {
+      transition: background-color 0.15s ease;
+      cursor: pointer;
+    }
+
+    .compact-table tbody tr.client-table-row:hover {
+      background-color: #FAF4F8;
+    }
+
+    .client-cell-primary {
       display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .client-avatar-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand-primary) 0%, #521D34 100%);
+      color: #FFFFFF;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .client-name-text {
+      font-weight: 600;
+      color: var(--brand-primary);
+      line-height: 1.25;
+    }
+
+    .client-subphone {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    /* Badges das 5 Macro-Fases */
+    .macro-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .macro-badge-comercial {
+      background: #EBF3FB;
+      color: #155E96;
+      border: 1px solid #B7DAFA;
+    }
+
+    .macro-badge-andamento {
+      background: #FEF7EA;
+      color: #A3650B;
+      border: 1px solid #F9DC9F;
+    }
+
+    .macro-badge-pausados {
+      background: #F3F2F5;
+      color: #555057;
+      border: 1px solid #D7D4DA;
+    }
+
+    .macro-badge-encerrados {
+      background: #EBF8EF;
+      color: #176B37;
+      border: 1px solid #ABE4BC;
+    }
+
+    .macro-badge-descartados {
+      background: #FDEEEE;
+      color: #9D1C24;
+      border: 1px solid #F8B9BC;
+    }
+
+    .micro-status-text {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      display: block;
+      margin-top: 0.15rem;
+    }
+
+    .row-actions-cell {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-table-action {
+      padding: 0.35rem 0.65rem;
+      font-size: 0.74rem;
+      font-weight: 600;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--brand-primary);
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+
+    .btn-table-action:hover {
+      border-color: var(--brand-accent);
+      background: #F8F4F0;
+    }
+
+    /* Macro Kanban Limpo (5 Colunas Fixas) */
+    .macro-kanban-board {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(240px, 1fr));
       gap: 1rem;
       overflow-x: auto;
       padding-bottom: 0.75rem;
       align-items: flex-start;
     }
 
-    .kanban-board-dynamic .kanban-column {
-      min-width: 295px;
-      max-width: 330px;
-      flex: 0 0 305px;
+    .macro-kanban-col {
+      background: #F4F3F5;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      display: flex;
+      flex-direction: column;
+      min-width: 240px;
+    }
+
+    .macro-kanban-col-header {
+      padding: 0.75rem 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--border-color);
+      background: #ECE9EE;
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    }
+
+    .macro-kanban-col-header h3 {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--brand-primary);
+      margin: 0;
+    }
+
+    .macro-kanban-col-body {
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      min-height: 180px;
+    }
+
+    .compact-kanban-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--brand-primary);
+      border-radius: var(--radius-sm);
+      padding: 0.8rem 0.85rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .compact-kanban-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-card);
+      border-color: var(--brand-accent);
+    }
+
+    .compact-kanban-card.macro-col-comercial { border-left-color: #155E96; }
+    .compact-kanban-card.macro-col-andamento { border-left-color: #A3650B; }
+    .compact-kanban-card.macro-col-pausados { border-left-color: #7A757C; }
+    .compact-kanban-card.macro-col-encerrados { border-left-color: #176B37; }
+    .compact-kanban-card.macro-col-descartados { border-left-color: #9D1C24; }
+
+    .compact-kanban-title {
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--brand-primary);
+      line-height: 1.25;
+    }
+
+    .compact-kanban-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
+    /* GAVETA LATERAL: PAINEL DO CLIENTE (MICRO-VISÃO) */
+    #drawer-detalhes-cliente {
+      width: 520px;
+      max-width: 95vw;
+    }
+
+    .detalhe-secao {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .detalhe-secao-titulo {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--brand-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.45rem;
     }
   </style>
 </head>
@@ -1488,10 +1769,10 @@
         </div>
       </section>
 
-      <!-- Navegação entre os 4 Módulos (Ordem: 1. Funil de Leads, 2. Google Drive, 3. Agenda, 4. Linha Editorial) -->
+      <!-- Navegação entre os 4 Módulos (Ordem: 1. Status do Cliente, 2. Google Drive, 3. Agenda, 4. Linha Editorial) -->
       <nav class="crm-tabs-nav" aria-label="Módulos do CRM">
         <button type="button" class="nav-tab-btn active" data-tab="clientes">
-          👥 Funil de Leads
+          👥 Status do Cliente
         </button>
         <button type="button" class="nav-tab-btn" data-tab="imoveis">
           🏠 Google Drive
@@ -1505,7 +1786,7 @@
       </nav>
 
       <!-- ====================================================================
-           1. FUNIL DE LEADS (GESTÃO DE PROJETOS IMOBILIÁRIOS + META ADS)
+           1. STATUS DO CLIENTE (GESTÃO DE PROJETOS IMOBILIÁRIOS + META ADS)
            ==================================================================== -->
       <section id="section-clientes">
         <div class="section-toolbar">
@@ -1525,7 +1806,7 @@
               id="filtro-servico-clientes"
               class="form-control"
               style="width: auto; min-width: 175px; padding: 0.5rem 0.75rem; font-size: 0.82rem;"
-              title="Filtrar colunas do Kanban por Tipo de Serviço"
+              title="Filtrar por Tipo de Serviço"
             >
               <option value="Todos">Todos os Serviços</option>
               <option value="Compra">Serviço: Compra</option>
@@ -1538,7 +1819,7 @@
               id="busca-clientes"
               class="search-filter-input"
               placeholder="🔍 Buscar cliente, telefone, perfil..."
-              oninput="window.filtrarCardsTempoReal(this.value, '.cliente-card')"
+              oninput="window.filtrarCardsTempoReal(this.value, '.client-table-row, .compact-kanban-card')"
             />
             <button
               type="button"
@@ -1550,18 +1831,18 @@
             </button>
 
             <div class="toggle-group" role="group" aria-label="Modo de visualização">
-              <button type="button" class="toggle-btn view-toggle-btn active" data-view="kanban">
-                Kanban
-              </button>
-              <button type="button" class="toggle-btn view-toggle-btn" data-view="lista">
+              <button type="button" class="toggle-btn view-toggle-btn active" data-view="lista">
                 Lista
+              </button>
+              <button type="button" class="toggle-btn view-toggle-btn" data-view="kanban">
+                Macro Kanban
               </button>
             </div>
           </div>
         </div>
 
-        <div id="clientes-kanban-container" class="kanban-board-dynamic"></div>
-        <div id="clientes-lista-container" class="hidden"></div>
+        <div id="clientes-lista-container" class="compact-table-container"></div>
+        <div id="clientes-kanban-container" class="macro-kanban-board hidden"></div>
       </section>
 
       <!-- ====================================================================
@@ -1923,21 +2204,18 @@
         </div>
 
         <div class="form-group">
-          <label for="cliente-status">Funil de Leads *</label>
+          <label for="cliente-status">Status do Cliente *</label>
           <select id="cliente-status" class="form-control" required>
-            <option value="Proposta Enviada">Proposta Enviada</option>
-            <option value="Análise de Proposta">Análise de Proposta</option>
-            <option value="Aceita">Aceita</option>
-            <option value="Negada">Negada</option>
-            <option value="Pré-visitas">Pré-visitas</option>
-            <option value="Visitas">Visitas</option>
-            <option value="Envio de Proposta">Envio de Proposta</option>
-            <option value="Análise">Análise</option>
-            <option value="Aceita/Negada">Aceita/Negada</option>
-            <option value="Solicitação Docs">Solicitação Docs</option>
-            <option value="Confecção de Contrato">Confecção de Contrato</option>
-            <option value="Assinatura">Assinatura</option>
-            <option value="Encerrado">Encerrado</option>
+            <option value="1. Envio de Proposta">1. Envio de Proposta</option>
+            <option value="2. Análise de Proposta">2. Análise de Proposta</option>
+            <option value="3. Proposta Aceita">3. Proposta Aceita</option>
+            <option value="4. Proposta Negada">4. Proposta Negada</option>
+            <option value="1. Pré-visitas">1. Pré-visitas</option>
+            <option value="2. Visitas">2. Visitas</option>
+            <option value="7. Solicitação de Documentação">7. Solicitação de Documentação</option>
+            <option value="8. Confecção de Contrato">8. Confecção de Contrato</option>
+            <option value="9. Assinatura">9. Assinatura</option>
+            <option value="10. Encerrado">10. Encerrado</option>
           </select>
         </div>
 
@@ -2016,27 +2294,25 @@
           </div>
 
           <div class="form-group">
-            <label for="tarefa-novo-status">Atualizar status do funil para:</label>
+            <label for="tarefa-novo-status">Atualizar Status do Cliente para:</label>
             <select id="tarefa-novo-status" class="form-control">
               <option value="nao_alterar" selected>Não alterar</option>
-              <option value="Proposta Enviada">Proposta Enviada</option>
-              <option value="Análise de Proposta">Análise de Proposta</option>
-              <option value="Aceita">Aceita</option>
-              <option value="Negada">Negada</option>
-              <option value="Pré-visitas">Pré-visitas</option>
-              <option value="Visitas">Visitas</option>
-              <option value="Envio de Proposta">Envio de Proposta</option>
-              <option value="Solicitação de Documentação">Solicitação de Documentação</option>
-              <option value="Confecção de Contrato">Confecção de Contrato</option>
-              <option value="Assinatura">Assinatura</option>
-              <option value="Encerrado">Encerrado</option>
-              <option value="Alugado">Alugado</option>
+              <option value="1. Envio de Proposta">1. Envio de Proposta</option>
+              <option value="2. Análise de Proposta">2. Análise de Proposta</option>
+              <option value="3. Proposta Aceita">3. Proposta Aceita</option>
+              <option value="4. Proposta Negada">4. Proposta Negada</option>
+              <option value="1. Pré-visitas">1. Pré-visitas</option>
+              <option value="2. Visitas">2. Visitas</option>
+              <option value="7. Solicitação de Documentação">7. Solicitação de Documentação</option>
+              <option value="8. Confecção de Contrato">8. Confecção de Contrato</option>
+              <option value="9. Assinatura">9. Assinatura</option>
+              <option value="10. Encerrado">10. Encerrado</option>
             </select>
           </div>
         </div>
 
         <button type="submit" id="btn-salvar-tarefa" class="btn-primary">
-          + Salvar Tarefa e Atualizar Funil
+          + Salvar Tarefa e Atualizar Status
         </button>
       </form>
     </div>
@@ -2086,6 +2362,25 @@
     </div>
   </aside>
 
+  <!-- ========================================================================
+       4. GAVETA LATERAL: PAINEL DO CLIENTE (MICRO-VISÃO E EDIÇÃO COMPLETA)
+       ======================================================================== -->
+  <aside id="drawer-detalhes-cliente" class="offcanvas-drawer" aria-labelledby="drawer-detalhes-cliente-title">
+    <div class="drawer-header">
+      <div style="display: flex; align-items: center; gap: 0.55rem; flex-wrap: wrap;">
+        <h3 id="drawer-detalhes-cliente-title">👤 Painel do Cliente</h3>
+        <span id="detalhes-badge-servico" class="service-type-badge"></span>
+      </div>
+      <button type="button" id="btn-fechar-detalhes-cliente" class="btn-drawer-close" aria-label="Fechar">
+        ✕
+      </button>
+    </div>
+
+    <div class="drawer-body" id="drawer-detalhes-cliente-body">
+      <!-- Injetado dinamicamente via JS ao clicar na linha da lista compacta ou no card do Macro Kanban -->
+    </div>
+  </aside>
+
   <!-- RODAPÉ OFICIAL -->
   <footer class="app-footer">
     <div class="footer-container">
@@ -2126,7 +2421,6 @@
         "https://script.google.com/macros/s/AKfycbwrVLCJbLjWI7PaaJIMu1KEE65pfGy7YfnVp5iGoO1MvB5QB4LXEy-NBkYxZjaY6wkNvA/exec"
     };
 
-    const STATUS_FUNIL = ["Prospecção", "Visita Agendada", "Proposta", "Fechado"];
     const STATUS_MARKETING = [
       "1. Fazer Fotos",
       "2. Pronto para Postar",
@@ -2135,7 +2429,7 @@
     ];
     const STATUS_CONTEUDO = ["Ideia", "Gravar", "Editar", "Pronto", "Postado"];
 
-    // Checklist padrão para Solicitação de Documentação (Registro de Imóvel / Compra / Venda)
+    // Checklist padrão para Solicitação de Documentação (Registro de Imóvel / Regularização)
     const CHECKLIST_DOCS_PADRAO = [
       { item: "Certidão Negativa Federal", ok: false },
       { item: "Certidão Negativa Estadual", ok: false },
@@ -2147,61 +2441,166 @@
     ];
 
     /**
-     * Motor de Status (State Machine) baseado no Tipo de Serviço do Lead/Cliente
+     * Motor de Status com Fases Numeradas por Tipo de Serviço
      */
-    function obterStatusPorTipoServico(tipoServico) {
-      const padraoInicial = [
-        "Proposta Enviada",
-        "Análise de Proposta",
-        "Aceita",
-        "Negada"
-      ];
+    const STATUS_POR_SERVICO = {
+      "Compra": [
+        "1. Pré-visitas",
+        "2. Visitas",
+        "3. Envio de Proposta",
+        "4. Análise de Proposta",
+        "5. Proposta Aceita",
+        "6. Proposta Negada",
+        "7. Solicitação de Documentação",
+        "8. Confecção de Contrato",
+        "9. Assinatura",
+        "10. Encerrado"
+      ],
+      "Venda": [
+        "1. Marcar Fotos/Vídeos",
+        "2. Fazer Fotos/Vídeos",
+        "3. Editar Mídia",
+        "4. Postar Anúncio",
+        "5. Visitas",
+        "6. Envio de Proposta",
+        "7. Análise de Proposta",
+        "8. Proposta Aceita",
+        "9. Proposta Negada",
+        "10. Solicitação de Documentação",
+        "11. Confecção de Contrato",
+        "12. Assinatura",
+        "13. Encerrado"
+      ],
+      "Registro de Imóvel": [
+        "1. Envio de Proposta",
+        "2. Análise de Proposta",
+        "3. Proposta Aceita",
+        "4. Proposta Negada",
+        "5. Solicitação de Documentação",
+        "6. Análise de Documentos",
+        "7. Protocolo em Cartório",
+        "8. Registro Concluído"
+      ],
+      "Aluguel": [
+        "1. Envio de Proposta",
+        "2. Análise de Proposta",
+        "3. Proposta Aceita",
+        "4. Proposta Negada",
+        "5. Análise Inicial",
+        "6. Alugado",
+        "7. Recusado"
+      ]
+    };
 
-      switch (tipoServico) {
-        case "Aluguel":
-          return [
-            ...padraoInicial,
-            "Análise Inicial",
-            "Alugado",
-            "Recusado"
-          ];
-        case "Registro de Imóvel":
-          return [
-            ...padraoInicial,
-            "Solicitação de Documentação"
-          ];
-        case "Compra":
-          return [
-            ...padraoInicial,
-            "Pré-visitas",
-            "Visitas",
-            "Envio de Proposta",
-            "Análise",
-            "Aceita/Negada",
-            "Solicitação Docs",
-            "Confecção de Contrato",
-            "Assinatura",
-            "Encerrado"
-          ];
-        case "Venda":
-          return [
-            ...padraoInicial,
-            "Marcar Fotos/Vídeos",
-            "Fazer Fotos/Vídeos",
-            "Editar Mídia",
-            "Postar",
-            "Visitas",
-            "Envio Proposta",
-            "Análise",
-            "Aceita/Negada",
-            "Solicitação Docs",
-            "Confecção de Contrato",
-            "Assinatura",
-            "Encerrado"
-          ];
-        default:
-          return padraoInicial;
+    function obterStatusPorTipoServico(tipoServico) {
+      const servico = (tipoServico || "").trim();
+      if (servico.includes("Registro") || servico.includes("Regularização")) {
+        return STATUS_POR_SERVICO["Registro de Imóvel"];
       }
+      return STATUS_POR_SERVICO[servico] || STATUS_POR_SERVICO["Compra"];
+    }
+
+    /**
+     * Macro-Kanban Limpo (5 Fases Fixas) e Mapeamento Inteligente
+     */
+    const MACRO_FASES = [
+      "Fase Comercial",
+      "Em andamento",
+      "Pausados",
+      "Encerrados",
+      "Descartados"
+    ];
+
+    function mapearMacroFase(statusCliente) {
+      const st = String(statusCliente || "").toLowerCase().trim();
+
+      // 1. Descartados
+      if (
+        st.includes("negad") ||
+        st.includes("recusad") ||
+        st.includes("descart") ||
+        st.includes("perdid") ||
+        st.includes("cancel")
+      ) {
+        return "Descartados";
+      }
+
+      // 2. Pausados
+      if (
+        st.includes("pausad") ||
+        st.includes("standby") ||
+        st.includes("aguardando") ||
+        st.includes("espera")
+      ) {
+        return "Pausados";
+      }
+
+      // 3. Encerrados
+      if (
+        st.includes("encerrad") ||
+        st.includes("alugado") ||
+        st.includes("registro concluído") ||
+        st.includes("concluíd") ||
+        st.includes("fechado") ||
+        st.includes("vendido") ||
+        st.includes("assinad") ||
+        st.includes("assinatura")
+      ) {
+        return "Encerrados";
+      }
+
+      // 4. Em andamento
+      if (
+        st.includes("contrato") ||
+        st.includes("solicita") ||
+        st.includes("documenta") ||
+        st.includes("cartório") ||
+        st.includes("protocolo") ||
+        st.includes("análise inicial") ||
+        st.includes("análise de doc") ||
+        st.includes("foto") ||
+        st.includes("vídeo") ||
+        st.includes("mídia") ||
+        st.includes("postar") ||
+        st.includes("anúncio")
+      ) {
+        return "Em andamento";
+      }
+
+      // 5. Fase Comercial (Padrão para prospecção, pré-visitas, visitas, propostas)
+      return "Fase Comercial";
+    }
+
+    function obterClasseMacroBadge(macroFase) {
+      switch (macroFase) {
+        case "Fase Comercial": return "macro-badge-comercial";
+        case "Em andamento": return "macro-badge-andamento";
+        case "Pausados": return "macro-badge-pausados";
+        case "Encerrados": return "macro-badge-encerrados";
+        case "Descartados": return "macro-badge-descartados";
+        default: return "macro-badge-comercial";
+      }
+    }
+
+    /**
+     * Formatação da data atual para ISO (YYYY-MM-DD)
+     */
+    function formatarDataISO(data = new Date()) {
+      const ano = data.getFullYear();
+      const mes = String(data.getMonth() + 1).padStart(2, "0");
+      const dia = String(data.getDate()).padStart(2, "0");
+      return `${ano}-${mes}-${dia}`;
+    }
+
+    /**
+     * Regra estrita de Nomenclatura da Pasta no Google Drive:
+     * EXATAMENTE: [primeiro_nome] [sobrenome] - [tipo_servico] - ([YYYY-MM-DD])
+     */
+    function gerarNomePastaCliente(primeiroNome, sobrenome, tipoServico) {
+      const nomeCompleto = `${(primeiroNome || "").trim()} ${(sobrenome || "").trim()}`.trim() || "Cliente";
+      const servico = (tipoServico || "Compra").trim();
+      const dataHoje = formatarDataISO();
+      return `${nomeCompleto} - ${servico} - (${dataHoje})`;
     }
 
     /**
@@ -2237,9 +2636,9 @@
     const state = {
       user: null,
       activeTab: "clientes",
-      clientesView: "kanban",
+      clientesView: "lista", // 'lista' (Padrão Compacto) | 'kanban' (Macro-Kanban)
+      clienteSelecionadoId: null,
       filtroServicoClientes: "Todos",
-      paineisProjetoAbertos: {},
       conteudosView: "kanban",
       filtroImoveis: "ativos",
       clientes: [],
@@ -2534,9 +2933,8 @@
       try {
         let linkDriveCliente = "";
         try {
-          linkDriveCliente = await criarPastaDriveImovel(
-            `Cliente - ${nomeCompleto} (${tipoServico})`
-          );
+          const nomePastaLead = gerarNomePastaCliente(primeiroNome, sobrenome, tipoServico);
+          linkDriveCliente = await criarPastaDriveImovel(nomePastaLead);
         } catch (driveErr) {
           console.warn("Aviso ao criar pasta do cliente no Drive:", driveErr.message);
         }
@@ -2597,39 +2995,70 @@
       }
     }
 
-    async function gerarPastaDriveClienteExistente(id) {
-      const cliente = state.clientes.find((c) => c.id === id);
+    /**
+     * Automação Google Drive para Clientes
+     * Mecanismo Anti-duplicação (debounce / disabled = true) e Nomenclatura Estrita:
+     * [primeiro_nome] [sobrenome] - [tipo_servico] - ([YYYY-MM-DD])
+     */
+    async function gerarPastaDriveCliente(clienteId, btnElement) {
+      if (!clienteId) return;
+      const cliente = state.clientes.find((c) => c.id === clienteId);
       if (!cliente) return;
-      const nomeCompleto = obterNomeCompleto(cliente);
+
+      if (btnElement) {
+        if (btnElement.disabled) return;
+        btnElement.disabled = true;
+        btnElement.textContent = "Criando pasta no Google Drive...";
+      }
+
+      const primeiroNome = obterPrimeiroNome(cliente);
+      const sobrenome = obterSobrenome(cliente);
       const tipoServico = cliente.tipo_servico || "Compra";
-      showToast(`Criando pasta no Google Drive para ${nomeCompleto}...`, "info");
+      const nomePastaExato = gerarNomePastaCliente(primeiroNome, sobrenome, tipoServico);
+
+      showToast(`Criando pasta "${nomePastaExato}" no Google Drive...`, "info");
 
       try {
-        const urlDrive = await criarPastaDriveImovel(
-          `Cliente - ${nomeCompleto} (${tipoServico})`
-        );
+        const urlDrive = await criarPastaDriveImovel(nomePastaExato);
         const { error } = await supabase
           .from("clientes")
           .update({ link_drive_cliente: urlDrive })
-          .eq("id", id);
+          .eq("id", clienteId);
 
         if (error) throw error;
         cliente.link_drive_cliente = urlDrive;
+
         renderizarClientes();
-        showToast("Pasta do cliente criada no Google Drive!", "success");
+
+        if (state.clienteSelecionadoId === clienteId) {
+          const driveWrapper = document.getElementById("drawer-drive-wrapper");
+          if (driveWrapper) {
+            driveWrapper.innerHTML = `
+              <a href="${escapeHtml(urlDrive)}" target="_blank" rel="noopener noreferrer" class="btn-drive-folder" style="text-align: center;">
+                📁 Abrir Pasta no Google Drive
+              </a>
+            `;
+          }
+        }
+
+        showToast("Pasta do cliente criada no Google Drive com sucesso!", "success");
       } catch (err) {
         showToast(`Erro ao criar pasta no Drive: ${err.message}`, "error");
+        if (btnElement) {
+          btnElement.disabled = false;
+          btnElement.textContent = "📁 Gerar pasta no Drive";
+        }
       }
     }
 
-    async function atualizarCamposProjetoCliente(id, camposAtualizados, msgSucesso = "Projeto do lead atualizado!") {
+    async function atualizarCamposProjetoCliente(id, camposAtualizados, msgSucesso = "Dados atualizados!") {
       const { error } = await supabase
         .from("clientes")
         .update(camposAtualizados)
         .eq("id", id);
 
       if (error) {
-        showToast(`Erro ao salvar dados do projeto: ${error.message}`, "error");
+        showToast(`Erro ao salvar dados: ${error.message}`, "error");
         return;
       }
 
@@ -2651,6 +3080,35 @@
       return CHECKLIST_DOCS_PADRAO.map((d) => ({ ...d }));
     }
 
+    function renderizarChecklistDrawer(cliente) {
+      const container = document.getElementById("drawer-checklist-items");
+      const contadorEl = document.getElementById("drawer-checklist-contador");
+      if (!container) return;
+
+      const checklistItens = obterChecklistNormalizado(cliente);
+      const concluidos = checklistItens.filter((d) => d.ok).length;
+
+      if (contadorEl) {
+        contadorEl.textContent = `(${concluidos}/${checklistItens.length})`;
+      }
+
+      container.innerHTML = checklistItens
+        .map(
+          (doc, idx) => `
+          <label class="checklist-item ${doc.ok ? "done" : ""}">
+            <input
+              type="checkbox"
+              class="chk-drawer-doc"
+              data-doc-index="${idx}"
+              ${doc.ok ? "checked" : ""}
+            />
+            <span>${escapeHtml(doc.item)}</span>
+          </label>
+        `
+        )
+        .join("");
+    }
+
     async function alternarItemChecklistCliente(id, docIndex, concluido) {
       const cliente = state.clientes.find((c) => c.id === id);
       if (!cliente) return;
@@ -2661,8 +3119,12 @@
       await atualizarCamposProjetoCliente(
         id,
         { checklist_docs: lista },
-        `Checklist atualizado: ${lista[docIndex].item}`
+        `Documento "${lista[docIndex].item}" atualizado!`
       );
+
+      if (state.clienteSelecionadoId === id) {
+        renderizarChecklistDrawer(cliente);
+      }
     }
 
     async function adicionarItemChecklistCliente(id, textoNovoItem) {
@@ -2681,6 +3143,10 @@
         { checklist_docs: lista },
         `Documento "${limpo}" adicionado ao checklist!`
       );
+
+      if (state.clienteSelecionadoId === id) {
+        renderizarChecklistDrawer(cliente);
+      }
     }
 
     function exportarLeadsMetaAdsCSV() {
@@ -2734,20 +3200,8 @@
         nomeLead = obterNomeCompleto(state.clientes[index]);
       }
 
-      // Se a etapa exigir ação específica (ex: Pré-visitas, Visitas, Solicitação Docs, Confecção de Contrato), abre automaticamente o painel do projeto
-      const etapasExpansiveis = [
-        "Pré-visitas",
-        "Visitas",
-        "Solicitação de Documentação",
-        "Solicitação Docs",
-        "Confecção de Contrato"
-      ];
-      if (etapasExpansiveis.includes(novoStatus)) {
-        state.paineisProjetoAbertos[id] = true;
-      }
-
-      // Gatilho de Notificação: Mudança de status no funil
-      await registrarNotificacao(`O lead ${nomeLead} mudou para ${novoStatus}`);
+      // Gatilho de Notificação: Mudança de status do cliente
+      await registrarNotificacao(`O lead ${nomeLead} mudou para "${novoStatus}"`);
 
       renderizarClientes();
       popularSelectClientesTarefa();
@@ -2798,22 +3252,233 @@
       popularSelectClientesTarefa();
       popularSelectClientesAgenda();
       atualizarContadoresResumo();
-      showToast("Lead removido.", "info");
+      showToast("Lead removido com sucesso.", "info");
     }
 
-    function criarCardClienteHTML(cliente) {
+    function obterIniciais(nomeCompleto) {
+      const partes = String(nomeCompleto || "").trim().split(/\s+/).filter(Boolean);
+      if (partes.length === 0) return "AS";
+      if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase();
+      return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+    }
+
+    /**
+     * Cria linha da Lista Compacta (Default View: estilo tabela refinada)
+     */
+    function criarLinhaClienteHTML(cliente) {
       const nomeCompleto = obterNomeCompleto(cliente);
       const tipoServico = cliente.tipo_servico || "Compra";
-      const statusAtual = cliente.status_funil || "Proposta Enviada";
-      const { urlDouglas, urlAndressa } = gerarLinksWhatsAppDinamicos(cliente);
+      const statusAtual = cliente.status_funil || "1. Pré-visitas";
+      const macroFase = mapearMacroFase(statusAtual);
+      const badgeClass = obterClasseMacroBadge(macroFase);
+      const telefoneLimpo = limparTelefoneBrasilDDI(cliente.telefone);
+      const iniciais = obterIniciais(nomeCompleto);
 
-      // Opções dinâmicas de status segundo o Motor de Status (State Machine)
+      return `
+        <tr class="client-table-row" data-id="${escapeHtml(cliente.id)}">
+          <td>
+            <div class="client-cell-primary">
+              <div class="client-avatar-badge">${escapeHtml(iniciais)}</div>
+              <div>
+                <span class="client-name-text">${escapeHtml(nomeCompleto)}</span>
+                ${
+                  telefoneLimpo
+                    ? `<a href="https://wa.me/${escapeHtml(
+                        telefoneLimpo
+                      )}" target="_blank" rel="noopener noreferrer" class="client-subphone" style="text-decoration: none; color: #128C7E;" title="Conversar no WhatsApp">📞 ${escapeHtml(
+                        cliente.telefone
+                      )}</a>`
+                    : `<span class="client-subphone">Sem telefone</span>`
+                }
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="service-type-badge">🏷️ ${escapeHtml(tipoServico)}</span>
+          </td>
+          <td>
+            <span class="macro-badge ${badgeClass}">${escapeHtml(macroFase)}</span>
+            <span class="micro-status-text">${escapeHtml(statusAtual)}</span>
+            ${
+              cliente.usuario_marcado
+                ? `<span class="tarefa-lead-tag" style="display:inline-block; margin-top:2px; font-size:0.68rem;">👤 ${escapeHtml(
+                    cliente.usuario_marcado
+                  )}</span>`
+                : ""
+            }
+          </td>
+          <td>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">${formatarDataCurta(
+              cliente.created_at
+            )}</span>
+          </td>
+          <td style="text-align: right;">
+            <div class="row-actions-cell" style="justify-content: flex-end;">
+              <button type="button" class="btn-table-action btn-abrir-detalhes" data-id="${escapeHtml(
+                cliente.id
+              )}" title="Abrir painel detalhado do cliente">
+                👁️ Detalhes
+              </button>
+              ${
+                telefoneLimpo
+                  ? `<a href="https://wa.me/${escapeHtml(
+                      telefoneLimpo
+                    )}" target="_blank" rel="noopener noreferrer" class="btn-table-action" style="color: #25D366; text-decoration: none;" title="Abrir WhatsApp">💬</a>`
+                  : ""
+              }
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+
+    /**
+     * Cria Card Compacto para as 5 Colunas Fixas do Macro-Kanban
+     */
+    function criarCardKanbanCompactoHTML(cliente) {
+      const nomeCompleto = obterNomeCompleto(cliente);
+      const tipoServico = cliente.tipo_servico || "Compra";
+      const statusAtual = cliente.status_funil || "1. Pré-visitas";
+      const macroFase = mapearMacroFase(statusAtual);
+      let colSlug = "comercial";
+      if (macroFase === "Em andamento") colSlug = "andamento";
+      else if (macroFase === "Pausados") colSlug = "pausados";
+      else if (macroFase === "Encerrados") colSlug = "encerrados";
+      else if (macroFase === "Descartados") colSlug = "descartados";
+
+      return `
+        <article class="compact-kanban-card macro-col-${colSlug}" data-id="${escapeHtml(cliente.id)}">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.35rem;">
+            <span class="service-type-badge" style="font-size: 0.68rem; padding: 0.15rem 0.45rem;">🏷️ ${escapeHtml(
+              tipoServico
+            )}</span>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">${formatarDataCurta(
+              cliente.created_at
+            )}</span>
+          </div>
+          <h4 class="compact-kanban-title">${escapeHtml(nomeCompleto)}</h4>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.35rem; flex-wrap: wrap;">
+            <span class="macro-badge ${obterClasseMacroBadge(
+              macroFase
+            )}" style="font-size: 0.68rem; padding: 0.15rem 0.45rem;">${escapeHtml(
+        statusAtual
+      )}</span>
+            ${
+              cliente.usuario_marcado
+                ? `<span class="tarefa-lead-tag" style="font-size: 0.68rem; padding: 0.15rem 0.45rem;">👤 ${escapeHtml(
+                    cliente.usuario_marcado
+                  )}</span>`
+                : ""
+            }
+          </div>
+        </article>
+      `;
+    }
+
+    /**
+     * Renderização Principal de Clientes:
+     * - Modo Lista (Padrão): Tabela compacta com linhas clicáveis
+     * - Modo Macro-Kanban: 5 Colunas Fixas com mapeamento inteligente
+     */
+    function renderizarClientes() {
+      const containerKanban = document.getElementById("clientes-kanban-container");
+      const containerLista = document.getElementById("clientes-lista-container");
+      if (!containerKanban || !containerLista) return;
+
+      const servicoFiltro = state.filtroServicoClientes || "Todos";
+      const clientesFiltrados =
+        servicoFiltro === "Todos"
+          ? state.clientes
+          : state.clientes.filter((c) => (c.tipo_servico || "Compra") === servicoFiltro);
+
+      if (state.clientesView === "kanban") {
+        containerKanban.classList.remove("hidden");
+        containerLista.classList.add("hidden");
+
+        containerKanban.innerHTML = MACRO_FASES.map((macroFase) => {
+          const clientesMacro = clientesFiltrados.filter(
+            (c) => mapearMacroFase(c.status_funil) === macroFase
+          );
+          return `
+            <div class="macro-kanban-col">
+              <div class="macro-kanban-col-header">
+                <h3>${escapeHtml(macroFase)}</h3>
+                <span class="kanban-count">${clientesMacro.length}</span>
+              </div>
+              <div class="macro-kanban-col-body">
+                ${
+                  clientesMacro.length > 0
+                    ? clientesMacro.map(criarCardKanbanCompactoHTML).join("")
+                    : `<div class="empty-column" style="font-size: 0.75rem; color: var(--text-muted); text-align: center; padding: 1.5rem 0.5rem;">Nenhum lead nesta fase.</div>`
+                }
+              </div>
+            </div>
+          `;
+        }).join("");
+      } else {
+        containerKanban.classList.add("hidden");
+        containerLista.classList.remove("hidden");
+
+        if (clientesFiltrados.length === 0) {
+          containerLista.innerHTML = `<div class="empty-state-box"><p>Nenhum lead encontrado para o filtro selecionado.</p></div>`;
+        } else {
+          containerLista.innerHTML = `
+            <table class="compact-table">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Serviço</th>
+                  <th>Status do Cliente</th>
+                  <th>Data</th>
+                  <th style="text-align: right;">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${clientesFiltrados.map(criarLinhaClienteHTML).join("")}
+              </tbody>
+            </table>
+          `;
+        }
+      }
+
+      const termoBuscaClientes = document.getElementById("busca-clientes")?.value || "";
+      if (termoBuscaClientes) {
+        filtrarCardsTempoReal(termoBuscaClientes, ".client-table-row, .compact-kanban-card");
+      }
+    }
+
+    /**
+     * Abre a Gaveta Lateral (Off-canvas Drawer) "Painel do Cliente"
+     * Apresenta visão micro detalhada, edição de status numerado, Google Drive,
+     * WhatsApp e Checklist de Documentação (apenas para Registro de Imóvel).
+     */
+    function abrirPainelDetalhesCliente(id) {
+      const cliente = state.clientes.find((c) => c.id === id);
+      if (!cliente) return;
+
+      state.clienteSelecionadoId = id;
+      fecharTodasDrawers();
+
+      const drawerEl = document.getElementById("drawer-detalhes-cliente");
+      const bodyEl = document.getElementById("drawer-detalhes-cliente-body");
+      const badgeServicoEl = document.getElementById("detalhes-badge-servico");
+      if (!drawerEl || !bodyEl) return;
+
+      const nomeCompleto = obterNomeCompleto(cliente);
+      const tipoServico = cliente.tipo_servico || "Compra";
+      const statusAtual = cliente.status_funil || "1. Pré-visitas";
+      const { urlDouglas, urlAndressa, numeroWhats } = gerarLinksWhatsAppDinamicos(cliente);
+
+      if (badgeServicoEl) {
+        badgeServicoEl.textContent = `🏷️ ${tipoServico}`;
+      }
+
       const listaStatusServico = obterStatusPorTipoServico(tipoServico);
-      const todosStatusCard = listaStatusServico.includes(statusAtual)
+      const statusOptionsList = listaStatusServico.includes(statusAtual)
         ? listaStatusServico
         : [statusAtual, ...listaStatusServico];
 
-      const opcoesStatus = todosStatusCard
+      const opcoesStatus = statusOptionsList
         .map(
           (st) =>
             `<option value="${escapeHtml(st)}" ${
@@ -2841,343 +3506,304 @@
         })
         .join("");
 
-      let badgeClass = "badge-prospeccao";
-      if (
-        statusAtual.includes("Visita") ||
-        statusAtual.includes("Fotos") ||
-        statusAtual.includes("Mídia")
-      ) {
-        badgeClass = "badge-visita";
-      } else if (
-        statusAtual.includes("Aceita") ||
-        statusAtual.includes("Contrato") ||
-        statusAtual.includes("Assinatura") ||
-        statusAtual === "Encerrado" ||
-        statusAtual === "Alugado" ||
-        statusAtual === "Fechado"
-      ) {
-        badgeClass = "badge-proposta";
-      }
-
-      const temPastaDriveCliente = Boolean(
+      const temPastaDrive = Boolean(
         cliente.link_drive_cliente && cliente.link_drive_cliente.trim()
       );
 
+      const isRegistroImovel =
+        tipoServico.includes("Registro") || tipoServico.includes("Regularização");
+
       const checklistItens = obterChecklistNormalizado(cliente);
       const concluidosChecklist = checklistItens.filter((d) => d.ok).length;
-      const painelAberto = Boolean(state.paineisProjetoAbertos[cliente.id]);
 
-      const checklistHTML = checklistItens
-        .map(
-          (doc, idx) => `
-            <label class="checklist-item ${doc.ok ? "done" : ""}">
-              <input
-                type="checkbox"
-                class="chk-doc-cliente"
-                data-id="${escapeHtml(cliente.id)}"
-                data-doc-index="${idx}"
-                ${doc.ok ? "checked" : ""}
-              />
-              <span>${escapeHtml(doc.item)}</span>
-            </label>
-          `
-        )
-        .join("");
-
-      return `
-        <article class="crm-card cliente-card" data-id="${escapeHtml(cliente.id)}">
-          <div class="card-top">
-            <div>
-              <span class="service-type-badge">🏷️ ${escapeHtml(tipoServico)}</span>
-              <h4 class="card-title" style="margin-top: 0.3rem;">${escapeHtml(nomeCompleto)}</h4>
-              <span class="card-date">Cadastrado em ${formatarDataCurta(cliente.created_at)}</span>
+      bodyEl.innerHTML = `
+        <!-- CABEÇALHO DO LEAD -->
+        <div class="detalhe-secao" style="background: linear-gradient(135deg, #FAF8F9 0%, #FFFFFF 100%);">
+          <div style="display: flex; align-items: center; gap: 0.85rem;">
+            <div class="client-avatar-badge" style="width: 44px; height: 44px; font-size: 1rem;">
+              ${escapeHtml(obterIniciais(nomeCompleto))}
             </div>
-            <span class="status-badge ${badgeClass}">${escapeHtml(statusAtual)}</span>
+            <div style="flex: 1; min-width: 0;">
+              <h4 style="font-family: var(--font-heading); font-size: 1.15rem; color: var(--brand-primary); margin-bottom: 0.15rem;">
+                ${escapeHtml(nomeCompleto)}
+              </h4>
+              <span style="font-size: 0.76rem; color: var(--text-muted);">
+                Cadastrado em ${formatarDataCurta(cliente.created_at)}
+              </span>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.82rem; margin-top: 0.35rem;">
+            ${
+              cliente.telefone
+                ? `<div>📞 <strong>Telefone:</strong> <a href="https://wa.me/${escapeHtml(
+                    numeroWhats
+                  )}" target="_blank" rel="noopener noreferrer" style="color: #128C7E; font-weight: 600;">${escapeHtml(
+                    cliente.telefone
+                  )}</a></div>`
+                : ""
+            }
+            ${
+              cliente.email
+                ? `<div>✉️ <strong>E-mail:</strong> <a href="mailto:${escapeHtml(
+                    cliente.email
+                  )}" style="color: var(--text-secondary);">${escapeHtml(cliente.email)}</a></div>`
+                : ""
+            }
+          </div>
+        </div>
+
+        <!-- 1. CLASSIFICAÇÃO E STATUS NUMERADO -->
+        <div class="detalhe-secao">
+          <div class="detalhe-secao-titulo">🎯 Status do Cliente e Tipo de Serviço</div>
+          
+          <div class="form-group" style="margin-bottom: 0.65rem;">
+            <label for="drawer-cliente-tipo-servico">Tipo de Serviço</label>
+            <select id="drawer-cliente-tipo-servico" class="form-control">
+              ${opcoesTipoServico}
+            </select>
           </div>
 
-          ${
-            usuarioMarcadoAtual
-              ? `<div><span class="tarefa-lead-tag">🏷️ Marcado: <strong>${escapeHtml(
-                  usuarioMarcadoAtual
-                )}</strong></span></div>`
-              : ""
-          }
+          <div class="form-group" style="margin-bottom: 0.65rem;">
+            <label for="drawer-cliente-status">Status do Cliente (Fases Numeradas)</label>
+            <select id="drawer-cliente-status" class="form-control" style="font-weight: 600;">
+              ${opcoesStatus}
+            </select>
+          </div>
 
-          ${
-            cliente.email
-              ? `<div class="card-email">✉️ ${escapeHtml(cliente.email)}</div>`
-              : ""
-          }
+          <div class="form-group">
+            <label for="drawer-cliente-usuario">Marcar Usuário Responsável</label>
+            <select id="drawer-cliente-usuario" class="form-control">
+              ${opcoesUsuarios}
+            </select>
+          </div>
+        </div>
 
-          ${
-            cliente.perfil_interesse
-              ? `<p class="card-description"><strong>Perfil de Interesse:</strong> ${escapeHtml(
-                  cliente.perfil_interesse
-                )}</p>`
-              : ""
-          }
-
-          ${
-            cliente.observacao
-              ? `<p class="card-description" style="border-left-color: var(--brand-accent);"><strong>Observação:</strong> ${escapeHtml(
-                  cliente.observacao
-                )}</p>`
-              : ""
-          }
-
-          <!-- AUTOMAÇÃO GOOGLE DRIVE PARA CLIENTES -->
-          <div class="drive-action-wrapper">
+        <!-- 2. GOOGLE DRIVE (DEBOUNCE / PREVENÇÃO DE DUPLICAÇÃO) -->
+        <div class="detalhe-secao">
+          <div class="detalhe-secao-titulo">📁 Google Drive do Cliente</div>
+          <p style="font-size: 0.76rem; color: var(--text-muted); margin: 0;">
+            Pasta sincronizada com o Apps Script: <code>[Nome] - [Serviço] - (Data)</code>
+          </p>
+          <div id="drawer-drive-wrapper" class="drive-action-wrapper" style="margin-top: 0.2rem;">
             ${
-              temPastaDriveCliente
+              temPastaDrive
                 ? `<a href="${escapeHtml(
                     cliente.link_drive_cliente
-                  )}" target="_blank" rel="noopener noreferrer" class="btn-drive-folder">
-                    📁 Abrir Pasta do Cliente
+                  )}" target="_blank" rel="noopener noreferrer" class="btn-drive-folder" style="text-align: center;">
+                    📁 Abrir Pasta no Google Drive
                   </a>`
-                : `<button type="button" class="btn-drive-folder btn-gerar-drive-cliente" data-id="${escapeHtml(
-                    cliente.id
-                  )}" style="cursor: pointer;">
-                    📁 Gerar e Abrir Pasta do Cliente no Drive
+                : `<button type="button" id="btn-drawer-gerar-drive" class="btn-drive-folder" style="cursor: pointer; width: 100%;">
+                    📁 Gerar pasta no Drive
                   </button>`
             }
           </div>
+        </div>
 
-          <!-- WHATSAPP DINÂMICO: CHAMAR COMO DOUGLAS / CHAMAR COMO ANDRESSA -->
-          <div>
-            <span class="card-date" style="display: block; margin-bottom: 0.25rem;">
-              📞 WhatsApp (${escapeHtml(cliente.telefone)}):
-            </span>
-            <div class="whatsapp-dual-actions">
-              <a
-                href="${urlDouglas}"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="btn-whatsapp-sm"
-                title="Enviar mensagem padronizada de Douglas"
-              >
-                💬 Chamar como Douglas
-              </a>
-              <a
-                href="${urlAndressa}"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="btn-whatsapp-sm"
-                title="Enviar mensagem padronizada de Andressa"
-              >
-                💬 Chamar como Andressa
-              </a>
-            </div>
+        <!-- 3. ATENDIMENTO RÁPIDO WHATSAPP -->
+        <div class="detalhe-secao">
+          <div class="detalhe-secao-titulo">💬 Atendimento WhatsApp</div>
+          <div class="whatsapp-dual-actions" style="grid-template-columns: 1fr 1fr;">
+            <a
+              href="${urlDouglas}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-whatsapp-sm"
+              title="Mensagem padronizada de Douglas (CRECI-ES 7734F)"
+              style="text-align: center; padding: 0.55rem;"
+            >
+              💬 Chamar como Douglas
+            </a>
+            <a
+              href="${urlAndressa}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-whatsapp-sm"
+              title="Mensagem padronizada de Andressa Spagnol"
+              style="text-align: center; padding: 0.55rem;"
+            >
+              💬 Chamar como Andressa
+            </a>
+          </div>
+        </div>
+
+        <!-- 4. DADOS OPERACIONAIS E OBSERVAÇÕES -->
+        <div class="detalhe-secao">
+          <div class="detalhe-secao-titulo">📝 Anotações Comerciais & Visitas</div>
+          
+          <div class="form-group" style="margin-bottom: 0.65rem;">
+            <label for="drawer-cliente-links-imoveis">🔗 Links de Imóveis Pesquisados (Pré-visitas)</label>
+            <textarea
+              id="drawer-cliente-links-imoveis"
+              class="form-control"
+              style="min-height: 60px; font-size: 0.8rem;"
+              placeholder="Cole URLs ou referências de imóveis para este cliente..."
+            >${escapeHtml(cliente.links_imoveis || "")}</textarea>
           </div>
 
-          <!-- BOTÃO EXPANSÍVEL DO PAINEL DE GESTÃO DE PROJETO DO LEAD -->
-          <button
-            type="button"
-            class="btn-toggle-projeto"
-            data-id="${escapeHtml(cliente.id)}"
-          >
-            <span>📂 Painel do Projeto (${concluidosChecklist}/${checklistItens.length} docs)</span>
-            <span>${painelAberto ? "▲ Recolher" : "▼ Expandir"}</span>
-          </button>
+          <div class="form-group" style="margin-bottom: 0.65rem;">
+            <label for="drawer-cliente-obs-visitas">📝 Observações de Visitas e Captação</label>
+            <textarea
+              id="drawer-cliente-obs-visitas"
+              class="form-control"
+              style="min-height: 60px; font-size: 0.8rem;"
+              placeholder="Feedback das visitas, impressões, preferências..."
+            >${escapeHtml(cliente.observacoes_visitas || "")}</textarea>
+          </div>
 
-          <!-- PAINEL DE PROJETO EXPANSÍVEL (CAMPOS CONDICIONAIS + CHECKLIST INTERATIVO) -->
-          <div
-            id="painel-projeto-${escapeHtml(cliente.id)}"
-            class="lead-project-panel ${painelAberto ? "" : "hidden"}"
-          >
-            <div class="form-group">
-              <label>Tipo de Serviço do Projeto</label>
-              <select class="form-control select-tipo-servico-card" data-id="${escapeHtml(cliente.id)}">
-                ${opcoesTipoServico}
-              </select>
-            </div>
+          <div class="form-group" style="margin-bottom: 0.65rem;">
+            <label for="drawer-cliente-resp-contrato">📄 Responsável pelo Contrato</label>
+            <select id="drawer-cliente-resp-contrato" class="form-control">
+              <option value="Interno" ${
+                (cliente.responsavel_contrato || "Interno") === "Interno" ? "selected" : ""
+              }>Interno (Escritório Andressa Spagnol)</option>
+              <option value="Parceiro" ${
+                cliente.responsavel_contrato === "Parceiro" ? "selected" : ""
+              }>Parceiro</option>
+            </select>
+          </div>
 
-            ${
-              tipoServico === "Compra" || cliente.links_imoveis
-                ? `
-              <div class="form-group">
-                <label>🔗 Links de Imóveis / Pesquisa (Pré-visitas)</label>
-                <textarea
-                  class="form-control input-links-imoveis"
-                  data-id="${escapeHtml(cliente.id)}"
-                  style="min-height: 62px; font-size: 0.8rem;"
-                  placeholder="Cole links de imóveis pesquisados para este comprador..."
-                >${escapeHtml(cliente.links_imoveis || "")}</textarea>
-              </div>
-            `
-                : ""
-            }
+          <div class="form-group">
+            <label for="drawer-cliente-observacao">📌 Observações Gerais / Perfil de Interesse</label>
+            <textarea
+              id="drawer-cliente-observacao"
+              class="form-control"
+              style="min-height: 60px; font-size: 0.8rem;"
+              placeholder="Notas gerais sobre o cliente..."
+            >${escapeHtml(cliente.observacao || cliente.perfil_interesse || "")}</textarea>
+          </div>
+        </div>
 
-            ${
-              tipoServico === "Compra" || tipoServico === "Venda" || cliente.observacoes_visitas
-                ? `
-              <div class="form-group">
-                <label>📝 Observações de Visitas / Captação</label>
-                <textarea
-                  class="form-control input-observacoes-visitas"
-                  data-id="${escapeHtml(cliente.id)}"
-                  style="min-height: 62px; font-size: 0.8rem;"
-                  placeholder="Feedback das visitas realizadas, pontos fortes/fracos..."
-                >${escapeHtml(cliente.observacoes_visitas || "")}</textarea>
-              </div>
-            `
-                : ""
-            }
+        <!-- 5. CHECKLIST DE DOCUMENTAÇÃO (ESTRITAMENTE CONDICIONAL PARA REGISTRO DE IMÓVEL) -->
+        <div id="drawer-secao-checklist" class="detalhe-secao" style="${
+          isRegistroImovel ? "display: flex;" : "display: none;"
+        }">
+          <div class="detalhe-secao-titulo">
+            <span>✅ Checklist de Documentação</span>
+            <span id="drawer-checklist-contador" style="font-size: 0.74rem; font-weight: 500; color: var(--text-muted);">
+              (${concluidosChecklist}/${checklistItens.length})
+            </span>
+          </div>
 
-            <div class="form-group">
-              <label>📄 Confecção de Contrato (Responsável)</label>
-              <select
-                class="form-control select-responsavel-contrato"
-                data-id="${escapeHtml(cliente.id)}"
-              >
-                <option value="Interno" ${
-                  (cliente.responsavel_contrato || "Interno") === "Interno" ? "selected" : ""
-                }>Interno (Escritório Andressa Spagnol)</option>
-                <option value="Parceiro" ${
-                  cliente.responsavel_contrato === "Parceiro" ? "selected" : ""
-                }>Parceiro</option>
-              </select>
-            </div>
+          <div class="checklist-box" id="drawer-checklist-items">
+            <!-- Itens de documentação injetados aqui -->
+          </div>
 
+          <div class="checklist-add-row" style="margin-top: 0.4rem;">
+            <input
+              type="text"
+              id="drawer-novo-doc-input"
+              class="form-control"
+              style="padding: 0.45rem 0.65rem; font-size: 0.8rem;"
+              placeholder="+ Novo documento (ex: IPTU, Matrícula)..."
+            />
             <button
               type="button"
-              class="btn-primary btn-salvar-projeto-card"
-              data-id="${escapeHtml(cliente.id)}"
-              style="padding: 0.48rem 0.75rem; font-size: 0.78rem;"
+              id="btn-drawer-add-doc"
+              class="btn-secondary-outline"
+              style="padding: 0.45rem 0.85rem; font-size: 0.8rem; white-space: nowrap;"
             >
-              💾 Salvar Anotações e Contrato
-            </button>
-
-            <!-- CHECKLIST INTERATIVO DE DOCUMENTAÇÃO -->
-            <div class="form-group">
-              <label>✅ Checklist de Documentação (${concluidosChecklist}/${checklistItens.length})</label>
-              <div class="checklist-box">
-                ${checklistHTML}
-                <div class="checklist-add-row">
-                  <input
-                    type="text"
-                    id="novo-doc-input-${escapeHtml(cliente.id)}"
-                    class="form-control"
-                    style="padding: 0.35rem 0.55rem; font-size: 0.76rem;"
-                    placeholder="+ Novo documento..."
-                  />
-                  <button
-                    type="button"
-                    class="btn-secondary-outline btn-add-doc-checklist"
-                    data-id="${escapeHtml(cliente.id)}"
-                    style="padding: 0.35rem 0.65rem; font-size: 0.76rem;"
-                  >
-                    + Item
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card-meta-row" style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
-            <span class="card-date">Tagging:</span>
-            <label class="select-inline-label" style="max-width: 195px;">
-              <select class="select-usuario-cliente" data-id="${escapeHtml(cliente.id)}" title="Marcar usuário neste lead">
-                ${opcoesUsuarios}
-              </select>
-            </label>
-          </div>
-
-          <div class="card-actions-footer">
-            <label class="select-inline-label">
-              <span>Funil de Leads:</span>
-              <select class="select-status-cliente" data-id="${escapeHtml(cliente.id)}">
-                ${opcoesStatus}
-              </select>
-            </label>
-            <button type="button" class="btn-icon-delete btn-delete-cliente" data-id="${escapeHtml(
-              cliente.id
-            )}" data-nome="${escapeHtml(nomeCompleto)}">
-              Excluir
+              + Adicionar
             </button>
           </div>
-        </article>
+        </div>
+
+        <!-- AÇÕES FINAIS -->
+        <div style="display: flex; flex-direction: column; gap: 0.65rem; margin-top: 0.5rem; margin-bottom: 1.5rem;">
+          <button type="button" id="btn-drawer-salvar-cliente" class="btn-primary" style="width: 100%; padding: 0.85rem; font-size: 0.92rem;">
+            💾 Salvar Alterações do Cliente
+          </button>
+          <button type="button" id="btn-drawer-excluir-cliente" class="btn-icon-delete" style="align-self: center; font-size: 0.82rem; padding: 0.4rem 0.8rem;">
+            🗑️ Excluir Lead Permanentemente
+          </button>
+        </div>
       `;
-    }
 
-    function renderizarClientes() {
-      const containerKanban = document.getElementById("clientes-kanban-container");
-      const containerLista = document.getElementById("clientes-lista-container");
-      if (!containerKanban || !containerLista) return;
-
-      const servicoFiltro = state.filtroServicoClientes || "Todos";
-      const clientesFiltradosServico =
-        servicoFiltro === "Todos"
-          ? state.clientes
-          : state.clientes.filter((c) => (c.tipo_servico || "Compra") === servicoFiltro);
-
-      if (state.clientesView === "kanban") {
-        containerKanban.classList.remove("hidden");
-        containerLista.classList.add("hidden");
-
-        // Define as colunas do Kanban de acordo com o Tipo de Serviço selecionado ou agrega as etapas em uso
-        let etapasKanban = [];
-        if (servicoFiltro !== "Todos") {
-          etapasKanban = [...obterStatusPorTipoServico(servicoFiltro)];
-        } else {
-          etapasKanban = [
-            "Proposta Enviada",
-            "Análise de Proposta",
-            "Aceita",
-            "Negada",
-            "Pré-visitas",
-            "Visitas",
-            "Solicitação de Documentação",
-            "Solicitação Docs",
-            "Confecção de Contrato",
-            "Assinatura",
-            "Encerrado"
-          ];
-        }
-
-        // Garante que qualquer lead com status customizado/legado também apareça em sua respectiva coluna
-        clientesFiltradosServico.forEach((c) => {
-          const st = c.status_funil || "Proposta Enviada";
-          if (!etapasKanban.includes(st)) {
-            etapasKanban.push(st);
-          }
-        });
-
-        containerKanban.innerHTML = etapasKanban
-          .map((etapa) => {
-            const clientesEtapa = clientesFiltradosServico.filter(
-              (c) => (c.status_funil || "Proposta Enviada") === etapa
-            );
-            return `
-            <div class="kanban-column">
-              <div class="kanban-column-header">
-                <h3>${escapeHtml(etapa)}</h3>
-                <span class="kanban-count">${clientesEtapa.length}</span>
-              </div>
-              <div class="kanban-column-body">
-                ${
-                  clientesEtapa.length > 0
-                    ? clientesEtapa.map(criarCardClienteHTML).join("")
-                    : `<div class="empty-column">Nenhum cliente nesta etapa.</div>`
-                }
-              </div>
-            </div>
-          `;
-          })
-          .join("");
-      } else {
-        containerKanban.classList.add("hidden");
-        containerLista.classList.remove("hidden");
-        containerLista.innerHTML =
-          clientesFiltradosServico.length === 0
-            ? `<div class="empty-state-box"><p>Nenhum lead encontrado para o filtro selecionado.</p></div>`
-            : `<div class="cards-grid">${clientesFiltradosServico
-                .map(criarCardClienteHTML)
-                .join("")}</div>`;
+      if (isRegistroImovel) {
+        renderizarChecklistDrawer(cliente);
       }
 
-      const termoBuscaClientes = document.getElementById("busca-clientes")?.value || "";
-      if (termoBuscaClientes) {
-        filtrarCardsTempoReal(termoBuscaClientes, ".cliente-card");
+      drawerEl.classList.add("open");
+      document.getElementById("drawer-overlay")?.classList.add("open");
+    }
+
+    function fecharPainelDetalhesCliente() {
+      document.getElementById("drawer-detalhes-cliente")?.classList.remove("open");
+      document.getElementById("drawer-overlay")?.classList.remove("open");
+      state.clienteSelecionadoId = null;
+    }
+
+    async function salvarDetalhesClienteDrawer(clienteId) {
+      const cliente = state.clientes.find((c) => c.id === clienteId);
+      if (!cliente) return;
+
+      const btnSalvar = document.getElementById("btn-drawer-salvar-cliente");
+      if (btnSalvar) {
+        btnSalvar.disabled = true;
+        btnSalvar.textContent = "Salvando alterações...";
+      }
+
+      try {
+        const tipoServico =
+          document.getElementById("drawer-cliente-tipo-servico")?.value || cliente.tipo_servico;
+        const statusFunil =
+          document.getElementById("drawer-cliente-status")?.value || cliente.status_funil;
+        const usuarioMarcado =
+          document.getElementById("drawer-cliente-usuario")?.value || "";
+        const linksImoveis =
+          document.getElementById("drawer-cliente-links-imoveis")?.value.trim() ?? "";
+        const obsVisitas =
+          document.getElementById("drawer-cliente-obs-visitas")?.value.trim() ?? "";
+        const respContrato =
+          document.getElementById("drawer-cliente-resp-contrato")?.value || "Interno";
+        const observacao =
+          document.getElementById("drawer-cliente-observacao")?.value.trim() ?? "";
+
+        const statusMudou = statusFunil !== cliente.status_funil;
+        const usuarioMudou = usuarioMarcado !== (cliente.usuario_marcado || "");
+
+        const camposAtualizados = {
+          tipo_servico: tipoServico,
+          status_funil: statusFunil,
+          usuario_marcado: usuarioMarcado,
+          links_imoveis: linksImoveis,
+          observacoes_visitas: obsVisitas,
+          responsavel_contrato: respContrato,
+          observacao: observacao
+        };
+
+        const { error } = await supabase
+          .from("clientes")
+          .update(camposAtualizados)
+          .eq("id", clienteId);
+
+        if (error) throw error;
+
+        Object.assign(cliente, camposAtualizados);
+
+        if (statusMudou) {
+          await registrarNotificacao(
+            `O lead ${obterNomeCompleto(cliente)} mudou para "${statusFunil}"`
+          );
+        }
+        if (usuarioMudou && usuarioMarcado) {
+          await registrarNotificacao(
+            `Você (${usuarioMarcado}) foi marcado(a) no lead ${obterNomeCompleto(cliente)}`
+          );
+        }
+
+        renderizarClientes();
+        popularSelectClientesTarefa();
+        popularSelectClientesAgenda();
+        atualizarContadoresResumo();
+        showToast("Dados do cliente salvos com sucesso!", "success");
+        fecharPainelDetalhesCliente();
+      } catch (err) {
+        showToast(`Erro ao salvar cliente: ${err.message}`, "error");
+      } finally {
+        if (btnSalvar) {
+          btnSalvar.disabled = false;
+          btnSalvar.textContent = "💾 Salvar Alterações do Cliente";
+        }
       }
     }
 
@@ -3686,7 +4312,9 @@
       document.getElementById("drawer-nova-tarefa")?.classList.remove("open");
       document.getElementById("drawer-lista-tarefas")?.classList.remove("open");
       document.getElementById("drawer-notificacoes")?.classList.remove("open");
+      document.getElementById("drawer-detalhes-cliente")?.classList.remove("open");
       document.getElementById("drawer-overlay")?.classList.remove("open");
+      state.clienteSelecionadoId = null;
     }
 
     function toggleDrawerNovoLead(abrir) {
@@ -4206,78 +4834,108 @@
         if (btnLida) marcarNotificacaoComoLida(btnLida.dataset.id);
       });
 
-      const sectionClientes = document.getElementById("section-clientes");
-      sectionClientes?.addEventListener("change", (e) => {
-        if (e.target.matches(".select-status-cliente")) {
-          atualizarStatusCliente(e.target.dataset.id, e.target.value);
-        } else if (e.target.matches(".select-usuario-cliente")) {
-          atualizarUsuarioMarcadoCliente(e.target.dataset.id, e.target.value);
-        } else if (e.target.matches(".select-tipo-servico-card")) {
-          const id = e.target.dataset.id;
-          const novoServico = e.target.value;
-          const primeiroStatus = obterStatusPorTipoServico(novoServico)[0];
-          state.paineisProjetoAbertos[id] = true;
-          atualizarCamposProjetoCliente(
-            id,
-            { tipo_servico: novoServico, status_funil: primeiroStatus },
-            `Tipo de serviço alterado para "${novoServico}"!`
-          );
-        } else if (e.target.matches(".chk-doc-cliente")) {
-          const id = e.target.dataset.id;
-          const docIdx = Number(e.target.dataset.docIndex);
-          state.paineisProjetoAbertos[id] = true;
-          alternarItemChecklistCliente(id, docIdx, e.target.checked);
+      // Eventos do Painel Lateral do Cliente (Off-canvas Drawer: Visão Detalhada)
+      document
+        .getElementById("btn-fechar-detalhes-cliente")
+        ?.addEventListener("click", fecharPainelDetalhesCliente);
+
+      // Clique nas Linhas da Lista Compacta (Abre Gaveta de Detalhes)
+      document.getElementById("clientes-lista-container")?.addEventListener("click", (e) => {
+        if (e.target.closest("a")) return; // Não interfere nos links de telefone/WhatsApp
+        const row = e.target.closest(".client-table-row");
+        if (row && row.dataset.id) {
+          abrirPainelDetalhesCliente(row.dataset.id);
         }
       });
 
-      sectionClientes?.addEventListener("click", (e) => {
-        const deleteBtn = e.target.closest(".btn-delete-cliente");
-        if (deleteBtn) {
-          excluirCliente(deleteBtn.dataset.id, deleteBtn.dataset.nome);
+      // Clique nos Cards do Macro-Kanban (Abre Gaveta de Detalhes)
+      document.getElementById("clientes-kanban-container")?.addEventListener("click", (e) => {
+        if (e.target.closest("a")) return;
+        const card = e.target.closest(".compact-kanban-card");
+        if (card && card.dataset.id) {
+          abrirPainelDetalhesCliente(card.dataset.id);
+        }
+      });
+
+      // Eventos Internos do Drawer de Detalhes do Cliente
+      const drawerDetalhesEl = document.getElementById("drawer-detalhes-cliente");
+      drawerDetalhesEl?.addEventListener("change", (e) => {
+        if (e.target.id === "drawer-cliente-tipo-servico") {
+          const novoServico = e.target.value;
+          const statusSelect = document.getElementById("drawer-cliente-status");
+          if (statusSelect) {
+            const lista = obterStatusPorTipoServico(novoServico);
+            statusSelect.innerHTML = lista
+              .map((st) => `<option value="${escapeHtml(st)}">${escapeHtml(st)}</option>`)
+              .join("");
+          }
+          // Regra Estrita: Checklist de Documentação aparece APENAS para Registro de Imóvel / Regularização
+          const secaoChecklist = document.getElementById("drawer-secao-checklist");
+          if (secaoChecklist) {
+            const isReg = novoServico.includes("Registro") || novoServico.includes("Regularização");
+            secaoChecklist.style.display = isReg ? "flex" : "none";
+            if (isReg && state.clienteSelecionadoId) {
+              const c = state.clientes.find((cli) => cli.id === state.clienteSelecionadoId);
+              if (c) renderizarChecklistDrawer(c);
+            }
+          }
+        } else if (e.target.matches(".chk-drawer-doc")) {
+          const docIdx = Number(e.target.dataset.docIndex);
+          if (state.clienteSelecionadoId) {
+            alternarItemChecklistCliente(state.clienteSelecionadoId, docIdx, e.target.checked);
+          }
+        }
+      });
+
+      drawerDetalhesEl?.addEventListener("click", (e) => {
+        // Salvar dados do formulário do Drawer
+        if (e.target.closest("#btn-drawer-salvar-cliente")) {
+          if (state.clienteSelecionadoId) {
+            salvarDetalhesClienteDrawer(state.clienteSelecionadoId);
+          }
           return;
         }
 
-        const toggleProjetoBtn = e.target.closest(".btn-toggle-projeto");
-        if (toggleProjetoBtn) {
-          const id = toggleProjetoBtn.dataset.id;
-          state.paineisProjetoAbertos[id] = !state.paineisProjetoAbertos[id];
-          renderizarClientes();
+        // Gerar pasta do Drive (com debounce / disabled = true)
+        const btnDrive = e.target.closest("#btn-drawer-gerar-drive");
+        if (btnDrive) {
+          if (state.clienteSelecionadoId) {
+            gerarPastaDriveCliente(state.clienteSelecionadoId, btnDrive);
+          }
           return;
         }
 
-        const btnGerarDrive = e.target.closest(".btn-gerar-drive-cliente");
-        if (btnGerarDrive) {
-          gerarPastaDriveClienteExistente(btnGerarDrive.dataset.id);
+        // Excluir cliente permanentemente
+        if (e.target.closest("#btn-drawer-excluir-cliente")) {
+          if (state.clienteSelecionadoId) {
+            const c = state.clientes.find((cli) => cli.id === state.clienteSelecionadoId);
+            if (c) {
+              excluirCliente(c.id, obterNomeCompleto(c));
+              fecharPainelDetalhesCliente();
+            }
+          }
           return;
         }
 
-        const btnSalvarProjeto = e.target.closest(".btn-salvar-projeto-card");
-        if (btnSalvarProjeto) {
-          const id = btnSalvarProjeto.dataset.id;
-          const cardEl = btnSalvarProjeto.closest(".cliente-card");
-          const linksImoveis = cardEl?.querySelector(".input-links-imoveis")?.value.trim() ?? "";
-          const obsVisitas = cardEl?.querySelector(".input-observacoes-visitas")?.value.trim() ?? "";
-          const respContrato = cardEl?.querySelector(".select-responsavel-contrato")?.value || "Interno";
-          state.paineisProjetoAbertos[id] = true;
-          atualizarCamposProjetoCliente(
-            id,
-            {
-              links_imoveis: linksImoveis,
-              observacoes_visitas: obsVisitas,
-              responsavel_contrato: respContrato
-            },
-            "Anotações de pesquisa, visitas e contrato salvas!"
-          );
+        // Adicionar novo item manual ao checklist (Correção de Bug do EventListener)
+        if (e.target.closest("#btn-drawer-add-doc")) {
+          const inputDoc = document.getElementById("drawer-novo-doc-input");
+          if (inputDoc && state.clienteSelecionadoId) {
+            adicionarItemChecklistCliente(state.clienteSelecionadoId, inputDoc.value);
+            inputDoc.value = "";
+          }
           return;
         }
+      });
 
-        const btnAddDoc = e.target.closest(".btn-add-doc-checklist");
-        if (btnAddDoc) {
-          const id = btnAddDoc.dataset.id;
-          const inputEl = document.getElementById(`novo-doc-input-${id}`);
-          state.paineisProjetoAbertos[id] = true;
-          adicionarItemChecklistCliente(id, inputEl?.value || "");
-          return;
+      drawerDetalhesEl?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && e.target.id === "drawer-novo-doc-input") {
+          e.preventDefault();
+          const inputDoc = e.target;
+          if (inputDoc && state.clienteSelecionadoId) {
+            adicionarItemChecklistCliente(state.clienteSelecionadoId, inputDoc.value);
+            inputDoc.value = "";
+          }
         }
       });
 
