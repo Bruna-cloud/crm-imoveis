@@ -3347,19 +3347,31 @@
     }
 
     async function excluirCliente(id, nome) {
-      if (!window.confirm(`Deseja realmente remover o lead "${nome}"?`)) return;
-      const { error } = await supabase.from("clientes").delete().eq("id", id);
-      if (error) {
-        showToast(`Erro ao excluir cliente: ${error.message}`, "error");
-        return;
+      if (!window.confirm(`Deseja realmente remover o lead "${nome}"?`)) return false;
+      try {
+        const { data, error } = await supabase
+          .from("clientes")
+          .delete()
+          .eq("id", id)
+          .select();
+
+        if (error) {
+          showToast(`Erro ao excluir cliente: ${error.message}`, "error");
+          return false;
+        }
+
+        state.clientes = state.clientes.filter((c) => c.id !== id);
+        await registrarNotificacao(`🗑️ O lead "${nome}" foi excluído do sistema.`);
+        renderizarClientes();
+        popularSelectClientesTarefa();
+        popularSelectClientesAgenda();
+        atualizarContadoresResumo();
+        showToast(`Lead "${nome}" removido com sucesso.`, "info");
+        return true;
+      } catch (err) {
+        showToast(`Erro ao excluir lead: ${err.message}`, "error");
+        return false;
       }
-      state.clientes = state.clientes.filter((c) => c.id !== id);
-      await registrarNotificacao(`🗑️ O lead "${nome}" foi excluído do sistema.`);
-      renderizarClientes();
-      popularSelectClientesTarefa();
-      popularSelectClientesAgenda();
-      atualizarContadoresResumo();
-      showToast("Lead removido com sucesso.", "info");
     }
 
     function obterIniciais(nomeCompleto) {
@@ -3420,7 +3432,7 @@
             )}</span>
           </td>
           <td style="text-align: right;">
-            <div class="row-actions-cell" style="justify-content: flex-end;">
+            <div class="row-actions-cell" style="justify-content: flex-end; align-items: center; gap: 0.35rem;">
               <button type="button" class="btn-table-action btn-abrir-detalhes" data-id="${escapeHtml(
                 cliente.id
               )}" title="Abrir painel detalhado do cliente">
@@ -3433,6 +3445,16 @@
                     )}" target="_blank" rel="noopener noreferrer" class="btn-table-action" style="color: #25D366; text-decoration: none;" title="Abrir WhatsApp">💬</a>`
                   : ""
               }
+              <button
+                type="button"
+                class="btn-icon-delete btn-excluir-lead-tabela"
+                data-id="${escapeHtml(cliente.id)}"
+                data-nome="${escapeHtml(nomeCompleto)}"
+                title="Excluir Lead"
+                style="padding: 0.35rem 0.5rem; font-size: 0.85rem; border-radius: var(--radius-sm);"
+              >
+                🗑️
+              </button>
             </div>
           </td>
         </tr>
@@ -3470,13 +3492,25 @@
             )}" style="font-size: 0.68rem; padding: 0.15rem 0.45rem;">${escapeHtml(
         statusAtual
       )}</span>
-            ${
-              cliente.usuario_marcado
-                ? `<span class="tarefa-lead-tag" style="font-size: 0.68rem; padding: 0.15rem 0.45rem;">👤 ${escapeHtml(
-                    cliente.usuario_marcado
-                  )}</span>`
-                : ""
-            }
+            <div style="display: flex; align-items: center; gap: 0.3rem;">
+              ${
+                cliente.usuario_marcado
+                  ? `<span class="tarefa-lead-tag" style="font-size: 0.68rem; padding: 0.15rem 0.45rem;">👤 ${escapeHtml(
+                      cliente.usuario_marcado
+                    )}</span>`
+                  : ""
+              }
+              <button
+                type="button"
+                class="btn-icon-delete btn-excluir-lead-kanban"
+                data-id="${escapeHtml(cliente.id)}"
+                data-nome="${escapeHtml(nomeCompleto)}"
+                title="Excluir Lead"
+                style="padding: 0.15rem 0.35rem; font-size: 0.75rem;"
+              >
+                🗑️
+              </button>
+            </div>
           </div>
         </article>
       `;
@@ -3835,7 +3869,7 @@
           <button type="button" id="btn-drawer-salvar-cliente" class="btn-primary" style="width: 100%; padding: 0.85rem; font-size: 0.92rem;">
             💾 Salvar Alterações do Cliente
           </button>
-          <button type="button" id="btn-drawer-excluir-cliente" class="btn-icon-delete" style="align-self: center; font-size: 0.82rem; padding: 0.4rem 0.8rem;">
+          <button type="button" id="btn-drawer-excluir-cliente" data-cliente-id="${escapeHtml(cliente.id)}" data-nome="${escapeHtml(nomeCompleto)}" class="btn-icon-delete" style="align-self: center; font-size: 0.82rem; padding: 0.4rem 0.8rem;">
             🗑️ Excluir Lead Permanentemente
           </button>
         </div>
@@ -5230,9 +5264,15 @@
         .getElementById("btn-fechar-detalhes-cliente")
         ?.addEventListener("click", fecharPainelDetalhesCliente);
 
-      // Clique nas Linhas da Lista Compacta (Abre Gaveta de Detalhes)
+      // Clique nas Linhas da Lista Compacta (Abre Gaveta de Detalhes ou Exclui)
       document.getElementById("clientes-lista-container")?.addEventListener("click", (e) => {
         if (e.target.closest("a")) return; // Não interfere nos links de telefone/WhatsApp
+        const btnExcluir = e.target.closest(".btn-excluir-lead-tabela");
+        if (btnExcluir) {
+          e.stopPropagation();
+          excluirCliente(btnExcluir.dataset.id, btnExcluir.dataset.nome);
+          return;
+        }
         const btnDetalhes = e.target.closest(".btn-abrir-detalhes");
         const row = e.target.closest(".client-table-row");
         const clienteId = btnDetalhes?.dataset.id || row?.dataset.id;
@@ -5241,9 +5281,15 @@
         }
       });
 
-      // Clique nos Cards do Macro-Kanban (Abre Gaveta de Detalhes)
+      // Clique nos Cards do Macro-Kanban (Abre Gaveta de Detalhes ou Exclui)
       document.getElementById("clientes-kanban-container")?.addEventListener("click", (e) => {
         if (e.target.closest("a")) return;
+        const btnExcluir = e.target.closest(".btn-excluir-lead-kanban");
+        if (btnExcluir) {
+          e.stopPropagation();
+          excluirCliente(btnExcluir.dataset.id, btnExcluir.dataset.nome);
+          return;
+        }
         const card = e.target.closest(".compact-kanban-card");
         if (card && card.dataset.id) {
           abrirPainelDetalhesCliente(card.dataset.id);
@@ -5307,12 +5353,16 @@
 
         // Excluir cliente permanentemente
         if (e.target.closest("#btn-drawer-excluir-cliente")) {
-          if (idAtivo) {
-            const c = state.clientes.find((cli) => cli.id === idAtivo);
-            if (c) {
-              excluirCliente(c.id, obterNomeCompleto(c));
-              fecharPainelDetalhesCliente();
-            }
+          const btnDel = e.target.closest("#btn-drawer-excluir-cliente");
+          const clienteId = btnDel?.dataset?.clienteId || idAtivo;
+          if (clienteId) {
+            const c = state.clientes.find((cli) => cli.id === clienteId);
+            const nome = c ? obterNomeCompleto(c) : (btnDel?.dataset?.nome || "Lead");
+            excluirCliente(clienteId, nome).then((sucesso) => {
+              if (sucesso) {
+                fecharPainelDetalhesCliente();
+              }
+            });
           }
           return;
         }
