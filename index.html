@@ -3563,13 +3563,14 @@
       const cliente = state.clientes.find((c) => c.id === id);
       if (!cliente) return;
 
-      state.clienteSelecionadoId = id;
       fecharTodasDrawers();
+      state.clienteSelecionadoId = id;
 
       const drawerEl = document.getElementById("drawer-detalhes-cliente");
       const bodyEl = document.getElementById("drawer-detalhes-cliente-body");
       const badgeServicoEl = document.getElementById("detalhes-badge-servico");
       if (!drawerEl || !bodyEl) return;
+      drawerEl.dataset.clienteId = id;
 
       const nomeCompleto = obterNomeCompleto(cliente);
       const tipoServico = cliente.tipo_servico || "Compra";
@@ -3849,7 +3850,11 @@
     }
 
     function fecharPainelDetalhesCliente() {
-      document.getElementById("drawer-detalhes-cliente")?.classList.remove("open");
+      const drawer = document.getElementById("drawer-detalhes-cliente");
+      if (drawer) {
+        drawer.classList.remove("open");
+        delete drawer.dataset.clienteId;
+      }
       document.getElementById("drawer-overlay")?.classList.remove("open");
       state.clienteSelecionadoId = null;
     }
@@ -4461,7 +4466,11 @@
       document.getElementById("drawer-nova-tarefa")?.classList.remove("open");
       document.getElementById("drawer-lista-tarefas")?.classList.remove("open");
       document.getElementById("drawer-notificacoes")?.classList.remove("open");
-      document.getElementById("drawer-detalhes-cliente")?.classList.remove("open");
+      const drawerDetalhes = document.getElementById("drawer-detalhes-cliente");
+      if (drawerDetalhes) {
+        drawerDetalhes.classList.remove("open");
+        delete drawerDetalhes.dataset.clienteId;
+      }
       document.getElementById("drawer-disparo-lote")?.classList.remove("open");
       document.getElementById("drawer-overlay")?.classList.remove("open");
       state.clienteSelecionadoId = null;
@@ -5039,7 +5048,7 @@
     // ========================================================================
     // EVENT LISTENERS DOM
     // ========================================================================
-    document.addEventListener("DOMContentLoaded", () => {
+    function inicializarApp() {
       document.getElementById("form-login")?.addEventListener("submit", handleLoginSubmit);
       document.getElementById("btn-logout")?.addEventListener("click", handleLogout);
 
@@ -5224,9 +5233,11 @@
       // Clique nas Linhas da Lista Compacta (Abre Gaveta de Detalhes)
       document.getElementById("clientes-lista-container")?.addEventListener("click", (e) => {
         if (e.target.closest("a")) return; // Não interfere nos links de telefone/WhatsApp
+        const btnDetalhes = e.target.closest(".btn-abrir-detalhes");
         const row = e.target.closest(".client-table-row");
-        if (row && row.dataset.id) {
-          abrirPainelDetalhesCliente(row.dataset.id);
+        const clienteId = btnDetalhes?.dataset.id || row?.dataset.id;
+        if (clienteId) {
+          abrirPainelDetalhesCliente(clienteId);
         }
       });
 
@@ -5241,7 +5252,12 @@
 
       // Eventos Internos do Drawer de Detalhes do Cliente
       const drawerDetalhesEl = document.getElementById("drawer-detalhes-cliente");
+      function obterIdClienteAtivo() {
+        return state.clienteSelecionadoId || drawerDetalhesEl?.dataset?.clienteId || null;
+      }
+
       drawerDetalhesEl?.addEventListener("change", (e) => {
+        const idAtivo = obterIdClienteAtivo();
         if (e.target.id === "drawer-cliente-tipo-servico") {
           const novoServico = e.target.value;
           const statusSelect = document.getElementById("drawer-cliente-status");
@@ -5256,24 +5272,26 @@
           if (secaoChecklist) {
             const isReg = novoServico.includes("Registro") || novoServico.includes("Regularização");
             secaoChecklist.style.display = isReg ? "flex" : "none";
-            if (isReg && state.clienteSelecionadoId) {
-              const c = state.clientes.find((cli) => cli.id === state.clienteSelecionadoId);
+            if (isReg && idAtivo) {
+              const c = state.clientes.find((cli) => cli.id === idAtivo);
               if (c) renderizarChecklistDrawer(c);
             }
           }
         } else if (e.target.matches(".chk-drawer-doc")) {
           const docIdx = Number(e.target.dataset.docIndex);
-          if (state.clienteSelecionadoId) {
-            alternarItemChecklistCliente(state.clienteSelecionadoId, docIdx, e.target.checked);
+          if (idAtivo) {
+            alternarItemChecklistCliente(idAtivo, docIdx, e.target.checked);
           }
         }
       });
 
       drawerDetalhesEl?.addEventListener("click", (e) => {
+        const idAtivo = obterIdClienteAtivo();
+
         // Salvar dados do formulário do Drawer
         if (e.target.closest("#btn-drawer-salvar-cliente")) {
-          if (state.clienteSelecionadoId) {
-            salvarDetalhesClienteDrawer(state.clienteSelecionadoId);
+          if (idAtivo) {
+            salvarDetalhesClienteDrawer(idAtivo);
           }
           return;
         }
@@ -5281,16 +5299,16 @@
         // Gerar pasta do Drive (com debounce / disabled = true)
         const btnDrive = e.target.closest("#btn-drawer-gerar-drive");
         if (btnDrive) {
-          if (state.clienteSelecionadoId) {
-            gerarPastaDriveCliente(state.clienteSelecionadoId, btnDrive);
+          if (idAtivo) {
+            gerarPastaDriveCliente(idAtivo, btnDrive);
           }
           return;
         }
 
         // Excluir cliente permanentemente
         if (e.target.closest("#btn-drawer-excluir-cliente")) {
-          if (state.clienteSelecionadoId) {
-            const c = state.clientes.find((cli) => cli.id === state.clienteSelecionadoId);
+          if (idAtivo) {
+            const c = state.clientes.find((cli) => cli.id === idAtivo);
             if (c) {
               excluirCliente(c.id, obterNomeCompleto(c));
               fecharPainelDetalhesCliente();
@@ -5302,8 +5320,8 @@
         // Adicionar novo item manual ao checklist (Correção de Bug do EventListener)
         if (e.target.closest("#btn-drawer-add-doc")) {
           const inputDoc = document.getElementById("drawer-novo-doc-input");
-          if (inputDoc && state.clienteSelecionadoId) {
-            adicionarItemChecklistCliente(state.clienteSelecionadoId, inputDoc.value);
+          if (inputDoc && idAtivo) {
+            adicionarItemChecklistCliente(idAtivo, inputDoc.value);
             inputDoc.value = "";
           }
           return;
@@ -5314,8 +5332,9 @@
         if (e.key === "Enter" && e.target.id === "drawer-novo-doc-input") {
           e.preventDefault();
           const inputDoc = e.target;
-          if (inputDoc && state.clienteSelecionadoId) {
-            adicionarItemChecklistCliente(state.clienteSelecionadoId, inputDoc.value);
+          const idAtivo = obterIdClienteAtivo();
+          if (inputDoc && idAtivo) {
+            adicionarItemChecklistCliente(idAtivo, inputDoc.value);
             inputDoc.value = "";
           }
         }
@@ -5345,7 +5364,13 @@
 
       atualizarOpcoesStatusFormLead();
       inicializarAutenticacao();
-    });
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", inicializarApp);
+    } else {
+      inicializarApp();
+    }
   </script>
 </body>
 </html>
