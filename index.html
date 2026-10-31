@@ -1789,6 +1789,14 @@
             >
               ➕ Cadastrar Lead
             </button>
+            <button
+              type="button"
+              id="btn-abrir-disparo-lote"
+              class="btn-secondary-outline"
+              style="padding: 0.55rem 1.05rem; font-size: 0.84rem;"
+            >
+              📲 Disparo em Lote
+            </button>
           </div>
           <div class="toolbar-actions">
             <select
@@ -2353,6 +2361,56 @@
       </div>
 
       <div id="lista-notificacoes-drawer" class="tarefas-list"></div>
+    </div>
+  </aside>
+
+  <!-- ========================================================================
+       5. GAVETA LATERAL: DISPARO EM LOTE DE WHATSAPP (#drawer-disparo-lote)
+       ======================================================================== -->
+  <aside id="drawer-disparo-lote" class="offcanvas-drawer" aria-labelledby="drawer-disparo-lote-title">
+    <div class="drawer-header">
+      <h3 id="drawer-disparo-lote-title">📲 Disparo em Lote de WhatsApp</h3>
+      <button type="button" id="btn-fechar-disparo-lote" class="btn-drawer-close" aria-label="Fechar">
+        ✕
+      </button>
+    </div>
+
+    <div class="drawer-body">
+      <form id="form-disparo-lote" class="form-grid" style="grid-template-columns: 1fr;">
+        <div class="form-group">
+          <label for="disparo-filtro-clientes">Filtrar Clientes para o Disparo *</label>
+          <select id="disparo-filtro-clientes" class="form-control" required>
+            <option value="todos">Todos os Clientes</option>
+            <option value="fase_comercial">Fase Comercial</option>
+            <option value="em_andamento">Em Andamento</option>
+            <option value="pausados">Pausados</option>
+            <option value="sem_contato_7">Sem contato há +7 dias</option>
+            <option value="sem_contato_15">Sem contato há +15 dias</option>
+            <option value="sem_contato_30">Sem contato há +30 dias</option>
+          </select>
+          <small id="disparo-resumo-filtro" style="color: var(--text-secondary); font-size: 0.76rem; margin-top: 0.25rem; display: block;">
+            Selecione o público-alvo para envio na fila do robô.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="disparo-mensagem">Mensagem do Disparo *</label>
+          <textarea
+            id="disparo-mensagem"
+            class="form-control"
+            rows="6"
+            placeholder="Olá, [NOME]! Tudo bem? Aqui é da Andressa Spagnol Imóveis..."
+            required
+          ></textarea>
+          <small style="color: var(--text-secondary); font-size: 0.76rem; margin-top: 0.3rem; display: block;">
+            💡 <strong>Dica:</strong> Use a variável <code>[NOME]</code> no texto. Ela será substituída automaticamente pelo <code>primeiro_nome</code> de cada cliente.
+          </small>
+        </div>
+
+        <button type="submit" id="btn-enviar-fila-whatsapp" class="btn-primary">
+          🚀 Enviar para a Fila
+        </button>
+      </form>
     </div>
   </aside>
 
@@ -4404,8 +4462,117 @@
       document.getElementById("drawer-lista-tarefas")?.classList.remove("open");
       document.getElementById("drawer-notificacoes")?.classList.remove("open");
       document.getElementById("drawer-detalhes-cliente")?.classList.remove("open");
+      document.getElementById("drawer-disparo-lote")?.classList.remove("open");
       document.getElementById("drawer-overlay")?.classList.remove("open");
       state.clienteSelecionadoId = null;
+    }
+
+    function filtrarClientesParaDisparo(criterio) {
+      const agora = new Date();
+      return (state.clientes || []).filter((c) => {
+        const foneLimpo = limparTelefoneBrasilDDI(c.telefone);
+        if (!foneLimpo || foneLimpo.length < 12) return false;
+
+        if (criterio === "fase_comercial") {
+          return mapearMacroFase(c.status_funil) === "Fase Comercial";
+        }
+        if (criterio === "em_andamento") {
+          return mapearMacroFase(c.status_funil) === "Em andamento";
+        }
+        if (criterio === "pausados") {
+          return mapearMacroFase(c.status_funil) === "Pausados";
+        }
+        if (criterio && criterio.startsWith("sem_contato_")) {
+          const diasLimite = Number(criterio.replace("sem_contato_", "")) || 7;
+          if (!c.created_at) return false;
+          const dataRef = new Date(c.updated_at || c.created_at);
+          if (isNaN(dataRef.getTime())) return false;
+          const diffDias = (agora - dataRef) / (1000 * 60 * 60 * 24);
+          return diffDias >= diasLimite;
+        }
+        return true; // 'todos'
+      });
+    }
+
+    function atualizarResumoFiltroDisparo() {
+      const selectEl = document.getElementById("disparo-filtro-clientes");
+      const resumoEl = document.getElementById("disparo-resumo-filtro");
+      if (!selectEl || !resumoEl) return;
+      const filtrados = filtrarClientesParaDisparo(selectEl.value);
+      resumoEl.textContent = `📊 ${filtrados.length} cliente(s) com telefone válido encontrado(s) neste filtro.`;
+    }
+
+    function toggleDrawerDisparoLote(abrir) {
+      if (abrir) {
+        fecharTodasDrawers();
+        atualizarResumoFiltroDisparo();
+        document.getElementById("drawer-disparo-lote")?.classList.add("open");
+        document.getElementById("drawer-overlay")?.classList.add("open");
+      } else {
+        fecharTodasDrawers();
+      }
+    }
+
+    async function handleDisparoLoteSubmit(event) {
+      event.preventDefault();
+      const filtroEl = document.getElementById("disparo-filtro-clientes");
+      const mensagemEl = document.getElementById("disparo-mensagem");
+      const btnSubmit = document.getElementById("btn-enviar-fila-whatsapp");
+
+      const criterio = filtroEl ? filtroEl.value : "todos";
+      const templateMensagem = (mensagemEl?.value || "").trim();
+
+      if (!templateMensagem) {
+        showToast("Digite a mensagem antes de enviar para a fila.", "error");
+        return;
+      }
+
+      const clientesAlvo = filtrarClientesParaDisparo(criterio);
+      if (clientesAlvo.length === 0) {
+        showToast("Nenhum cliente com telefone válido encontrado para o filtro selecionado.", "error");
+        return;
+      }
+
+      const payloadFila = clientesAlvo.map((cliente) => {
+        const primeiroNome = obterPrimeiroNome(cliente) || "Cliente";
+        const numeroNormalizado = limparTelefoneBrasilDDI(cliente.telefone);
+        const mensagemPersonalizada = templateMensagem.replace(/\[NOME\]/gi, primeiroNome);
+
+        return {
+          telefone: numeroNormalizado,
+          mensagem: mensagemPersonalizada,
+          status: "pendente"
+        };
+      });
+
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.textContent = "Enviando para a fila...";
+      }
+
+      try {
+        const { error } = await supabase
+          .from("fila_whatsapp")
+          .insert(payloadFila);
+
+        if (error) throw error;
+
+        await registrarNotificacao(
+          `📲 Disparo em lote enfileirado: ${payloadFila.length} mensagem(ns) enviadas para a fila do robô`
+        );
+
+        event.target.reset();
+        toggleDrawerDisparoLote(false);
+        showToast(`${payloadFila.length} disparos enviados para a fila do robô!`, "success");
+        window.alert("Disparos enviados para a fila do robô!");
+      } catch (err) {
+        showToast(`Erro ao enfileirar disparos: ${err.message}`, "error");
+      } finally {
+        if (btnSubmit) {
+          btnSubmit.disabled = false;
+          btnSubmit.textContent = "🚀 Enviar para a Fila";
+        }
+      }
     }
 
     function toggleDrawerNovoLead(abrir) {
@@ -4973,6 +5140,19 @@
       document
         .getElementById("btn-fechar-novo-lead")
         ?.addEventListener("click", () => toggleDrawerNovoLead(false));
+
+      document
+        .getElementById("btn-abrir-disparo-lote")
+        ?.addEventListener("click", () => toggleDrawerDisparoLote(true));
+      document
+        .getElementById("btn-fechar-disparo-lote")
+        ?.addEventListener("click", () => toggleDrawerDisparoLote(false));
+      document
+        .getElementById("disparo-filtro-clientes")
+        ?.addEventListener("change", atualizarResumoFiltroDisparo);
+      document
+        .getElementById("form-disparo-lote")
+        ?.addEventListener("submit", handleDisparoLoteSubmit);
 
       document
         .getElementById("btn-abrir-nova-tarefa")
