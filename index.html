@@ -2333,17 +2333,22 @@
     </div>
 
     <div class="drawer-body">
-      <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
-        <span style="font-size: 0.84rem; color: var(--text-secondary); font-weight: 600;">
-          Notificações não lidas
-        </span>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.85rem; flex-wrap: wrap;">
+        <div class="toggle-group" style="margin: 0;">
+          <button type="button" id="btn-notif-tab-naolidas" class="toggle-btn active" style="font-size: 0.74rem; padding: 0.3rem 0.65rem;">
+            Não lidas (<span id="notif-count-tab-naolidas">0</span>)
+          </button>
+          <button type="button" id="btn-notif-tab-todas" class="toggle-btn" style="font-size: 0.74rem; padding: 0.3rem 0.65rem;">
+            Histórico (<span id="notif-count-tab-todas">0</span>)
+          </button>
+        </div>
         <button
           type="button"
           id="btn-limpar-notificacoes"
           class="btn-secondary-outline"
-          style="padding: 0.35rem 0.7rem; font-size: 0.75rem;"
+          style="padding: 0.3rem 0.65rem; font-size: 0.72rem;"
         >
-          ✓ Marcar todas como lidas
+          ✓ Marcar lidas
         </button>
       </div>
 
@@ -2634,7 +2639,8 @@
       imoveis: [],
       conteudos: [],
       tarefas: [],
-      notificacoes: []
+      notificacoes: [],
+      notificacoesFiltro: "nao_lidas" // 'nao_lidas' | 'todas'
     };
 
     // ========================================================================
@@ -2654,6 +2660,24 @@
         month: "2-digit",
         year: "numeric"
       });
+    }
+
+    function formatarHoraRelativa(isoString) {
+      if (!isoString) return "";
+      const d = new Date(isoString);
+      if (isNaN(d.getTime())) return isoString;
+      const agora = new Date();
+      const diffMs = agora - d;
+      const diffMin = Math.floor(diffMs / 60000);
+      if (diffMin < 1) return "Agora mesmo";
+      if (diffMin < 60) return `Há ${diffMin} min`;
+      const diffHoras = Math.floor(diffMin / 60);
+      if (diffHoras < 24) return `Há ${diffHoras}h`;
+      return (
+        d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }) +
+        " às " +
+        d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+      );
     }
 
     function obterPrimeiroNome(cliente) {
@@ -2756,6 +2780,8 @@
         state.clientes = [];
         state.imoveis = [];
         state.conteudos = [];
+        state.tarefas = [];
+        state.notificacoes = [];
         crmScreen.classList.add("hidden");
         authScreen.classList.remove("hidden");
       }
@@ -2806,6 +2832,7 @@
         carregarNotificacoes()
       ]);
       atualizarContadoresResumo();
+      inicializarRealtimeNotificacoes();
     }
 
     function atualizarContadoresResumo() {
@@ -2950,10 +2977,15 @@
         if (error) throw error;
         state.clientes.unshift(data);
 
-        // Gatilho de Notificação se algum usuário foi marcado no cadastro do Lead
+        // Gatilho de Notificação de cadastro de Lead
+        const nomeLeadCadastrado = obterNomeCompleto(data);
         if (novoCliente.usuario_marcado) {
           await registrarNotificacao(
-            `Você (${novoCliente.usuario_marcado}) foi marcado(a) no lead ${obterNomeCompleto(data)}`
+            `Você (${novoCliente.usuario_marcado}) foi marcado(a) no lead ${nomeLeadCadastrado}`
+          );
+        } else {
+          await registrarNotificacao(
+            `➕ Novo lead cadastrado: ${nomeLeadCadastrado} (${novoCliente.tipo_servico})`
           );
         }
 
@@ -3022,6 +3054,9 @@
         Object.assign(cliente, camposDrive);
 
         renderizarClientes();
+        await registrarNotificacao(
+          `📁 Pasta e subpastas no Drive criadas para ${obterNomeCompleto(cliente)}`
+        );
 
         if (state.clienteSelecionadoId === clienteId) {
           const driveWrapper = document.getElementById("drawer-drive-wrapper");
@@ -3125,6 +3160,12 @@
         `Documento "${lista[docIndex].item}" atualizado!`
       );
 
+      if (concluido) {
+        await registrarNotificacao(
+          `✅ Documento "${lista[docIndex].item}" entregue por ${obterNomeCompleto(cliente)}`
+        );
+      }
+
       if (state.clienteSelecionadoId === id) {
         renderizarChecklistDrawer(cliente);
       }
@@ -3145,6 +3186,10 @@
         id,
         { checklist_docs: lista },
         `Documento "${limpo}" adicionado ao checklist!`
+      );
+
+      await registrarNotificacao(
+        `📄 Documento "${limpo}" adicionado ao checklist de ${obterNomeCompleto(cliente)}`
       );
 
       if (state.clienteSelecionadoId === id) {
@@ -3204,7 +3249,7 @@
       }
 
       // Gatilho de Notificação: Mudança de status do cliente
-      await registrarNotificacao(`O lead ${nomeLead} mudou para "${novoStatus}"`);
+      await registrarNotificacao(`🔄 O lead ${nomeLead} mudou para "${novoStatus}"`);
 
       renderizarClientes();
       popularSelectClientesTarefa();
@@ -3251,6 +3296,7 @@
         return;
       }
       state.clientes = state.clientes.filter((c) => c.id !== id);
+      await registrarNotificacao(`🗑️ O lead "${nome}" foi excluído do sistema.`);
       renderizarClientes();
       popularSelectClientesTarefa();
       popularSelectClientesAgenda();
@@ -3778,6 +3824,7 @@
 
         const statusMudou = statusFunil !== cliente.status_funil;
         const usuarioMudou = usuarioMarcado !== (cliente.usuario_marcado || "");
+        const tipoMudou = tipoServico !== cliente.tipo_servico;
 
         const camposAtualizados = {
           tipo_servico: tipoServico,
@@ -3806,6 +3853,11 @@
         if (usuarioMudou && usuarioMarcado) {
           await registrarNotificacao(
             `Você (${usuarioMarcado}) foi marcado(a) no lead ${obterNomeCompleto(cliente)}`
+          );
+        }
+        if (tipoMudou) {
+          await registrarNotificacao(
+            `📋 Tipo de serviço do lead ${obterNomeCompleto(cliente)} alterado para "${tipoServico}"`
           );
         }
 
@@ -3911,6 +3963,9 @@
 
         if (error) throw error;
         state.imoveis.unshift(data);
+        await registrarNotificacao(
+          `🏠 Novo imóvel cadastrado: "${titulo}" (${formatarMoeda(valorNumerico)})`
+        );
         renderizarImoveis();
         atualizarContadoresResumo();
         event.target.reset();
@@ -3935,7 +3990,14 @@
         return;
       }
       const index = state.imoveis.findIndex((i) => i.id === id);
-      if (index !== -1) state.imoveis[index].status_marketing = novoStatus;
+      let tituloImovel = "Imóvel";
+      if (index !== -1) {
+        state.imoveis[index].status_marketing = novoStatus;
+        tituloImovel = state.imoveis[index].titulo || "Imóvel";
+      }
+      await registrarNotificacao(
+        `🏠 Imóvel "${tituloImovel}" alterado para status "${novoStatus}"`
+      );
       renderizarImoveis();
       atualizarContadoresResumo();
       showToast(`Status do imóvel alterado para "${novoStatus}".`, "success");
@@ -3949,6 +4011,7 @@
         return;
       }
       state.imoveis = state.imoveis.filter((i) => i.id !== id);
+      await registrarNotificacao(`🗑️ O imóvel "${titulo}" foi excluído do CRM.`);
       renderizarImoveis();
       atualizarContadoresResumo();
       showToast("Imóvel removido do CRM.", "info");
@@ -4091,6 +4154,9 @@
 
         if (error) throw error;
         state.conteudos.unshift(data);
+        await registrarNotificacao(
+          `🎬 Novo conteúdo planejado: "${novoConteudo.tema}" (${novoConteudo.formato})`
+        );
         renderizarConteudos();
         event.target.reset();
         showToast("Conteúdo adicionado à Linha Editorial!", "success");
@@ -4113,7 +4179,12 @@
         return;
       }
       const idx = state.conteudos.findIndex((c) => c.id === id);
-      if (idx !== -1) state.conteudos[idx].status = novoStatus;
+      let temaConteudo = "Conteúdo";
+      if (idx !== -1) {
+        state.conteudos[idx].status = novoStatus;
+        temaConteudo = state.conteudos[idx].tema || "Conteúdo";
+      }
+      await registrarNotificacao(`🎬 Conteúdo "${temaConteudo}" movido para "${novoStatus}"`);
       renderizarConteudos();
       showToast(`Conteúdo movido para "${novoStatus}".`, "success");
     }
@@ -4126,6 +4197,7 @@
         return;
       }
       state.conteudos = state.conteudos.filter((c) => c.id !== id);
+      await registrarNotificacao(`🗑️ Conteúdo "${tema}" foi excluído.`);
       renderizarConteudos();
       showToast("Conteúdo excluído.", "info");
     }
@@ -4302,6 +4374,9 @@
         }
 
         event.target.reset();
+        await registrarNotificacao(
+          `📅 Nova visita agendada: "${tituloEvento}" (${dataInicioObj.toLocaleDateString("pt-BR")} às ${dataInicioObj.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })})`
+        );
         showToast("Compromisso de 1h agendado com sucesso no Google Calendar!", "success");
 
         // Promessa de auto-refresh visual do iFrame do Google Calendar após o sucesso
@@ -4466,6 +4541,7 @@
         if (resCliente.error) throw resCliente.error;
 
         state.tarefas.unshift(resTarefa.data);
+        await registrarNotificacao(`☑️ Nova tarefa criada: "${titulo}"`);
 
         if (deveAtualizarStatusLead) {
           const idx = state.clientes.findIndex((c) => c.id === clienteId);
@@ -4510,17 +4586,27 @@
       }
 
       const idx = state.tarefas.findIndex((t) => t.id === id);
-      if (idx !== -1) state.tarefas[idx].concluida = !concluidaAtual;
+      const novoStatusConcluida = !concluidaAtual;
+      if (idx !== -1) {
+        state.tarefas[idx].concluida = novoStatusConcluida;
+        const nomeTarefa = state.tarefas[idx].titulo || "Tarefa";
+        if (novoStatusConcluida) {
+          await registrarNotificacao(`🎉 Tarefa concluída: "${nomeTarefa}"`);
+        }
+      }
       renderizarTarefas();
     }
 
     async function excluirTarefa(id) {
+      const tarefa = state.tarefas.find((t) => t.id === id);
+      const nomeTarefa = tarefa ? tarefa.titulo : "Tarefa";
       const { error } = await supabase.from("tarefas").delete().eq("id", id);
       if (error) {
         showToast(`Erro ao excluir tarefa: ${error.message}`, "error");
         return;
       }
       state.tarefas = state.tarefas.filter((t) => t.id !== id);
+      await registrarNotificacao(`🗑️ Tarefa "${nomeTarefa}" foi removida.`);
       renderizarTarefas();
     }
 
@@ -4596,12 +4682,55 @@
       }
     }
 
+    let notificacoesChannel = null;
+
+    function inicializarRealtimeNotificacoes() {
+      if (notificacoesChannel) return;
+      try {
+        notificacoesChannel = supabase
+          .channel("realtime-notificacoes")
+          .on(
+            "postgres_changes",
+            { event: "*", schema: "public", table: "notificacoes" },
+            (payload) => {
+              if (payload.eventType === "INSERT") {
+                const nova = payload.new;
+                if (!state.notificacoes.some((n) => n.id === nova.id)) {
+                  state.notificacoes.unshift(nova);
+                  renderizarNotificacoes();
+                }
+              } else if (payload.eventType === "UPDATE") {
+                const atualizada = payload.new;
+                const idx = state.notificacoes.findIndex((n) => n.id === atualizada.id);
+                if (idx !== -1) {
+                  state.notificacoes[idx] = atualizada;
+                } else {
+                  state.notificacoes.unshift(atualizada);
+                }
+                renderizarNotificacoes();
+              } else if (payload.eventType === "DELETE") {
+                const antiga = payload.old;
+                state.notificacoes = state.notificacoes.filter((n) => n.id !== antiga.id);
+                renderizarNotificacoes();
+              }
+            }
+          )
+          .subscribe((status) => {
+            if (status === "SUBSCRIBED") {
+              console.log("Realtime de notificações conectado com sucesso.");
+            }
+          });
+      } catch (err) {
+        console.warn("Falha ao inicializar realtime de notificações:", err);
+      }
+    }
+
     async function carregarNotificacoes() {
       const { data, error } = await supabase
         .from("notificacoes")
         .select("*")
-        .eq("lida", false)
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .limit(100);
 
       if (error) {
         console.warn("Tabela notificacoes ainda não migrada:", error.message);
@@ -4614,20 +4743,26 @@
 
     async function registrarNotificacao(mensagem) {
       if (!mensagem || !mensagem.trim()) return;
-      const { data, error } = await supabase
-        .from("notificacoes")
-        .insert([{ mensagem: mensagem.trim(), lida: false }])
-        .select()
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from("notificacoes")
+          .insert([{ mensagem: mensagem.trim(), lida: false }])
+          .select()
+          .single();
 
-      if (error) {
-        console.warn("Aviso ao registrar notificação:", error.message);
-        return;
-      }
+        if (error) {
+          console.warn("Aviso ao registrar notificação:", error.message);
+          return;
+        }
 
-      if (data) {
-        state.notificacoes.unshift(data);
-        renderizarNotificacoes();
+        if (data) {
+          if (!state.notificacoes.some((n) => n.id === data.id)) {
+            state.notificacoes.unshift(data);
+            renderizarNotificacoes();
+          }
+        }
+      } catch (e) {
+        console.warn("Erro ao registrar notificação:", e);
       }
     }
 
@@ -4642,14 +4777,19 @@
         return;
       }
 
-      state.notificacoes = state.notificacoes.filter((n) => n.id !== id);
+      const item = state.notificacoes.find((n) => n.id === id);
+      if (item) item.lida = true;
       renderizarNotificacoes();
     }
 
     async function marcarTodasNotificacoesComoLidas() {
-      if (state.notificacoes.length === 0) return;
+      const naoLidas = state.notificacoes.filter((n) => !n.lida);
+      if (naoLidas.length === 0) {
+        showToast("Nenhuma notificação não lida para marcar.", "info");
+        return;
+      }
 
-      const ids = state.notificacoes.map((n) => n.id);
+      const ids = naoLidas.map((n) => n.id);
       const { error } = await supabase
         .from("notificacoes")
         .update({ lida: true })
@@ -4660,7 +4800,7 @@
         return;
       }
 
-      state.notificacoes = [];
+      naoLidas.forEach((n) => (n.lida = true));
       renderizarNotificacoes();
       showToast("Todas as notificações foram marcadas como lidas!", "info");
     }
@@ -4668,33 +4808,61 @@
     function renderizarNotificacoes() {
       const container = document.getElementById("lista-notificacoes-drawer");
       const badgeEl = document.getElementById("badge-count-notificacoes");
-      const naoLidasCount = state.notificacoes.length;
+      const countTabNaoLidasEl = document.getElementById("notif-count-tab-naolidas");
+      const countTabTodasEl = document.getElementById("notif-count-tab-todas");
+
+      const naoLidas = state.notificacoes.filter((n) => !n.lida);
+      const totalCount = state.notificacoes.length;
+      const naoLidasCount = naoLidas.length;
+
       if (badgeEl) badgeEl.textContent = naoLidasCount;
+      if (countTabNaoLidasEl) countTabNaoLidasEl.textContent = naoLidasCount;
+      if (countTabTodasEl) countTabTodasEl.textContent = totalCount;
+
       if (!container) return;
 
-      if (naoLidasCount === 0) {
-        container.innerHTML = `<div class="empty-column">Nenhuma notificação não lida no momento.</div>`;
+      const filtro = state.notificacoesFiltro || "nao_lidas";
+      const listaExibir = filtro === "nao_lidas" ? naoLidas : state.notificacoes;
+
+      if (listaExibir.length === 0) {
+        if (filtro === "nao_lidas") {
+          container.innerHTML = `<div class="empty-column">Nenhuma notificação não lida no momento 🎉</div>`;
+        } else {
+          container.innerHTML = `<div class="empty-column">Nenhuma notificação registrada no histórico.</div>`;
+        }
         return;
       }
 
-      container.innerHTML = state.notificacoes
+      container.innerHTML = listaExibir
         .map((n) => {
+          const tempoFormatado = formatarHoraRelativa(n.created_at);
+          const estaLida = Boolean(n.lida);
           return `
-            <div class="tarefa-item">
-              <div style="flex: 1;">
-                <div style="font-size: 0.86rem; font-weight: 600; color: var(--text-primary);">
+            <div class="tarefa-item ${estaLida ? 'notificacao-lida' : ''}" style="opacity: ${estaLida ? '0.75' : '1'}; transition: opacity 0.2s ease;">
+              <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 0.85rem; font-weight: ${estaLida ? '500' : '600'}; color: var(--text-primary); line-height: 1.35; word-break: break-word;">
                   🔔 ${escapeHtml(n.mensagem)}
                 </div>
-                <span class="card-date">${formatarDataCurta(n.created_at)}</span>
+                <div style="display: flex; align-items: center; gap: 0.4rem; margin-top: 0.25rem;">
+                  <span class="card-date" style="font-size: 0.72rem; color: var(--text-secondary);">${escapeHtml(tempoFormatado)}</span>
+                  ${estaLida ? '<span style="font-size: 0.68rem; color: var(--text-secondary); background: rgba(0,0,0,0.04); padding: 1px 5px; border-radius: 4px;">✓ Lida</span>' : ''}
+                </div>
               </div>
-              <button
-                type="button"
-                class="btn-icon-delete btn-lida-notificacao"
-                data-id="${escapeHtml(n.id)}"
-                title="Marcar como lida"
-              >
-                ✓ Lida
-              </button>
+              ${
+                !estaLida
+                  ? `
+                  <button
+                    type="button"
+                    class="btn-icon-delete btn-lida-notificacao"
+                    data-id="${escapeHtml(n.id)}"
+                    title="Marcar como lida"
+                    style="margin-left: 0.4rem; flex-shrink: 0;"
+                  >
+                    ✓ Lida
+                  </button>
+                `
+                  : ''
+              }
             </div>
           `;
         })
@@ -4829,6 +4997,24 @@
       document
         .getElementById("btn-limpar-notificacoes")
         ?.addEventListener("click", marcarTodasNotificacoesComoLidas);
+
+      document
+        .getElementById("btn-notif-tab-naolidas")
+        ?.addEventListener("click", () => {
+          state.notificacoesFiltro = "nao_lidas";
+          document.getElementById("btn-notif-tab-naolidas")?.classList.add("active");
+          document.getElementById("btn-notif-tab-todas")?.classList.remove("active");
+          renderizarNotificacoes();
+        });
+
+      document
+        .getElementById("btn-notif-tab-todas")
+        ?.addEventListener("click", () => {
+          state.notificacoesFiltro = "todas";
+          document.getElementById("btn-notif-tab-todas")?.classList.add("active");
+          document.getElementById("btn-notif-tab-naolidas")?.classList.remove("active");
+          renderizarNotificacoes();
+        });
       document
         .getElementById("drawer-overlay")
         ?.addEventListener("click", fecharTodasDrawers);
