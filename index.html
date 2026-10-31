@@ -8,14 +8,7 @@
   <link rel="icon" type="image/png" href="./assets/favicon.png" />
   <link rel="apple-touch-icon" href="./assets/favicon.png" />
 
-  <!-- Google Fonts: Montserrat & Playfair Display (Identidade Visual Premium) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap"
-    rel="stylesheet"
-  />
-
+  <!-- Tipografia padrão do sistema (Performance e Usabilidade Nativa) -->
   <link rel="stylesheet" href="./css/styles.css" />
 
   <style>
@@ -47,8 +40,8 @@
       --shadow-card-hover: 0 12px 28px rgba(59, 20, 37, 0.12);
       --shadow-header: 0 4px 20px rgba(38, 11, 23, 0.25);
 
-      --font-heading: 'Playfair Display', Georgia, serif;
-      --font-body: 'Montserrat', sans-serif;
+      --font-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
     * {
@@ -1749,7 +1742,7 @@
     </header>
 
     <main class="crm-main">
-      <!-- Indicadores Rápidos (4 Blocos: Leads, Visitas, Imóveis Ativos e VGV Ativo) -->
+      <!-- Indicadores Rápidos (3 Blocos: Leads, Visitas e Imóveis Ativos) -->
       <section class="kpi-strip" aria-label="Resumo do CRM">
         <div class="kpi-card">
           <span class="kpi-label">Leads</span>
@@ -1762,10 +1755,6 @@
         <div class="kpi-card">
           <span class="kpi-label">Imóveis Ativos</span>
           <strong id="kpi-imoveis-ativos" class="kpi-value">0</strong>
-        </div>
-        <div class="kpi-card" style="border-left-color: var(--brand-accent);">
-          <span class="kpi-label">VGV Ativo</span>
-          <strong id="kpi-vgv-ativo" class="kpi-value" style="font-size: 1.45rem;">R$ 0,00</strong>
         </div>
       </section>
 
@@ -2823,7 +2812,6 @@
       const totalClientesEl = document.getElementById("kpi-total-clientes");
       const visitasAgendadasEl = document.getElementById("kpi-visitas");
       const imoveisAtivosEl = document.getElementById("kpi-imoveis-ativos");
-      const vgvAtivoEl = document.getElementById("kpi-vgv-ativo");
 
       if (totalClientesEl) totalClientesEl.textContent = state.clientes.length;
       if (visitasAgendadasEl) {
@@ -2840,17 +2828,6 @@
 
       if (imoveisAtivosEl) {
         imoveisAtivosEl.textContent = imoveisNaoVendidos.length;
-      }
-
-      if (vgvAtivoEl) {
-        const somaVGV = imoveisNaoVendidos.reduce(
-          (acc, imovel) => acc + (Number(imovel.valor) || 0),
-          0
-        );
-        vgvAtivoEl.textContent = new Intl.NumberFormat("pt-BR", {
-          style: "currency",
-          currency: "BRL"
-        }).format(somaVGV);
       }
     }
 
@@ -2931,15 +2908,19 @@
       btnSubmit.textContent = "Criando pasta do cliente no Google Drive...";
 
       try {
-        let linkDriveCliente = "";
+        let driveData = null;
         try {
           const nomePastaLead = gerarNomePastaCliente(primeiroNome, sobrenome, tipoServico);
-          linkDriveCliente = await criarPastaDriveImovel(nomePastaLead);
+          driveData = await criarPastaDriveImovel(nomePastaLead);
         } catch (driveErr) {
           console.warn("Aviso ao criar pasta do cliente no Drive:", driveErr.message);
         }
 
         btnSubmit.textContent = "Salvando Lead no Supabase...";
+
+        const linkPrincipal = driveData?.url || "";
+        const linkDocs = driveData?.url_documentos || linkPrincipal;
+        const linkFotos = driveData?.url_fotos || linkPrincipal;
 
         const novoCliente = {
           primeiro_nome: primeiroNome,
@@ -2955,7 +2936,9 @@
           observacoes_visitas: "",
           checklist_docs: CHECKLIST_DOCS_PADRAO,
           responsavel_contrato: "Interno",
-          link_drive_cliente: linkDriveCliente
+          link_drive_cliente: linkPrincipal,
+          link_drive_documentos: linkDocs,
+          link_drive_fotos: linkFotos
         };
 
         const { data, error } = await supabase
@@ -2982,9 +2965,9 @@
         atualizarOpcoesStatusFormLead();
         toggleDrawerNovoLead(false);
         showToast(
-          linkDriveCliente
-            ? "Lead cadastrado e pasta do cliente criada no Google Drive!"
-            : "Lead adicionado ao funil com sucesso!",
+          linkPrincipal
+            ? "Lead cadastrado e pasta (com subpastas Documentos e Fotos) criada no Drive!"
+            : "Lead adicionado com sucesso!",
           "success"
         );
       } catch (err) {
@@ -2996,7 +2979,7 @@
     }
 
     /**
-     * Automação Google Drive para Clientes
+     * Automação Google Drive para Clientes (com Subpastas Documentos e Fotos)
      * Mecanismo Anti-duplicação (debounce / disabled = true) e Nomenclatura Estrita:
      * [primeiro_nome] [sobrenome] - [tipo_servico] - ([YYYY-MM-DD])
      */
@@ -3016,17 +2999,27 @@
       const tipoServico = cliente.tipo_servico || "Compra";
       const nomePastaExato = gerarNomePastaCliente(primeiroNome, sobrenome, tipoServico);
 
-      showToast(`Criando pasta "${nomePastaExato}" no Google Drive...`, "info");
+      showToast(`Criando pasta "${nomePastaExato}" e subpastas no Drive...`, "info");
 
       try {
-        const urlDrive = await criarPastaDriveImovel(nomePastaExato);
+        const driveData = await criarPastaDriveImovel(nomePastaExato);
+        const urlPrincipal = driveData?.url || "";
+        const urlDocs = driveData?.url_documentos || urlPrincipal;
+        const urlFotos = driveData?.url_fotos || urlPrincipal;
+
+        const camposDrive = {
+          link_drive_cliente: urlPrincipal,
+          link_drive_documentos: urlDocs,
+          link_drive_fotos: urlFotos
+        };
+
         const { error } = await supabase
           .from("clientes")
-          .update({ link_drive_cliente: urlDrive })
+          .update(camposDrive)
           .eq("id", clienteId);
 
         if (error) throw error;
-        cliente.link_drive_cliente = urlDrive;
+        Object.assign(cliente, camposDrive);
 
         renderizarClientes();
 
@@ -3034,14 +3027,24 @@
           const driveWrapper = document.getElementById("drawer-drive-wrapper");
           if (driveWrapper) {
             driveWrapper.innerHTML = `
-              <a href="${escapeHtml(urlDrive)}" target="_blank" rel="noopener noreferrer" class="btn-drive-folder" style="text-align: center;">
-                📁 Abrir Pasta no Google Drive
-              </a>
+              <div class="drive-dual-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.4rem;">
+                <a href="${escapeHtml(urlDocs)}" target="_blank" rel="noopener noreferrer" class="btn-drive-folder" style="text-align: center; padding: 0.55rem 0.4rem; font-size: 0.78rem;">
+                  📁 Abrir Documentos
+                </a>
+                <a href="${escapeHtml(urlFotos)}" target="_blank" rel="noopener noreferrer" class="btn-drive-folder" style="text-align: center; padding: 0.55rem 0.4rem; font-size: 0.78rem;">
+                  🖼️ Abrir Fotos
+                </a>
+              </div>
+              ${urlPrincipal ? `
+                <a href="${escapeHtml(urlPrincipal)}" target="_blank" rel="noopener noreferrer" class="btn-secondary-outline" style="text-align: center; display: block; font-size: 0.76rem; padding: 0.35rem;">
+                  📂 Abrir Pasta Principal no Drive
+                </a>
+              ` : ''}
             `;
           }
         }
 
-        showToast("Pasta do cliente criada no Google Drive com sucesso!", "success");
+        showToast("Pasta e subpastas (Documentos e Fotos) criadas no Google Drive!", "success");
       } catch (err) {
         showToast(`Erro ao criar pasta no Drive: ${err.message}`, "error");
         if (btnElement) {
@@ -3506,9 +3509,10 @@
         })
         .join("");
 
-      const temPastaDrive = Boolean(
-        cliente.link_drive_cliente && cliente.link_drive_cliente.trim()
-      );
+      const linkPrincipal = cliente.link_drive_cliente || "";
+      const linkDocs = cliente.link_drive_documentos || linkPrincipal;
+      const linkFotos = cliente.link_drive_fotos || linkPrincipal;
+      const temPastaDrive = Boolean(linkPrincipal || linkDocs || linkFotos);
 
       const isRegistroImovel =
         tipoServico.includes("Registro") || tipoServico.includes("Regularização");
@@ -3578,7 +3582,7 @@
           </div>
         </div>
 
-        <!-- 2. GOOGLE DRIVE (DEBOUNCE / PREVENÇÃO DE DUPLICAÇÃO) -->
+        <!-- 2. GOOGLE DRIVE (SUBPASTAS: DOCUMENTOS E FOTOS) -->
         <div class="detalhe-secao">
           <div class="detalhe-secao-titulo">📁 Google Drive do Cliente</div>
           <p style="font-size: 0.76rem; color: var(--text-muted); margin: 0;">
@@ -3587,11 +3591,25 @@
           <div id="drawer-drive-wrapper" class="drive-action-wrapper" style="margin-top: 0.2rem;">
             ${
               temPastaDrive
-                ? `<a href="${escapeHtml(
-                    cliente.link_drive_cliente
-                  )}" target="_blank" rel="noopener noreferrer" class="btn-drive-folder" style="text-align: center;">
-                    📁 Abrir Pasta no Google Drive
-                  </a>`
+                ? `
+                  <div class="drive-dual-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.4rem;">
+                    <a href="${escapeHtml(
+                      linkDocs
+                    )}" target="_blank" rel="noopener noreferrer" class="btn-drive-folder" style="text-align: center; padding: 0.55rem 0.4rem; font-size: 0.78rem;">
+                      📁 Abrir Documentos
+                    </a>
+                    <a href="${escapeHtml(
+                      linkFotos
+                    )}" target="_blank" rel="noopener noreferrer" class="btn-drive-folder" style="text-align: center; padding: 0.55rem 0.4rem; font-size: 0.78rem;">
+                      🖼️ Abrir Fotos
+                    </a>
+                  </div>
+                  ${linkPrincipal ? `
+                    <a href="${escapeHtml(linkPrincipal)}" target="_blank" rel="noopener noreferrer" class="btn-secondary-outline" style="text-align: center; display: block; font-size: 0.76rem; padding: 0.35rem;">
+                      📂 Abrir Pasta Principal no Drive
+                    </a>
+                  ` : ''}
+                `
                 : `<button type="button" id="btn-drawer-gerar-drive" class="btn-drive-folder" style="cursor: pointer; width: 100%;">
                     📁 Gerar pasta no Drive
                   </button>`
@@ -3830,7 +3848,7 @@
       if (!data || !data.success || !data.url) {
         throw new Error(data?.error || "O Google Apps Script não retornou a URL da pasta.");
       }
-      return data.url;
+      return data; // Retorna { success: true, url, url_documentos, url_fotos }
     }
 
     async function carregarImoveis() {
@@ -3844,23 +3862,6 @@
         return;
       }
       state.imoveis = data || [];
-
-      // Contador acumulativo de VGV Ativo (todos os imóveis cujo status não seja "Vendido")
-      const vgvAtivoTotal = state.imoveis.reduce((acumulador, imovel) => {
-        const statusStr = String(imovel.status_marketing || "").toLowerCase();
-        if (!statusStr.includes("vendido")) {
-          return acumulador + (Number(imovel.valor) || 0);
-        }
-        return acumulador;
-      }, 0);
-
-      const vgvAtivoEl = document.getElementById("kpi-vgv-ativo");
-      if (vgvAtivoEl) {
-        vgvAtivoEl.textContent = new Intl.NumberFormat("pt-BR", {
-          style: "currency",
-          currency: "BRL"
-        }).format(vgvAtivoTotal);
-      }
 
       renderizarImoveis();
       atualizarContadoresResumo();
@@ -3885,7 +3886,11 @@
       statusFeedbackEl.classList.remove("hidden");
 
       try {
-        const urlPastaDrive = await criarPastaDriveImovel(titulo);
+        const driveData = await criarPastaDriveImovel(titulo);
+        const urlPrincipal = driveData?.url || "";
+        const urlDocs = driveData?.url_documentos || urlPrincipal;
+        const urlFotos = driveData?.url_fotos || urlPrincipal;
+
         btnSubmit.textContent = "Salvando no Supabase...";
         statusFeedbackEl.textContent =
           "2/2 Pasta criada! Salvando registro do imóvel no banco de dados...";
@@ -3897,7 +3902,8 @@
               titulo,
               valor: valorNumerico,
               status_marketing: statusMarketing,
-              link_drive_fotos: urlPastaDrive
+              link_drive_fotos: urlFotos,
+              link_drive_documentos: urlDocs
             }
           ])
           .select()
@@ -3976,7 +3982,9 @@
           if (imovel.status_marketing.startsWith("3.")) mktBadgeClass = "badge-mkt-3";
           if (imovel.status_marketing.startsWith("4.")) mktBadgeClass = "badge-mkt-4";
 
-          const temLinkDrive = Boolean(imovel.link_drive_fotos && imovel.link_drive_fotos.trim());
+          const linkDocsImovel = imovel.link_drive_documentos || imovel.link_drive_fotos || "";
+          const linkFotosImovel = imovel.link_drive_fotos || imovel.link_drive_documentos || "";
+          const temLinkDrive = Boolean(linkDocsImovel || linkFotosImovel);
 
           return `
             <article class="crm-card imovel-card" data-id="${escapeHtml(imovel.id)}">
@@ -3998,12 +4006,12 @@
                     ? `
                       <div class="drive-dual-buttons">
                         <a href="${escapeHtml(
-                          imovel.link_drive_fotos
+                          linkDocsImovel
                         )}" target="_blank" rel="noopener noreferrer" class="btn-drive-folder">
                           📁 Abrir Documentos
                         </a>
                         <a href="${escapeHtml(
-                          imovel.link_drive_fotos
+                          linkFotosImovel
                         )}" target="_blank" rel="noopener noreferrer" class="btn-drive-folder">
                           🖼️ Abrir Fotos
                         </a>
@@ -4247,6 +4255,14 @@
         return;
       }
 
+      // Converte rigorosamente o datetime-local para objeto Date e formato ISOString
+      const dataInicioObj = new Date(dataHora);
+      if (isNaN(dataInicioObj.getTime())) {
+        showToast("Data e hora inválidas. Verifique o campo selecionado.", "error");
+        return;
+      }
+      const dataHoraISO = dataInicioObj.toISOString();
+
       // Ação Vinculada na Agenda (2 em 1): concatena o nome do cliente no título do evento
       let tituloEvento = tituloBase;
       if (clienteId) {
@@ -4268,8 +4284,8 @@
             acao: "calendar",
             calendar_id: "ef4db9ef39447454cea9c3e6ec534785fc81c39829bbc1645d820b5afa5bfff8@group.calendar.google.com",
             titulo: tituloEvento,
-            data_hora: new Date(dataHora).toISOString(),
-            descricao
+            data_hora: dataHoraISO,
+            descricao: descricao
           }),
           redirect: "follow"
         });

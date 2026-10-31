@@ -1,7 +1,7 @@
 /* ============================================================================
    IDENTIDADE VISUAL E UI/UX - ANDRESSA SPAGNOL IMÓVEIS
    Paleta: Vinho/Bordô Principal (#2F0E1E), Branco (#FFFFFF) e Cinza Claro (#ECECEC)
-   Tipografia: Playfair Display (Títulos/Marca) e Montserrat (Corpo/Interface)
+   Tipografia: Pilha Padrão do Sistema (Performance e Usabilidade Nativa)
    ============================================================================ */
 
 :root {
@@ -31,8 +31,8 @@
   --shadow-card-hover: 0 8px 24px rgba(59, 20, 37, 0.11);
   --shadow-header: 0 2px 12px rgba(59, 20, 37, 0.18);
 
-  --font-heading: "Playfair Display", Georgia, serif;
-  --font-body: "Montserrat", sans-serif;
+  --font-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 * {
